@@ -58,6 +58,12 @@ dependencies {
     cordaCompile "$corda_release_group:corda-node-api:$corda_release_version"
     cordaRuntime "$corda_release_group:corda:$corda_release_version"
 
+    //rm adding from corda-example projecct:
+    cordaCompile "$corda_release_group:corda-webserver-impl:$corda_release_version"
+    cordaRuntime "$corda_release_group:corda-webserver:$corda_release_version"
+
+    testCompile "$corda_release_group:corda-node-driver:$corda_release_version"
+
     testCompileClasspath fileTree(dir: 'lib/dependencies', include: '*.jar')
     testCompile "$corda_release_group:corda-node-driver:$corda_release_version"
     testCompile "$corda_release_group:corda-test-utils:$corda_release_version"
@@ -70,7 +76,7 @@ tasks.withType(JavaCompile) {
 task deployNodesJava(type: net.corda.plugins.Cordform, dependsOn: ['jar']) {
     directory "./build/nodes"
     node {
-        name "O=Notary,L=London,C=GB"
+        name "O=Notary,L=Muttenz,C=CH"
         notary = [validating: false]
         p2pPort 10002
         cordapps = [
@@ -78,7 +84,7 @@ task deployNodesJava(type: net.corda.plugins.Cordform, dependsOn: ['jar']) {
         ]
     }
     node {
-        name "O=PartyA,L=London,C=GB"
+        name "O=Loyalty_AG,L=Zurich,C=CH"
         p2pPort 10003
         rpcSettings {
             address("localhost:10004")
@@ -90,7 +96,7 @@ task deployNodesJava(type: net.corda.plugins.Cordform, dependsOn: ['jar']) {
         rpcUsers = [[user: "user1", password: "test", permissions: ["ALL"]]]
     }
     node {
-        name "O=PartyB,L=New York,C=US"
+        name "O=SBB,L=Bern,C=CH"
         p2pPort 10006
         rpcSettings {
             address("localhost:10007")
@@ -102,7 +108,7 @@ task deployNodesJava(type: net.corda.plugins.Cordform, dependsOn: ['jar']) {
         rpcUsers = [[user: "user1", password: "test", permissions: ["ALL"]]]
     }
     node {
-        name "O=PartyC,L=Lagos,C=NG"
+        name "O=Alpamare,L=Pfaffikon,C=CH"
         p2pPort 10009
         rpcSettings {
             address("localhost:10010")
