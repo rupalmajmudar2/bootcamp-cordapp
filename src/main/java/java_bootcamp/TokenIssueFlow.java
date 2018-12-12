@@ -1,11 +1,18 @@
 package java_bootcamp;
 
 import co.paralleluniverse.fibers.Suspendable;
+import com.google.common.collect.ImmutableList;
+import java_examples.ArtState;
+import net.corda.core.contracts.ContractState;
+import net.corda.core.contracts.StateAndRef;
 import net.corda.core.flows.*;
 import net.corda.core.identity.Party;
 import net.corda.core.transactions.SignedTransaction;
 import net.corda.core.transactions.TransactionBuilder;
 import net.corda.core.utilities.ProgressTracker;
+
+import java.security.PublicKey;
+import java.util.List;
 
 /* Our flow, automating the process of updating the ledger.
  * See src/main/java/examples/ArtTransferFlowInitiator.java for an example. */
@@ -36,19 +43,31 @@ public class TokenIssueFlow extends FlowLogic<SignedTransaction> {
         Party issuer = getOurIdentity();
 
         /* ============================================================================
-         *         TODO 1 - Create our TokenState to represent on-ledger tokens!
+         *         STEP 1 - Create our TokenState to represent on-ledger tokens!
          * ===========================================================================*/
         // We create our new TokenState.
-        TokenState tokenState = null;
+        TokenState tokenState = new TokenState(issuer, owner, amount);
+        TokenContract.Commands.Issue command= new TokenContract.Commands.Issue();
 
         /* ============================================================================
-         *      TODO 3 - Build our token issuance transaction to update the ledger!
+         *      STEP 3 - Build our token issuance transaction to update the ledger!
          * ===========================================================================*/
         // We build our transaction.
-        TransactionBuilder transactionBuilder = null;
+        //StateAndRef<ContractState> inputState= new StateAndRef<TokenState>;
+
+        PublicKey reqdSigner= issuer.getOwningKey();
+        List<PublicKey> reqdSigners= ImmutableList.of(reqdSigner);
+
+        TransactionBuilder transactionBuilder = new TransactionBuilder();
+        transactionBuilder.setNotary(notary);
+
+        transactionBuilder
+                //.addInputState(inputState)
+                .addOutputState(tokenState, TokenContract.ID) //Which contract will be associated with this (new) outputState
+                .addCommand(command, reqdSigners);
 
         /* ============================================================================
-         *          TODO 2 - Write our TokenContract to control token issuance!
+         *          STEP 2 - Write our TokenContract to control token issuance!
          * ===========================================================================*/
         // We check our transaction is valid based on its contracts.
         transactionBuilder.verify(getServiceHub());
