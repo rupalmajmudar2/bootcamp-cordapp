@@ -36,6 +36,8 @@ apply plugin: 'net.corda.plugins.cordapp'
 apply plugin: 'net.corda.plugins.cordformation'
 apply plugin: 'net.corda.plugins.quasar-utils'
 
+jar.baseName = "cordapp-tokens"
+
 sourceSets {
     main {
         resources {
@@ -78,19 +80,19 @@ task deployNodesJava(type: net.corda.plugins.Cordform, dependsOn: ['jar']) {
     node {
         name "O=Notary,L=Muttenz,C=CH"
         notary = [validating: false]
-        p2pPort 10002
+        p2pPort 10006
         cordapps = [
                 "$project.group:cordapp:$project.version"
         ]
     }
     node {
         name "O=Loyalty_AG,L=Zurich,C=CH"
-        p2pPort 10003
+        p2pPort 10007
         rpcSettings {
-            address("localhost:10004")
-            adminAddress("localhost:10005")
+            address("localhost:10008")
+            adminAddress("localhost:10048")
         }
-        webPort 10030
+        webPort 10009
         cordapps = [
                 "$project.group:cordapp:$project.version"
         ]
@@ -98,12 +100,12 @@ task deployNodesJava(type: net.corda.plugins.Cordform, dependsOn: ['jar']) {
     }
     node {
         name "O=SBB,L=Bern,C=CH"
-        p2pPort 10006
+        p2pPort 10010
         rpcSettings {
-            address("localhost:10007")
-            adminAddress("localhost:10008")
+            address("localhost:10011")
+            adminAddress("localhost:10051")
         }
-        webPort 10031
+        webPort 10012
         cordapps = [
                 "$project.group:cordapp:$project.version"
         ]
@@ -111,12 +113,12 @@ task deployNodesJava(type: net.corda.plugins.Cordform, dependsOn: ['jar']) {
     }
     node {
         name "O=Alpamare,L=Pfaffikon,C=CH"
-        p2pPort 10009
+        p2pPort 10013
         rpcSettings {
-            address("localhost:10010")
-            adminAddress("localhost:10011")
+            address("localhost:10014")
+            adminAddress("localhost:10054")
         }
-        webPort 10032
+        webPort 10015
         cordapps = [
                 "$project.group:cordapp:$project.version"
         ]
@@ -132,4 +134,10 @@ task gatherDependencies(type: Copy) {
     from configurations.testCompile
     from configurations.testRuntime
     from configurations.quasar
+}
+
+task runTokenClientRPCJava(type: JavaExec) {
+    classpath = sourceSets.main.runtimeClasspath
+    main = 'org.vloyalty.client.TokenClientRPC'
+    args 'localhost:10008' //RM 17Dec18: All ports set same as for ExampleApp
 }
