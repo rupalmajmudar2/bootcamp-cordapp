@@ -1,4 +1,4 @@
-package java_bootcamp;
+package org.vloyalty.state;
 
 import com.google.common.collect.ImmutableList;
 import net.corda.core.contracts.ContractState;

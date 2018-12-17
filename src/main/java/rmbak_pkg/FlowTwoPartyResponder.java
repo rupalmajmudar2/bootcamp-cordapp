@@ -1,7 +1,7 @@
 package rmbak_pkg;
 
 import co.paralleluniverse.fibers.Suspendable;
-import java_bootcamp.TokenState;
+import org.vloyalty.state.TokenState;
 import net.corda.core.contracts.StateAndRef;
 import net.corda.core.flows.FlowException;
 import net.corda.core.flows.FlowLogic;

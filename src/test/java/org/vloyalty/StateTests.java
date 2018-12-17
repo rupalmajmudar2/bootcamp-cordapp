@@ -1,10 +1,12 @@
-package java_bootcamp;
+package org.vloyalty;
 
 import net.corda.core.contracts.ContractState;
 import net.corda.core.identity.CordaX500Name;
 import net.corda.core.identity.Party;
 import net.corda.testing.core.TestIdentity;
 import org.junit.Test;
+import org.vloyalty.state.TokenState;
+
 import static org.junit.Assert.assertEquals;
 
 public class StateTests {

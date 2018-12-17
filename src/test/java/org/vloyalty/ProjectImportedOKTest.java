@@ -1,4 +1,4 @@
-package java_bootcamp;
+package org.vloyalty;
 
 import org.junit.Test;
 

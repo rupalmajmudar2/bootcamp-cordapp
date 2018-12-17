@@ -1,15 +1,14 @@
-package java_bootcamp;
+package org.vloyalty.flow;
 
 import co.paralleluniverse.fibers.Suspendable;
 import com.google.common.collect.ImmutableList;
-import java_examples.ArtState;
-import net.corda.core.contracts.ContractState;
-import net.corda.core.contracts.StateAndRef;
 import net.corda.core.flows.*;
 import net.corda.core.identity.Party;
 import net.corda.core.transactions.SignedTransaction;
 import net.corda.core.transactions.TransactionBuilder;
 import net.corda.core.utilities.ProgressTracker;
+import org.vloyalty.contract.TokenContract;
+import org.vloyalty.state.TokenState;
 
 import java.security.PublicKey;
 import java.util.List;

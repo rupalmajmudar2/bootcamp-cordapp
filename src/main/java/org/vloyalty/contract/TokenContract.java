@@ -1,19 +1,18 @@
-package java_bootcamp;
+package org.vloyalty.contract;
 
 import net.corda.core.contracts.*;
 import net.corda.core.identity.Party;
 import net.corda.core.transactions.LedgerTransaction;
 import org.jetbrains.annotations.NotNull;
+import org.vloyalty.state.TokenState;
 
 import java.security.PublicKey;
 import java.util.List;
 
-import static net.corda.core.contracts.ContractsDSL.requireThat;
-
 /* Our contract, governing how our state will evolve over time.
  * See src/main/java/examples/ArtContract.java for an example. */
 public class TokenContract implements Contract {
-    public static String ID = "java_bootcamp.TokenContract";
+    public static String ID = "TokenContract";
 
     @Override
     public void verify(@NotNull LedgerTransaction tx) throws IllegalArgumentException {
@@ -46,7 +45,7 @@ public class TokenContract implements Contract {
 
     }
 
-    interface Commands extends CommandData {
+    public interface Commands extends CommandData {
         public static class Issue implements Commands {
         }
     }

@@ -1,4 +1,4 @@
-package java_bootcamp;
+package org.vloyalty;
 
 import com.google.common.collect.ImmutableList;
 import net.corda.core.concurrent.CordaFuture;
@@ -10,6 +10,9 @@ import net.corda.testing.node.StartedMockNode;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.vloyalty.contract.TokenContract;
+import org.vloyalty.flow.TokenIssueFlow;
+import org.vloyalty.state.TokenState;
 
 import static org.junit.Assert.assertEquals;
 
@@ -68,7 +71,7 @@ public class FlowTests {
         assertEquals(1, signedTransaction.getTx().getOutputStates().size());
         TransactionState output = signedTransaction.getTx().getOutputs().get(0);
 
-        assertEquals("java_bootcamp.TokenContract", output.getContract());
+        assertEquals("TokenContract", output.getContract());
     }
 
     @Test

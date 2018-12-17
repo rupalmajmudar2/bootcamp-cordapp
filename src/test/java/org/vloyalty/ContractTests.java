@@ -1,4 +1,4 @@
-package java_bootcamp;
+package org.vloyalty;
 
 import net.corda.core.contracts.Contract;
 import net.corda.core.identity.CordaX500Name;
@@ -7,6 +7,8 @@ import net.corda.testing.core.DummyCommandData;
 import net.corda.testing.core.TestIdentity;
 import net.corda.testing.node.MockServices;
 import org.junit.Test;
+import org.vloyalty.contract.TokenContract;
+import org.vloyalty.state.TokenState;
 
 import static net.corda.testing.node.NodeTestUtils.transaction;
 

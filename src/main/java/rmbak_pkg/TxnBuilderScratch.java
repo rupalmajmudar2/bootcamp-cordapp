@@ -1,6 +1,6 @@
 package rmbak_pkg;
 
-import java_bootcamp.TokenState;
+import org.vloyalty.state.TokenState;
 import net.corda.core.contracts.ContractState;
 import net.corda.core.contracts.StateAndRef;
 import net.corda.core.identity.Party;
