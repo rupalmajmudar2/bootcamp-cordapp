@@ -28,8 +28,8 @@ public class TokenClientRPC {
 
     public static void main(String[] args) throws ActiveMQException, InterruptedException, ExecutionException {
         if (args.length != 1) {
-            //throw new IllegalArgumentException("Usage: ExampleClientRPC <node address>");
-            args= new String[1]; args[0] = "localhost:10009";
+            throw new IllegalArgumentException("Usage: TokenClientRPC <node address>");
+            //args= new String[1]; args[0] = "localhost:10009";
         }
 
         final NetworkHostAndPort nodeAddress = NetworkHostAndPort.parse(args[0]);

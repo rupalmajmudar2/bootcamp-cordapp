@@ -22,7 +22,7 @@ public class TxnBuilderScratch extends FlowLogic<SignedTransaction> {
         TransactionBuilder txnBldr = new TransactionBuilder();
         txnBldr
               //  .addInputState(inputState)
-                .addOutputState(outputState, "java.bootcamp.TokenState"); //Which contract will be associated with this (new) outputState
+                .addOutputState(outputState, "org.vloyalty.state.TokenState"); //Which contract will be associated with this (new) outputState
                 //.addCommand(new TokenContract.Commands.Issue(), reqdSigners);
 
         txnBldr.verify(new TxnBuilderScratch().getServiceHub());

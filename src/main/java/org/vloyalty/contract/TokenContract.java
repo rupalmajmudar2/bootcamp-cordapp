@@ -12,7 +12,7 @@ import java.util.List;
 /* Our contract, governing how our state will evolve over time.
  * See src/main/java/examples/ArtContract.java for an example. */
 public class TokenContract implements Contract {
-    public static String ID = "TokenContract";
+    public static String ID = "org.vloyalty.contract.TokenContract";
 
     @Override
     public void verify(@NotNull LedgerTransaction tx) throws IllegalArgumentException {

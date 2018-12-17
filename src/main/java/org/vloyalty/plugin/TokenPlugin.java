@@ -21,8 +21,8 @@ public class TokenPlugin implements WebServerPluginRegistry {
      * A list of directories in the resources directory that will be served by Jetty under /web.
      */
     private final Map<String, String> staticServeDirs = ImmutableMap.of(
-            // This will serve the exampleWeb directory in resources to /web/example
-            "example", getClass().getClassLoader().getResource("exampleWeb").toExternalForm()
+            // This will serve the tokenWeb directory in resources to /web/token
+            "token", getClass().getClassLoader().getResource("tokenWeb").toExternalForm()
     );
 
     @Override public List<Function<CordaRPCOps, ?>> getWebApis() { return webApis; }

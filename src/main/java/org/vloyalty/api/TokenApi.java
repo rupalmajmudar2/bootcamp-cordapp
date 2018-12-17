@@ -1,5 +1,6 @@
 package org.vloyalty.api;
 
+import net.corda.core.contracts.StateAndRef;
 import org.vloyalty.flow.TokenIssueFlow;
 import org.vloyalty.schema.TokenSchema;
 import org.vloyalty.state.TokenState;
@@ -18,8 +19,8 @@ import java.util.Map;
 
 import static java.util.stream.Collectors.toList;
 
-// This API is accessible from /api/example. All paths specified below are relative to it.
-@Path("example")
+// This API is accessible from /api/token. All paths specified below are relative to it.
+@Path("token")
 public class TokenApi {
     private final CordaRPCOps rpcOps;
     private final CordaX500Name myLegalName;
@@ -60,15 +61,15 @@ public class TokenApi {
     }
 
     /**
-     * Displays all IOU states that exist in the node's vault.
+     * Displays all Token states that exist in the node's vault.
      */
-   /* @GET
-    @Path("ious")
+    @GET
+    @Path("tokens")
     @Produces(MediaType.APPLICATION_JSON)
-    public List<StateAndRef<IOUState>> getIOUs() {
-        return rpcOps.vaultQuery(IOUState.class).getStates();
+    public List<StateAndRef<TokenState>> getTokens() {
+        return rpcOps.vaultQuery(TokenState.class).getStates();
     }
-*/
+
     /**
      * Initiates a flow to agree an IOU between two parties.
      *

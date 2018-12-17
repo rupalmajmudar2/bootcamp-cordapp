@@ -23,7 +23,7 @@ public class FlowTests {
 
     @Before
     public void setup() {
-        network = new MockNetwork(ImmutableList.of("java_bootcamp"));
+        network = new MockNetwork(ImmutableList.of("org.vloyalty.contract"));
         nodeA = network.createPartyNode(null);
         nodeB = network.createPartyNode(null);
         network.runNetwork();
@@ -71,7 +71,7 @@ public class FlowTests {
         assertEquals(1, signedTransaction.getTx().getOutputStates().size());
         TransactionState output = signedTransaction.getTx().getOutputs().get(0);
 
-        assertEquals("TokenContract", output.getContract());
+        assertEquals("org.vloyalty.contract.TokenContract", output.getContract());
     }
 
     @Test

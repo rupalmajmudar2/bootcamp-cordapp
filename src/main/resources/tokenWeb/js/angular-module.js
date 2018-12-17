@@ -27,7 +27,7 @@ app.controller('DemoAppController', function($http, $location, $uibModal) {
     const demoApp = this;
 
     // We identify the node.
-    const apiBaseURL = "/api/example/";
+    const apiBaseURL = "/api/token/";
     let peers = [];
 
     $http.get(apiBaseURL + "me").then((response) => demoApp.thisNode = response.data.me);
@@ -49,18 +49,18 @@ app.controller('DemoAppController', function($http, $location, $uibModal) {
         modalInstance.result.then(() => {}, () => {});
     };
 
-    demoApp.getIOUs = () => $http.get(apiBaseURL + "ious")
-        .then((response) => demoApp.ious = Object.keys(response.data)
+    demoApp.getTokens = () => $http.get(apiBaseURL + "tokens")
+        .then((response) => demoApp.tokens = Object.keys(response.data)
             .map((key) => response.data[key].state.data)
             .reverse());
 
-    demoApp.getMyIOUs = () => $http.get(apiBaseURL + "my-ious")
+    /*demoApp.getMyIOUs = () => $http.get(apiBaseURL + "my-ious")
         .then((response) => demoApp.myious = Object.keys(response.data)
             .map((key) => response.data[key].state.data)
-            .reverse());
+            .reverse());*/
 
-    demoApp.getIOUs();
-    demoApp.getMyIOUs();
+    demoApp.getTokens();
+    //demoApp.getMyIOUs();
 
 });
 
