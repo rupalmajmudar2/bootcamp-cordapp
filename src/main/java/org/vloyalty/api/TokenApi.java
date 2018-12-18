@@ -1,6 +1,8 @@
 package org.vloyalty.api;
 
 import net.corda.core.contracts.StateAndRef;
+import net.corda.core.identity.Party;
+import net.corda.core.transactions.SignedTransaction;
 import org.vloyalty.flow.TokenIssueFlow;
 import org.vloyalty.schema.TokenSchema;
 import org.vloyalty.state.TokenState;
@@ -14,10 +16,14 @@ import org.slf4j.LoggerFactory;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
 
 import static java.util.stream.Collectors.toList;
+import static javax.ws.rs.core.Response.Status.BAD_REQUEST;
+import static javax.ws.rs.core.Response.Status.CREATED;
 
 // This API is accessible from /api/token. All paths specified below are relative to it.
 @Path("token")
@@ -81,24 +87,29 @@ public class TokenApi {
      *
      * The flow is invoked asynchronously. It returns a future when the flow's call() method returns.
      */
-   /* @PUT
-    @Path("create-iou")
-    public Response createIOU(@QueryParam("iouValue") int iouValue, @QueryParam("partyName") CordaX500Name partyName) throws InterruptedException, ExecutionException {
-        if (iouValue <= 0) {
-            return Response.status(BAD_REQUEST).entity("Query parameter 'iouValue' must be non-negative.\n").build();
+    //TokenIssueFlow(Party owner, int amount)
+    //
+    @PUT
+    @Path("issue-tokens")
+    public Response createIOU(
+                @QueryParam("numtokens") int numTokens,
+                @QueryParam("owner") CordaX500Name ownerPartyName) throws InterruptedException, ExecutionException {
+        if (numTokens <= 0) {
+            return Response.status(BAD_REQUEST).entity("Query parameter 'numtokens' must be non-negative.\n").build();
         }
-        if (partyName == null) {
-            return Response.status(BAD_REQUEST).entity("Query parameter 'partyName' missing or has wrong format.\n").build();
+        if (ownerPartyName == null) {
+            return Response.status(BAD_REQUEST).entity("Query parameter 'owner' missing or has wrong format.\n").build();
         }
 
-        final Party otherParty = rpcOps.wellKnownPartyFromX500Name(partyName);
+        System.out.println("#createTokens: owner="+ownerPartyName+ " #tokens="+numTokens);
+        final Party otherParty = rpcOps.wellKnownPartyFromX500Name(ownerPartyName);
         if (otherParty == null) {
-            return Response.status(BAD_REQUEST).entity("Party named " + partyName + "cannot be found.\n").build();
+            return Response.status(BAD_REQUEST).entity("Party named " + ownerPartyName + "cannot be found.\n").build();
         }
 
         try {
             final SignedTransaction signedTx = rpcOps
-                    .startTrackedFlowDynamic(ExampleFlow.Initiator.class, iouValue, otherParty)
+                    .startTrackedFlowDynamic(TokenIssueFlow.class, otherParty, numTokens)
                     .getReturnValue()
                     .get();
 
@@ -111,7 +122,7 @@ public class TokenApi {
             return Response.status(BAD_REQUEST).entity(msg).build();
         }
     }
-	*/
+
 	/**
      * Displays all IOU states that are created by Party.
      */

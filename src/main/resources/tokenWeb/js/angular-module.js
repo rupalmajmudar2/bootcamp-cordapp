@@ -54,14 +54,7 @@ app.controller('DemoAppController', function($http, $location, $uibModal) {
             .map((key) => response.data[key].state.data)
             .reverse());
 
-    /*demoApp.getMyIOUs = () => $http.get(apiBaseURL + "my-ious")
-        .then((response) => demoApp.myious = Object.keys(response.data)
-            .map((key) => response.data[key].state.data)
-            .reverse());*/
-
     demoApp.getTokens();
-    //demoApp.getMyIOUs();
-
 });
 
 app.controller('ModalInstanceCtrl', function ($http, $location, $uibModalInstance, $uibModal, demoApp, apiBaseURL, peers) {
@@ -71,7 +64,7 @@ app.controller('ModalInstanceCtrl', function ($http, $location, $uibModalInstanc
     modalInstance.form = {};
     modalInstance.formError = false;
 
-    // Validate and create IOU.
+    // Validate and create Tokens.
     modalInstance.create = () => {
         if (invalidFormInput()) {
             modalInstance.formError = true;
@@ -80,14 +73,14 @@ app.controller('ModalInstanceCtrl', function ($http, $location, $uibModalInstanc
 
             $uibModalInstance.close();
 
-            const createIOUEndpoint = `${apiBaseURL}create-iou?partyName=${modalInstance.form.counterparty}&iouValue=${modalInstance.form.value}`;
+            const createTokenEndpoint = `${apiBaseURL}issue-tokens?owner=${modalInstance.form.counterparty}&numtokens=${modalInstance.form.value}`;
 
             // Create PO and handle success / fail responses.
-            $http.put(createIOUEndpoint).then(
+            $http.put(createTokenEndpoint).then(
                 (result) => {
                     modalInstance.displayMessage(result);
-                    demoApp.getIOUs();
-                    demoApp.getMyIOUs();
+                    demoApp.getTokens();
+                    //demoApp.getMyIOUs();
                 },
                 (result) => {
                     modalInstance.displayMessage(result);
@@ -108,10 +101,10 @@ app.controller('ModalInstanceCtrl', function ($http, $location, $uibModalInstanc
         modalInstanceTwo.result.then(() => {}, () => {});
     };
 
-    // Close create IOU modal dialogue.
+    // Close create Token modal dialogue.
     modalInstance.cancel = () => $uibModalInstance.dismiss();
 
-    // Validate the IOU.
+    // Validate the Token.
     function invalidFormInput() {
         return isNaN(modalInstance.form.value) || (modalInstance.form.counterparty === undefined);
     }

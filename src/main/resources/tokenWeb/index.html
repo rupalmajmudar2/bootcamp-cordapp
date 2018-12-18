@@ -35,36 +35,36 @@ COMING WEEKS WE'LL WRITE A TUTORIAL ON HOW BEST TO DO THIS.
         <div class="navbar-header">
             <a class="navbar-brand" href="#">{{demoApp.thisNode}}</a>
         </div>
-        <button ng-click="demoApp.openModal()" type="button" class="btn btn-primary navbar-btn">Create KOINs</button>
+        <button ng-click="demoApp.openModal()" type="button" class="btn btn-primary navbar-btn">Create Tokens</button>
     </div>
 </nav>
 <script type="text/ng-template" id="demoAppModal.html">
     <div class="modal-header">
-        <h4 class="modal-title">Add new IOU</h4>
+        <h4 class="modal-title">Add new Token</h4>
     </div>
     <form>
         <div class="modal-body">
             <div class="form-group">
-                <label for="counterparty" class="control-label">Counter-party:</label>
+                <label for="counterparty" class="control-label">Tokens For:</label>
                 <select ng-model="modalInstance.form.counterparty" class="form-control" id="counterparty"
                         ng-options="peer as peer for peer in modalInstance.peers">
                 </select>
             </div>
             <div class="form-group">
-                <label for="value" class="control-label">Value (Int):</label>
+                <label for="value" class="control-label">#Tokens:</label>
                 <input type="text" ng-model="modalInstance.form.value" class="form-control" id="value">
             </div>
             <div ng-show="modalInstance.formError" class="form-group">
                 <div class="alert alert-danger" role="alert">
                     <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
                     <span class="sr-only">Error:</span>
-                    Enter valid IOU parameters
+                    Enter valid Token parameters
                 </div>
             </div>
         </div>
         <div class="modal-footer">
             <button ng-click="modalInstance.cancel()" type="button" class="btn btn-default">Close</button>
-            <button ng-click="modalInstance.create()" type="button" class="btn btn-primary">Create IOU</button>
+            <button ng-click="modalInstance.create()" type="button" class="btn btn-primary">Create Tokens</button>
         </div>
     </form>
 </script>
@@ -82,18 +82,18 @@ COMING WEEKS WE'LL WRITE A TUTORIAL ON HOW BEST TO DO THIS.
                 <div class="panel-primary">
                     <div class="panel-heading">
                         <h4 class="panel-title">
-                            Recorded IOUs:
+                            Recorded Tokens:
                         </h4>
                     </div>
                 </div>
                 <div>
-                    <div ng-show="!demoApp.ious.length" class="panel-body">Use the "Create IOU" button to send an IOU to a peer.</div>
-                    <div ng-repeat="iou in demoApp.ious" class="panel panel-default">
+                    <div ng-show="!demoApp.tokens.length" class="panel-body">Use the "Create Tokens" button to create tokens for a peer.</div>
+                    <div ng-repeat="token in demoApp.tokens" class="panel panel-default">
                         <div class="panel-body">
                             <ul>
-                                <li>Lender: {{iou.lender}}</li>
-                                <li>Borrower: {{iou.borrower}}</li>
-                                <li>Value: {{iou.value}}</li>
+                                <li>Owner: {{token.owner}}</li>
+                                <li>Issuer: {{token.issuer}}</li>
+                                <li>Value: {{token.amount}}</li>
                             </ul>
                         </div>
                     </div>
@@ -103,17 +103,17 @@ COMING WEEKS WE'LL WRITE A TUTORIAL ON HOW BEST TO DO THIS.
                 <div class="panel-primary">
                     <div class="panel-heading">
                         <h4 class="panel-title">
-                            My IOUs:
+                            My Tokens:
                         </h4>
                     </div>
                 </div>
                 <div>
-                    <div ng-repeat="iou in demoApp.myious" class="panel panel-default">
+                    <div ng-repeat="token in demoApp.tokens" class="panel panel-default">
                         <div class="panel-body">
                             <ul>
-                                <li>Lender: {{iou.lender}}</li>
-                                <li>Borrower: {{iou.borrower}}</li>
-                                <li>Value: {{iou.value}}</li>
+                                <li>Owner: {{token.owner}}</li>
+                                <li>Issuer: {{token.issuer}}</li>
+                                <li>Value: {{token.amount}}</li>
                             </ul>
                         </div>
                     </div>
