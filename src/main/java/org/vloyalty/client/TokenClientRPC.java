@@ -43,7 +43,7 @@ public class TokenClientRPC {
         final Vault.Page<TokenState> snapshot = dataFeed.getSnapshot();
         final Observable<Vault.Update<TokenState>> updates = dataFeed.getUpdates();
 
-        // Log the 'placed' IOUs and listen for new ones.
+        // Log the 'placed' Tokens and listen for new ones.
         snapshot.getStates().forEach(TokenClientRPC::logState);
         updates.toBlocking().subscribe(update -> update.getProduced().forEach(TokenClientRPC::logState));
     }

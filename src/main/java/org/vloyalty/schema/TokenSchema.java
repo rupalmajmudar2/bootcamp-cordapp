@@ -14,47 +14,39 @@ import java.util.UUID;
  */
 public class TokenSchema extends MappedSchema {
     public TokenSchema() {
-        super(TokenSchema.class, 1, ImmutableList.of(PersistentIOU.class));
+        super(TokenSchema.class, 1, ImmutableList.of(PersistentToken.class));
     }
 
     @Entity
     @Table(name = "token_states")
-    public static class PersistentIOU extends PersistentState {
-        @Column(name = "lender") private final String lender;
-        @Column(name = "borrower") private final String borrower;
-        @Column(name = "value") private final int value;
-        @Column(name = "linear_id") private final UUID linearId;
+    public static class PersistentToken extends PersistentState {
+        @Column(name = "issuer") private final String issuer;
+        @Column(name = "owner") private final String owner;
+        @Column(name = "numTokens") private final int numTokens;
 
-
-        public PersistentIOU(String lender, String borrower, int value, UUID linearId) {
-            this.lender = lender;
-            this.borrower = borrower;
-            this.value = value;
-            this.linearId = linearId;
+        public PersistentToken(String issuer, String owner, int numTokens) {
+            this.issuer = issuer;
+            this.owner = owner;
+            this.numTokens = numTokens;
         }
 
         // Default constructor required by hibernate.
-        public PersistentIOU() {
-            this.lender = null;
-            this.borrower = null;
-            this.value = 0;
-            this.linearId = null;
+        public PersistentToken() {
+            this.issuer = null;
+            this.owner = null;
+            this.numTokens = 0;
         }
 
-        public String getLender() {
-            return lender;
+        public String getIssuer() {
+            return issuer;
         }
 
-        public String getBorrower() {
-            return borrower;
+        public String getOwner() {
+            return owner;
         }
 
-        public int getValue() {
-            return value;
-        }
-
-        public UUID getId() {
-            return linearId;
+        public int getNumTokens() {
+            return numTokens;
         }
     }
 }

@@ -51,7 +51,7 @@ public class ApiTests {
         Party otherParty= new TestIdentity(new CordaX500Name("SBB", "Bern", "CH")).getParty();
         int numTokens= 20;
 
-        final NetworkHostAndPort nodeAddress = NetworkHostAndPort.parse("localhost:10009");
+        final NetworkHostAndPort nodeAddress = NetworkHostAndPort.parse("localhost:10008");
         final CordaRPCClient rpcOps = new CordaRPCClient(nodeAddress, CordaRPCClientConfiguration.DEFAULT);
         final CordaRPCOps proxy = rpcOps.start("user1", "test").getProxy();
         final SignedTransaction signedTx = proxy
