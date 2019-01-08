@@ -23,6 +23,7 @@ public class TokenClientRPC {
     private static final Logger logger = LoggerFactory.getLogger(TokenClientRPC.class);
 
     private static void logState(StateAndRef<TokenState> state) {
+        logger.info("#TokenClientRPC.logState");
         logger.info("{}", state.getState().getData());
     }
 

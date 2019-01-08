@@ -26,12 +26,12 @@ public class TokenIssueFlow extends FlowLogic<SignedTransaction> {
         this.amount = amount;
     }
 
-    private final ProgressTracker progressTracker = new ProgressTracker();
+    /*private final ProgressTracker progressTracker = new ProgressTracker();
 
     @Override
     public ProgressTracker getProgressTracker() {
         return progressTracker;
-    }
+    }*/
 
     @Suspendable
     @Override
