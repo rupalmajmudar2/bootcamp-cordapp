@@ -35,12 +35,13 @@ COMING WEEKS WE'LL WRITE A TUTORIAL ON HOW BEST TO DO THIS.
         <div class="navbar-header">
             <a class="navbar-brand" href="#">{{demoApp.thisNode}}</a>
         </div>
-        <button ng-click="demoApp.openModal()" type="button" class="btn btn-primary navbar-btn">Create Tokens</button>
+        <button ng-click="demoApp.openModalForTokenCreation()" type="button" class="btn btn-primary navbar-btn">Create Tokens</button>
+        <!-- <button ng-click="demoApp.openModalForTokenTransfer()" type="button" class="btn btn-primary navbar-btn">Transfer Tokens</button> -->
     </div>
 </nav>
 <script type="text/ng-template" id="demoAppModal.html">
     <div class="modal-header">
-        <h4 class="modal-title">Add new Token</h4>
+        <h4 class="modal-title">Add new Tokens</h4>
     </div>
     <form>
         <div class="modal-body">
@@ -65,6 +66,45 @@ COMING WEEKS WE'LL WRITE A TUTORIAL ON HOW BEST TO DO THIS.
         <div class="modal-footer">
             <button ng-click="modalInstance.cancel()" type="button" class="btn btn-default">Close</button>
             <button ng-click="modalInstance.create()" type="button" class="btn btn-primary">Create Tokens</button>
+        </div>
+    </form>
+</script>
+<nav class="navbar navbar-default">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <a class="navbar-brand" href="#">{{demoApp.thisNode}}</a>
+        </div>
+        <!-- <button ng-click="demoApp.openModalForTokenCreation()" type="button" class="btn btn-primary navbar-btn">Create Tokens</button> -->
+        <button ng-click="demoApp.openModalForTokenTransfer()" type="button" class="btn btn-primary navbar-btn">Transfer Tokens</button>
+    </div>
+</nav>
+<script type="text/ng-template" id="demoAppModalTransfer.html">
+    <div class="modal-header">
+        <h4 class="modal-title">Transfer My Tokens</h4>
+    </div>
+    <form>
+        <div class="modal-body">
+            <div class="form-group">
+                <label for="counterparty" class="control-label">Send Tokens To:</label>
+                <select ng-model="modalInstance.form.counterparty" class="form-control" id="txfr_counterparty"
+                        ng-options="peer as peer for peer in modalInstance.peers">
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="value" class="control-label">#Tokens:</label>
+                <input type="text" ng-model="modalInstance.form.value" class="form-control" id="txfr_value">
+            </div>
+            <div ng-show="modalInstance.formError" class="form-group">
+                <div class="alert alert-danger" role="alert">
+                    <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+                    <span class="sr-only">Error:</span>
+                    Enter valid Token parameters
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button ng-click="modalInstance.cancel()" type="button" class="btn btn-default">Close</button>
+            <button ng-click="modalInstance.transfer()" type="button" class="btn btn-primary">Transfer Tokens</button>
         </div>
     </form>
 </script>

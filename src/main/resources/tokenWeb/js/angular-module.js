@@ -34,9 +34,24 @@ app.controller('DemoAppController', function($http, $location, $uibModal) {
 
     $http.get(apiBaseURL + "peers").then((response) => peers = response.data.peers);
 
-    demoApp.openModal = () => {
+    demoApp.openModalForTokenCreation = () => {
         const modalInstance = $uibModal.open({
             templateUrl: 'demoAppModal.html',
+            controller: 'ModalInstanceCtrl',
+            controllerAs: 'modalInstance',
+            resolve: {
+                demoApp: () => demoApp,
+                apiBaseURL: () => apiBaseURL,
+                peers: () => peers
+            }
+        });
+
+        modalInstance.result.then(() => {}, () => {});
+    };
+
+    demoApp.openModalForTokenTransfer = () => {
+        const modalInstance = $uibModal.open({
+            templateUrl: 'demoAppModalTransfer.html',
             controller: 'ModalInstanceCtrl',
             controllerAs: 'modalInstance',
             resolve: {
@@ -88,6 +103,31 @@ app.controller('ModalInstanceCtrl', function ($http, $location, $uibModalInstanc
             );
         }
     };
+
+    modalInstance.transfer = () => {
+        if (invalidFormInput()) {
+            modalInstance.formError = true;
+        } else {
+            modalInstance.formError = false;
+
+            $uibModalInstance.close();
+            console.log("In #transfer");
+            const createTokenEndpoint = `${apiBaseURL}issue-tokens?owner=${modalInstance.form.counterparty}&numtokens=${modalInstance.form.value}`;
+
+            // Create PO and handle success / fail responses.
+            $http.put(createTokenEndpoint).then(
+                (result) => {
+                    modalInstance.displayMessage(result);
+                    demoApp.getTokens();
+                    //demoApp.getMyIOUs();
+                },
+                (result) => {
+                    modalInstance.displayMessage(result);
+                }
+            );
+        }
+    };
+
 
     modalInstance.displayMessage = (message) => {
         const modalInstanceTwo = $uibModal.open({
