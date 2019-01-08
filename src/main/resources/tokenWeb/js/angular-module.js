@@ -95,7 +95,6 @@ app.controller('ModalInstanceCtrl', function ($http, $location, $uibModalInstanc
                 (result) => {
                     modalInstance.displayMessage(result);
                     demoApp.getTokens();
-                    //demoApp.getMyIOUs();
                 },
                 (result) => {
                     modalInstance.displayMessage(result);
@@ -112,14 +111,13 @@ app.controller('ModalInstanceCtrl', function ($http, $location, $uibModalInstanc
 
             $uibModalInstance.close();
             console.log("In #transfer");
-            const createTokenEndpoint = `${apiBaseURL}issue-tokens?owner=${modalInstance.form.counterparty}&numtokens=${modalInstance.form.value}`;
+            const txfrTokenEndpoint = `${apiBaseURL}transfer-tokens?newowner=${modalInstance.form.counterparty}&numtokens=${modalInstance.form.value}`;
 
             // Create PO and handle success / fail responses.
-            $http.put(createTokenEndpoint).then(
+            $http.put(txfrTokenEndpoint).then(
                 (result) => {
                     modalInstance.displayMessage(result);
                     demoApp.getTokens();
-                    //demoApp.getMyIOUs();
                 },
                 (result) => {
                     modalInstance.displayMessage(result);
@@ -127,7 +125,6 @@ app.controller('ModalInstanceCtrl', function ($http, $location, $uibModalInstanc
             );
         }
     };
-
 
     modalInstance.displayMessage = (message) => {
         const modalInstanceTwo = $uibModal.open({

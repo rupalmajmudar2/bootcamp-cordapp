@@ -4,6 +4,7 @@ import net.corda.core.contracts.StateAndRef;
 import net.corda.core.identity.Party;
 import net.corda.core.transactions.SignedTransaction;
 import org.vloyalty.flow.TokenIssueFlow;
+import org.vloyalty.flow.TokenTransferFlowInitiator;
 import org.vloyalty.schema.TokenSchema;
 import org.vloyalty.state.TokenState;
 import com.google.common.collect.ImmutableList;
@@ -91,7 +92,7 @@ public class TokenApi {
     //
     @PUT
     @Path("issue-tokens")
-    public Response createIOU(
+    public Response createTokens( //createIOU(
                 @QueryParam("numtokens") int numTokens,
                 @QueryParam("owner") CordaX500Name ownerPartyName) throws InterruptedException, ExecutionException {
         if (numTokens <= 0) {
@@ -113,7 +114,41 @@ public class TokenApi {
                     .getReturnValue()
                     .get();
 
-            final String msg = String.format("Transaction id %s committed to ledger.\n", signedTx.getId());
+            final String msg = String.format("TokenIssue Transaction id %s committed to ledger.\n", signedTx.getId());
+            return Response.status(CREATED).entity(msg).build();
+
+        } catch (Throwable ex) {
+            final String msg = ex.getMessage();
+            logger.error(ex.getMessage(), ex);
+            return Response.status(BAD_REQUEST).entity(msg).build();
+        }
+    }
+
+    @PUT
+    @Path("transfer-tokens")
+    public Response transferTokens(
+                                  @QueryParam("numtokens") int numTokens,
+                                  @QueryParam("newowner") CordaX500Name newOwnerPartyName) throws InterruptedException, ExecutionException {
+        if (numTokens <= 0) {
+            return Response.status(BAD_REQUEST).entity("Query parameter 'numtokens' must be non-negative.\n").build();
+        }
+        if (newOwnerPartyName == null) {
+            return Response.status(BAD_REQUEST).entity("Query parameter 'newowner' missing or has wrong format.\n").build();
+        }
+
+        System.out.println("#transferTokens: newowner="+newOwnerPartyName+ " #tokens="+numTokens);
+        final Party otherParty = rpcOps.wellKnownPartyFromX500Name(newOwnerPartyName);
+        if (otherParty == null) {
+            return Response.status(BAD_REQUEST).entity("Party named " + newOwnerPartyName + "cannot be found.\n").build();
+        }
+
+        try {
+            final SignedTransaction signedTx = rpcOps
+                    .startTrackedFlowDynamic(TokenTransferFlowInitiator.class, otherParty, numTokens)
+                    .getReturnValue()
+                    .get();
+
+            final String msg = String.format("TokenTransfer Transaction id %s committed to ledger.\n", signedTx.getId());
             return Response.status(CREATED).entity(msg).build();
 
         } catch (Throwable ex) {
