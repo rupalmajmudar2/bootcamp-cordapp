@@ -19,7 +19,7 @@ import java.security.PublicKey;
 import java.util.Currency;
 import java.util.List;
 
-public class TokenState implements FungibleAsset<Token>, OwnableState, QueryableState {
+public class TokenState implements ContractState,/*FungibleAsset<Token>, OwnableState,*/ QueryableState {
     private int _numTokens;
     private Party _owner;
     private Party _issuer;
@@ -41,13 +41,13 @@ public class TokenState implements FungibleAsset<Token>, OwnableState, Queryable
         _issuer = issuer;
     }
 
-    @Override
+   // @Override
     public List<PublicKey> getExitKeys() {
         //@TODO : check!
         return ImmutableList.of(_owner.getOwningKey());
     }
 
-    @Override
+    //@Override
     public Amount<Issued<Token>> getAmount() {
         return getAmountFor(_numTokens);
     }
@@ -66,12 +66,12 @@ public class TokenState implements FungibleAsset<Token>, OwnableState, Queryable
         return Amount.fromDecimal(b, ic);
     }
 
-    public CommandAndState withNewOwner(AbstractParty newOwner) {
+   /* public CommandAndState withNewOwner(AbstractParty newOwner) {
         Party newOwnerParty= (Party) newOwner; //@TODO : cleanup!
 
         return new CommandAndState(new TokenContract.Commands.Transfer(), new TokenState(_issuer, newOwnerParty, _numTokens));
     }
-
+*/
     public TokenState withNewOwnerAndAmount(Amount<Issued<Token>> amount, AbstractParty newOwner) {
         int numTokens= (int) amount.getQuantity(); //@TODO : check!
         Party newOwnerParty= (Party) newOwner; //@TODO : cleanup!
