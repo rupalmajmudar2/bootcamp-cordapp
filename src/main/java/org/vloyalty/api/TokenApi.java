@@ -1,7 +1,9 @@
 package org.vloyalty.api;
 
+import net.corda.core.contracts.FungibleAsset;
 import net.corda.core.contracts.StateAndRef;
 import net.corda.core.identity.Party;
+import net.corda.core.node.services.vault.QueryCriteria;
 import net.corda.core.transactions.SignedTransaction;
 import org.vloyalty.flow.TokenIssueFlow;
 import org.vloyalty.flow.TokenTransferFlowInitiator;
@@ -14,6 +16,7 @@ import net.corda.core.messaging.CordaRPCOps;
 import net.corda.core.node.NodeInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.vloyalty.token.Token;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
@@ -74,7 +77,12 @@ public class TokenApi {
     @Path("tokens")
     @Produces(MediaType.APPLICATION_JSON)
     public List<StateAndRef<TokenState>> getTokens() {
-        return rpcOps.vaultQuery(TokenState.class).getStates();
+        //System.out.println("#getTokens: #1");
+        List<StateAndRef<TokenState>> states= rpcOps.vaultQuery(TokenState.class).getStates();
+        //rpcOps.vaultQueryBy(<FungibleAsset<Token>())
+        //rpcOps.vaultQueryByCriteria(QueryCriteria.FungibleAssetQueryCriteria(TokenState.class);
+        //System.out.println("#getTokens: #2 #states=" + states.size());
+        return states;
     }
 
     /**
@@ -115,7 +123,10 @@ public class TokenApi {
                     .get();
 
             final String msg = String.format("TokenIssue Transaction id %s committed to ledger.\n", signedTx.getId());
-            return Response.status(CREATED).entity(msg).build();
+            //System.out.println("#createTokens: #1");
+            Response rr= Response.status(CREATED).entity(msg).build();
+            //System.out.println("#createTokens: #2");
+            return rr;
 
         } catch (Throwable ex) {
             final String msg = ex.getMessage();

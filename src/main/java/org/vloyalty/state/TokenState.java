@@ -19,7 +19,7 @@ import java.security.PublicKey;
 import java.util.Currency;
 import java.util.List;
 
-public class TokenState implements ContractState,/*FungibleAsset<Token>, OwnableState,*/ QueryableState {
+public class TokenState implements FungibleAsset<Token>, QueryableState {
     private int _numTokens;
     private Party _owner;
     private Party _issuer;
@@ -41,13 +41,13 @@ public class TokenState implements ContractState,/*FungibleAsset<Token>, Ownable
         _issuer = issuer;
     }
 
-   // @Override
+    @Override
     public List<PublicKey> getExitKeys() {
         //@TODO : check!
         return ImmutableList.of(_owner.getOwningKey());
     }
 
-    //@Override
+    @Override
     public Amount<Issued<Token>> getAmount() {
         return getAmountFor(_numTokens);
     }
@@ -66,17 +66,24 @@ public class TokenState implements ContractState,/*FungibleAsset<Token>, Ownable
         return Amount.fromDecimal(b, ic);
     }
 
-   /* public CommandAndState withNewOwner(AbstractParty newOwner) {
+    public CommandAndState withNewOwner(AbstractParty newOwner) {
         Party newOwnerParty= (Party) newOwner; //@TODO : cleanup!
 
         return new CommandAndState(new TokenContract.Commands.Transfer(), new TokenState(_issuer, newOwnerParty, _numTokens));
     }
-*/
+
     public TokenState withNewOwnerAndAmount(Amount<Issued<Token>> amount, AbstractParty newOwner) {
         int numTokens= (int) amount.getQuantity(); //@TODO : check!
         Party newOwnerParty= (Party) newOwner; //@TODO : cleanup!
 
         return new TokenState(_issuer, newOwnerParty, numTokens);
+    }
+
+    //For re-issue of part of the amount to ourselves
+    public TokenState withNewAmount(Amount<Issued<Token>> amount) {
+        int numTokens= (int) amount.getQuantity(); //@TODO : check!
+
+        return new TokenState(_issuer, _owner, numTokens);
     }
 
     public int getNumTokens() {
@@ -111,7 +118,7 @@ public class TokenState implements ContractState,/*FungibleAsset<Token>, Ownable
                     this._owner.getName().toString(),
                     this._numTokens);
         } else {
-            throw new IllegalArgumentException("Unrecognised schema $schema");
+            throw new IllegalArgumentException("Unrecognised schema.");
         }
     }
 

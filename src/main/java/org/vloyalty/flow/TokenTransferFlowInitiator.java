@@ -11,6 +11,7 @@ import net.corda.core.identity.Party;
 import net.corda.core.transactions.SignedTransaction;
 import net.corda.core.transactions.TransactionBuilder;
 import net.corda.core.utilities.ProgressTracker;
+import org.vloyalty.token.Token;
 
 import java.security.PublicKey;
 import java.util.List;
@@ -56,6 +57,15 @@ public class TokenTransferFlowInitiator extends FlowLogic<SignedTransaction> {
                     "This flow (TokenTransferFlowInitiator) must be started by the current owner i.e. " + currentOwner +
                             ". Currenty being attempted by " + inputTokenState.getOwner());
 
+        int tokensToOurselves= inputTokenState.getNumTokens() - _numTokensToTxfr;
+        if (tokensToOurselves < 0) { //trying to transfer more than what we have
+            String err= "This flow (TokenTransferFlowInitiator) is attempting to transfer more tokens ("
+                    + _numTokensToTxfr + ") than what " + inputTokenState.getOwner() + " currently owns ("
+                    + inputTokenState.getNumTokens() + ")";
+            throw new IllegalArgumentException(err);
+            //@TODO: Should use InsufficientBalanceException instead.
+        }
+
         // We use the notary used by the input state.
         Party notary = inputTokenStateAndRef.getState().getNotary();
 
@@ -66,28 +76,27 @@ public class TokenTransferFlowInitiator extends FlowLogic<SignedTransaction> {
         // notary it will use.
         txBuilder.setNotary(notary);
 
-        // We add the input ArtState to the transaction.
+        // We add the input Token State to the transaction.
         txBuilder.addInputState(inputTokenStateAndRef);
 
         // We add the TWO output TokenStates to the transaction:
         //(i) The specified #tokens to the newOwner
         //(ii) The remaining tokens back to us!!
-        TokenState outputTokenStateForNewOwner = new TokenState( //issuer, owner, amount
+        /*TokenState outputTokenStateForNewOwner = new TokenState( //issuer, owner, amount
                 currentOwner,
                 _newOwner,
-                _numTokensToTxfr);
+                _numTokensToTxfr);*/
+        TokenState outputTokenStateForNewOwner= inputTokenState.withNewOwnerAndAmount(
+                                                                    inputTokenState.getAmountFor(_numTokensToTxfr),
+                                                                    _newOwner);
         txBuilder.addOutputState(outputTokenStateForNewOwner, TokenContract.ID);
 
-        TokenState outputTokenStateForOurselves = new TokenState( //issuer, owner, amount
+        TokenState outputTokenStateForOurselves = inputTokenState.withNewAmount(
+                                                        inputTokenState.getAmountFor(tokensToOurselves));
+                /*new TokenState( //issuer, owner, amount
                 currentOwner,
                 currentOwner,
-                55); //TEMP!!
-        /**
-         * TODO:
-         * (i) Compute the total tokens with currentOwner
-         * (ii) Validate that amountToTxfr is less than this total
-         * (iii) Txfr total less amountToTxfr, to oueselves.
-         **/
+                amountToOurselves);*/
         txBuilder.addOutputState(outputTokenStateForOurselves, TokenContract.ID);
 
         // We add the Transfer command to the transaction.

@@ -58,7 +58,7 @@ public class FlowTests {
         TokenState output = signedTransaction.getTx().outputsOfType(TokenState.class).get(0);
 
         assertEquals(nodeB.getInfo().getLegalIdentities().get(0), output.getOwner());
-        assertEquals(99, output.getAmount());
+        assertEquals(99, output.getNumTokens());
     }
 
     @Test

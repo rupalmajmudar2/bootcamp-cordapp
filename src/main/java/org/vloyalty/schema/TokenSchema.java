@@ -1,8 +1,11 @@
 package org.vloyalty.schema;
 
 import com.google.common.collect.ImmutableList;
+import net.corda.core.contracts.Amount;
+import net.corda.core.contracts.Issued;
 import net.corda.core.schemas.MappedSchema;
 import net.corda.core.schemas.PersistentState;
+import org.vloyalty.token.Token;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -28,6 +31,12 @@ public class TokenSchema extends MappedSchema {
             this.issuer = issuer;
             this.owner = owner;
             this.numTokens = numTokens;
+        }
+
+        public PersistentToken(String issuer, String owner, Amount<Issued<Token>> amount) {
+            this.issuer = issuer;
+            this.owner = owner;
+            this.numTokens = (int) amount.getQuantity();
         }
 
         // Default constructor required by hibernate.

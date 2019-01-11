@@ -2,10 +2,6 @@ package org.vloyalty;
 
 import com.google.common.collect.ImmutableList;
 import net.corda.core.concurrent.CordaFuture;
-import net.corda.core.contracts.Command;
-import net.corda.core.contracts.TransactionState;
-import net.corda.core.contracts.TransactionVerificationException;
-import net.corda.core.flows.FlowException;
 import net.corda.core.transactions.SignedTransaction;
 import net.corda.testing.node.MockNetwork;
 import net.corda.testing.node.StartedMockNode;
@@ -14,7 +10,6 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
-import org.vloyalty.contract.TokenContract;
 import org.vloyalty.flow.TokenIssueFlow;
 import org.vloyalty.flow.TokenTransferFlowInitiator;
 import org.vloyalty.flow.TokenTransferFlowResponder;
@@ -67,6 +62,22 @@ public class TransferFlowTests {
     }
 
     @Test
+    public void flowRejectsInvalidLargeTokenAmounts() throws Exception {
+        provideInitialTokenBalance(10);
+
+        TokenTransferFlowInitiator flow = new TokenTransferFlowInitiator(nodeB.getInfo().getLegalIdentities().get(0), 17); //more than 10
+        CordaFuture<SignedTransaction> future = nodeA.startFlow(flow);
+        network.runNetwork();
+
+        // IllegalArgumentException("No Tokens found for owner...") - since this nodeA has zero token balance
+        //@see TokenTransferFlowInitiator#call
+        exception.expectCause(instanceOf(IllegalArgumentException.class));
+        exception.expectMessage("This flow (TokenTransferFlowInitiator) is attempting to transfer more tokens (17) than what O=Mock Company 1, L=London, C=GB currently owns (10)");
+
+        future.get();
+    }
+
+    @Test
     public void signedTransactionReturnedByTheFlowIsSignedByTheInitiator() throws Exception {
 
         //First issue tokens to nodeA so that it can do the transfer to nodeB.
@@ -75,8 +86,8 @@ public class TransferFlowTests {
         network.runNetwork();
         SignedTransaction signedIssueTx = issueFuture.get();
         TokenState issuedState = signedIssueTx.getTx().outputsOfType(TokenState.class).get(0);
-        assertEquals(99, issuedState.getAmount());*/
-        provideInitialTokenBalance();
+        assertEquals(99, issuedState.getNumTokens());*/
+        provideInitialTokenBalance(99);
 
         TokenTransferFlowInitiator flow = new TokenTransferFlowInitiator(nodeB.getInfo().getLegalIdentities().get(0), 22);
         CordaFuture<SignedTransaction> future = nodeA.startFlow(flow);
@@ -86,19 +97,19 @@ public class TransferFlowTests {
         signedTx.verifySignaturesExcept(nodeB.getInfo().getLegalIdentities().get(0).getOwningKey());
     }
 
-    private void provideInitialTokenBalance() throws Exception {
+    private void provideInitialTokenBalance(int bal) throws Exception {
         //First issue tokens to nodeA so that it can do the transfer to nodeB.
-        TokenIssueFlow issueFlow = new TokenIssueFlow(nodeA.getInfo().getLegalIdentities().get(0), 99);
+        TokenIssueFlow issueFlow = new TokenIssueFlow(nodeA.getInfo().getLegalIdentities().get(0), bal);
         CordaFuture<SignedTransaction> issueFuture = nodeA.startFlow(issueFlow);
         network.runNetwork();
         SignedTransaction signedIssueTx = issueFuture.get();
         TokenState issuedState = signedIssueTx.getTx().outputsOfType(TokenState.class).get(0);
-        assertEquals(99, issuedState.getAmount());
+        assertEquals(bal, issuedState.getNumTokens());
     }
 
     @Test
     public void signedTransactionReturnedByTheFlowIsSignedByTheAcceptor() throws Exception {
-        provideInitialTokenBalance();
+        provideInitialTokenBalance(99);
 
         TokenTransferFlowInitiator flow = new TokenTransferFlowInitiator(nodeB.getInfo().getLegalIdentities().get(0), 33);
         CordaFuture<SignedTransaction> future = nodeA.startFlow(flow);
@@ -110,7 +121,7 @@ public class TransferFlowTests {
 
     @Test
     public void flowRecordsATransactionInBothPartiesTransactionStorages() throws Exception {
-        provideInitialTokenBalance();
+        provideInitialTokenBalance(99);
 
         TokenTransferFlowInitiator flow = new TokenTransferFlowInitiator(nodeB.getInfo().getLegalIdentities().get(0), 44);
         CordaFuture<SignedTransaction> future = nodeA.startFlow(flow);

@@ -38,7 +38,7 @@ public class TokenContract implements Contract {
             if (!(cs instanceof TokenState))
                 throw new IllegalArgumentException("Tx output must be a TokenState. Found: " + cs.getClass());
             TokenState ts = (TokenState) cs;
-            int amt = ((TokenState) cs).getAmount();
+            int amt = ((TokenState) cs).getNumTokens();
             if (amt <= 0) throw new IllegalArgumentException("Token amount must be positive");
 
             //(C) Signer rules
