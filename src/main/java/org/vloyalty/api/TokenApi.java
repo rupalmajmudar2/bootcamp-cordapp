@@ -3,6 +3,9 @@ package org.vloyalty.api;
 import net.corda.core.contracts.FungibleAsset;
 import net.corda.core.contracts.StateAndRef;
 import net.corda.core.identity.Party;
+import net.corda.core.node.services.Vault;
+import net.corda.core.node.services.vault.Builder;
+import net.corda.core.node.services.vault.CriteriaExpression;
 import net.corda.core.node.services.vault.QueryCriteria;
 import net.corda.core.transactions.SignedTransaction;
 import org.vloyalty.flow.TokenIssueFlow;
@@ -21,11 +24,13 @@ import org.vloyalty.token.Token;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.lang.reflect.Field;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
 import static java.util.stream.Collectors.toList;
+import static javax.security.auth.callback.ConfirmationCallback.OK;
 import static javax.ws.rs.core.Response.Status.BAD_REQUEST;
 import static javax.ws.rs.core.Response.Status.CREATED;
 
@@ -77,12 +82,7 @@ public class TokenApi {
     @Path("tokens")
     @Produces(MediaType.APPLICATION_JSON)
     public List<StateAndRef<TokenState>> getTokens() {
-        //System.out.println("#getTokens: #1");
-        List<StateAndRef<TokenState>> states= rpcOps.vaultQuery(TokenState.class).getStates();
-        //rpcOps.vaultQueryBy(<FungibleAsset<Token>())
-        //rpcOps.vaultQueryByCriteria(QueryCriteria.FungibleAssetQueryCriteria(TokenState.class);
-        //System.out.println("#getTokens: #2 #states=" + states.size());
-        return states;
+        return rpcOps.vaultQuery(TokenState.class).getStates();
     }
 
     /**
@@ -170,18 +170,20 @@ public class TokenApi {
     }
 
 	/**
-     * Displays all IOU states that are created by Party.
+     * Displays all Token states that are created by this Party.
      */
-  /*  @GET
-    @Path("my-ious")
+    @GET
+    @Path("tokens-issued-by-me")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getMyIOUs() throws NoSuchFieldException {
+    public Response getTokensIssuedByMe() throws NoSuchFieldException {
         QueryCriteria generalCriteria = new QueryCriteria.VaultQueryCriteria(Vault.StateStatus.ALL);
-        Field lender = IOUSchemaV1.PersistentIOU.class.getDeclaredField("lender");
-        CriteriaExpression lenderIndex = Builder.equal(lender, myLegalName.toString());
-        QueryCriteria lenderCriteria = new QueryCriteria.VaultCustomQueryCriteria(lenderIndex);
-        QueryCriteria criteria = generalCriteria.and(lenderCriteria);
-        List<StateAndRef<IOUState>> results = rpcOps.vaultQueryByCriteria(criteria,IOUState.class).getStates();
+
+        Field issuer = TokenSchema.PersistentToken.class.getDeclaredField("issuer");
+        CriteriaExpression issuerIndex = Builder.equal(issuer, myLegalName.toString());
+        QueryCriteria issuerCriteria = new QueryCriteria.VaultCustomQueryCriteria(issuerIndex);
+
+        QueryCriteria criteria = generalCriteria.and(issuerCriteria);
+        List<StateAndRef<TokenState>> results = rpcOps.vaultQueryByCriteria(criteria,TokenState.class).getStates();
         return Response.status(OK).entity(results).build();
-    }*/
+    }
 }

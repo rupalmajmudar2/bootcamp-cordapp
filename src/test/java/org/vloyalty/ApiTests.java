@@ -31,12 +31,14 @@ public class ApiTests {
     private MockNetwork network;
     private StartedMockNode nodeA;
     private StartedMockNode nodeB;
+    private StartedMockNode nodeC;
 
     @Before
     public void setup() {
         network = new MockNetwork(ImmutableList.of("org.vloyalty.contract"));
-        nodeA = network.createPartyNode(null);
-        nodeB = network.createPartyNode(null);
+        nodeA = network.createPartyNode(new CordaX500Name("Valora", "Bern", "CH"));
+        nodeB = network.createPartyNode(new CordaX500Name("SBB", "Bern", "CH"));
+        nodeC = network.createPartyNode(new CordaX500Name("Alpamare", "Bern", "CH"));
         network.runNetwork();
     }
 
@@ -48,14 +50,20 @@ public class ApiTests {
     @Test
     public void createTokenCreationFlow() throws Exception {
 
-        Party otherParty= new TestIdentity(new CordaX500Name("SBB", "Bern", "CH")).getParty();
+        //Party otherParty= new TestIdentity(new CordaX500Name("SBB", "Bern", "CH")).getParty();
+        //StartedMockNode nodeC = network.createPartyNode( new CordaX500Name("SBB", "Bern", "CH") );
         int numTokens= 20;
 
         final NetworkHostAndPort nodeAddress = NetworkHostAndPort.parse("localhost:10008");
         final CordaRPCClient rpcOps = new CordaRPCClient(nodeAddress, CordaRPCClientConfiguration.DEFAULT);
         final CordaRPCOps proxy = rpcOps.start("user1", "test").getProxy();
-        final SignedTransaction signedTx = proxy
-                .startTrackedFlowDynamic(TokenIssueFlow.class, otherParty, numTokens)
+        System.out.println( proxy.nodeInfo() );
+
+        //nodeB.getServices();
+        System.out.println( nodeB.getId() );
+
+        /*final SignedTransaction signedTx = proxy
+                .startTrackedFlowDynamic(TokenIssueFlow.class, nodeB.getInfo().getLegalIdentities().get(0), numTokens)
                 .getReturnValue()
                 .get();
 
@@ -69,6 +77,6 @@ public class ApiTests {
         assertEquals(1, signedTransaction.getTx().getOutputStates().size());
         TransactionState output = signedTransaction.getTx().getOutputs().get(0);
 
-        assertEquals(network.getNotaryNodes().get(0).getInfo().getLegalIdentities().get(0), output.getNotary());
+        assertEquals(network.getNotaryNodes().get(0).getInfo().getLegalIdentities().get(0), output.getNotary());*/
     }
 }

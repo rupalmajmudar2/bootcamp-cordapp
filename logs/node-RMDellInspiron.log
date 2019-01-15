@@ -1,6 +1,8 @@
-[INFO ] 2019-01-09T14:42:29,969Z [main] internal.RPCClient.logElapsedTime - Startup took 2215 msec {}
-[INFO ] 2019-01-09T16:14:19,278Z [main] internal.RPCClient.logElapsedTime - Startup took 2063 msec {}
-[INFO ] 2019-01-09T16:14:19,701Z [main] client.TokenClientRPC.logState - #TokenClientRPC.logState {}
-[INFO ] 2019-01-09T16:14:19,704Z [main] client.TokenClientRPC.logState - TokenState(#tokens=150, owner=O=Loyalty_AG, L=Zurich, C=CH, issuer=O=SBB, L=Bern, C=CH) {}
-[INFO ] 2019-01-09T16:14:51,866Z [main] client.TokenClientRPC.logState - #TokenClientRPC.logState {}
-[INFO ] 2019-01-09T16:14:51,866Z [main] client.TokenClientRPC.logState - TokenState(#tokens=142, owner=O=Loyalty_AG, L=Zurich, C=CH, issuer=O=Loyalty_AG, L=Zurich, C=CH) {}
+[INFO ] 2019-01-11T15:51:08,432Z [main] internal.RPCClient.logElapsedTime - Startup took 2408 msec {}
+[INFO ] 2019-01-11T15:54:06,398Z [main] internal.RPCClient.logElapsedTime - Startup took 2672 msec {}
+[INFO ] 2019-01-11T16:04:03,489Z [main] internal.RPCClient.logElapsedTime - Startup took 2112 msec {}
+[INFO ] 2019-01-11T16:06:38,173Z [main] internal.RPCClient.logElapsedTime - Startup took 2041 msec {}
+[INFO ] 2019-01-11T16:11:52,668Z [main] internal.RPCClient.logElapsedTime - Startup took 2389 msec {}
+[INFO ] 2019-01-11T16:13:42,879Z [main] internal.RPCClient.logElapsedTime - Startup took 2156 msec {}
+[INFO ] 2019-01-11T16:17:42,344Z [main] internal.RPCClient.logElapsedTime - Startup took 1976 msec {}
+[INFO ] 2019-01-11T16:19:00,394Z [main] internal.RPCClient.logElapsedTime - Startup took 1973 msec {}

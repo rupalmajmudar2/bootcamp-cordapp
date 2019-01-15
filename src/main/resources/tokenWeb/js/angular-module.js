@@ -70,6 +70,13 @@ app.controller('DemoAppController', function($http, $location, $uibModal) {
             .reverse());
 
     demoApp.getTokens();
+
+    demoApp.getTokensIssuedByMe = () => $http.get(apiBaseURL + "tokens-issued-by-me")
+        .then((response) => demoApp.tokens = Object.keys(response.data)
+           .map((key) => response.data[key].state.data)
+           .reverse());
+
+    demoApp.getTokensIssuedByMe();
 });
 
 app.controller('ModalInstanceCtrl', function ($http, $location, $uibModalInstance, $uibModal, demoApp, apiBaseURL, peers) {
