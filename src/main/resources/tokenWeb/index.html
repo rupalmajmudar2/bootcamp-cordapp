@@ -36,6 +36,7 @@ COMING WEEKS WE'LL WRITE A TUTORIAL ON HOW BEST TO DO THIS.
             <a class="navbar-brand" href="#">{{demoApp.thisNode}}</a>
         </div>
         <button ng-click="demoApp.openModalForTokenCreation()" type="button" class="btn btn-primary navbar-btn">Create Tokens</button>
+        To be signed by: Txn Initiator
         <!-- <button ng-click="demoApp.openModalForTokenTransfer()" type="button" class="btn btn-primary navbar-btn">Transfer Tokens</button> -->
     </div>
 </nav>
@@ -76,6 +77,7 @@ COMING WEEKS WE'LL WRITE A TUTORIAL ON HOW BEST TO DO THIS.
         </div>
         <!-- <button ng-click="demoApp.openModalForTokenCreation()" type="button" class="btn btn-primary navbar-btn">Create Tokens</button> -->
         <button ng-click="demoApp.openModalForTokenTransfer()" type="button" class="btn btn-primary navbar-btn">Transfer Tokens</button>
+        To be signed by: Txn Initiator & Txn Acceptor
     </div>
 </nav>
 <script type="text/ng-template" id="demoAppModalTransfer.html">
@@ -118,17 +120,17 @@ COMING WEEKS WE'LL WRITE A TUTORIAL ON HOW BEST TO DO THIS.
     <div class="col-md-1"></div>
     <div class="col-md-10">
         <div class="panel-group" id="accordion">
-            <div class="panel">
+            <!--<div class="panel">
                 <div class="panel-primary">
                     <div class="panel-heading">
                         <h4 class="panel-title">
-                            Tokens Issued by me [wip]:
+                            Tokens Issued by Loyalty_AG:
                         </h4>
                     </div>
                 </div>
                 <div>
                     <div ng-show="!demoApp.tokens.length" class="panel-body">Use the "Create Tokens" button to create tokens for a peer.</div>
-                    <div ng-repeat="token in demoApp.tokens" class="panel panel-default">
+                    <div ng-repeat="token in demoApp.loyalty_tokens" class="panel panel-default">
                         <div class="panel-body">
                             <ul>
                                 <li>Owner: {{token.owner}}</li>
@@ -138,12 +140,12 @@ COMING WEEKS WE'LL WRITE A TUTORIAL ON HOW BEST TO DO THIS.
                         </div>
                     </div>
                 </div>
-            </div>
+            </div>-->
             <div class="panel">
                 <div class="panel-primary">
                     <div class="panel-heading">
                         <h4 class="panel-title">
-                            My Tokens:
+                            My Tokens [Tokens owned by me]:
                         </h4>
                     </div>
                 </div>

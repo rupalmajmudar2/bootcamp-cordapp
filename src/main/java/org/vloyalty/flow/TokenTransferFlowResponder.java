@@ -1,10 +1,16 @@
 package org.vloyalty.flow;
 
 import co.paralleluniverse.fibers.Suspendable;
+import net.corda.core.contracts.ContractState;
+import net.corda.core.identity.Party;
 import org.vloyalty.flow.TokenTransferFlowInitiator;
 import net.corda.core.flows.*;
 import net.corda.core.transactions.SignedTransaction;
 import net.corda.core.utilities.ProgressTracker;
+import org.vloyalty.state.TokenState;
+
+import javax.swing.*;
+import java.util.List;
 
 // `InitiatedBy` means that we will start this flow in response to a
 // message from `TokenTransferFlow.Initiator`.
@@ -45,7 +51,31 @@ public class TokenTransferFlowResponder extends FlowLogic<SignedTransaction> {
             protected void checkTransaction(SignedTransaction stx) throws FlowException {
                 // Whatever checking you want to do...
                 //TODO - add checks
+                //List<ContractState> outputStates= stx.getTx().getOutputStates();
+                /*
+                String msg=""; int i= 0;
+                for (ContractState cs: outputStates) {
+                    msg += "#" + i++ + " : " + cs.toString() + " ppl: " + cs.getParticipants().toString();
+                }
+                JOptionPane.showInputDialog(msg);
+                */
+                Party thisNode= getOurIdentity();
+                JDialog.setDefaultLookAndFeelDecorated(true);
+                int response = JOptionPane.showConfirmDialog(null, "Do you wish to Sign this txn?", "Confirm for Node:" + thisNode.getName(),
+                        JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+                if (response == JOptionPane.NO_OPTION) {
+                    System.out.println("No button clicked");
+                    throw new FlowException("Counterparty refused to sign. Cancelling the Transaction.");
+                } else if (response == JOptionPane.YES_OPTION) {
+                    System.out.println("Yes button clicked");
+                    //ok.
+                } else if (response == JOptionPane.CLOSED_OPTION) {
+                    System.out.println("JOptionPane closed");
+                    //ok.
+                }
                 //stx.getInputs();
+
+                //getServiceHub().getValidatedTransactions();
             }
         }
 

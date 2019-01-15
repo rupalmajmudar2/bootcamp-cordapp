@@ -91,13 +91,11 @@ public class TokenTransferFlowInitiator extends FlowLogic<SignedTransaction> {
                                                                     _newOwner);
         txBuilder.addOutputState(outputTokenStateForNewOwner, TokenContract.ID);
 
-        TokenState outputTokenStateForOurselves = inputTokenState.withNewAmount(
-                                                        inputTokenState.getAmountFor(tokensToOurselves));
-                /*new TokenState( //issuer, owner, amount
-                currentOwner,
-                currentOwner,
-                amountToOurselves);*/
-        txBuilder.addOutputState(outputTokenStateForOurselves, TokenContract.ID);
+        if (tokensToOurselves > 0) { //else dont bother creating this new state
+            TokenState outputTokenStateForOurselves = inputTokenState.withNewAmount(
+                    inputTokenState.getAmountFor(tokensToOurselves));
+            txBuilder.addOutputState(outputTokenStateForOurselves, TokenContract.ID);
+        }
 
         // We add the Transfer command to the transaction.
         // Note that we also specific who is required to sign the transaction.

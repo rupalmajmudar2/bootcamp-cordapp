@@ -72,10 +72,11 @@ app.controller('DemoAppController', function($http, $location, $uibModal) {
     demoApp.getTokens();
 
     demoApp.getTokensIssuedByMe = () => $http.get(apiBaseURL + "tokens-issued-by-me")
-        .then((response) => demoApp.tokens = Object.keys(response.data)
+        .then((response) => demoApp.loyalty_tokens = Object.keys(response.data)
            .map((key) => response.data[key].state.data)
            .reverse());
 
+    //console.log("L-issued tokens size=" + demoApp.tokens.length);
     demoApp.getTokensIssuedByMe();
 });
 

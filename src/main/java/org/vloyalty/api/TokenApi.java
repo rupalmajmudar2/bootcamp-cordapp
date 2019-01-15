@@ -171,19 +171,26 @@ public class TokenApi {
 
 	/**
      * Displays all Token states that are created by this Party.
+     * Update 15Jan.19 : Only those on THIS node will be queried!
+     * So for now - show the states issued by LoyaltyAG
      */
     @GET
     @Path("tokens-issued-by-me")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getTokensIssuedByMe() throws NoSuchFieldException {
         QueryCriteria generalCriteria = new QueryCriteria.VaultQueryCriteria(Vault.StateStatus.ALL);
+        QueryCriteria all_criteria = generalCriteria;
+        List<StateAndRef<TokenState>> all_results = rpcOps.vaultQueryByCriteria(all_criteria,TokenState.class).getStates();
+        System.out.println("#tokens-issued-by-loyaltyAg: all-criteria count=" + all_results.size());
 
         Field issuer = TokenSchema.PersistentToken.class.getDeclaredField("issuer");
-        CriteriaExpression issuerIndex = Builder.equal(issuer, myLegalName.toString());
+        CordaX500Name loyaltyAg = new CordaX500Name("Loyalty_AG", "Zurich", "CH");
+        CriteriaExpression issuerIndex = Builder.equal(issuer, loyaltyAg.toString());
         QueryCriteria issuerCriteria = new QueryCriteria.VaultCustomQueryCriteria(issuerIndex);
 
-        QueryCriteria criteria = generalCriteria.and(issuerCriteria);
+        QueryCriteria criteria = issuerCriteria; //generalCriteria.and(issuerCriteria);
         List<StateAndRef<TokenState>> results = rpcOps.vaultQueryByCriteria(criteria,TokenState.class).getStates();
+        System.out.println("#tokens-issued-by-loyaltyAg: count=" + results.size());
         return Response.status(OK).entity(results).build();
     }
 }
