@@ -29,6 +29,8 @@ public class TokenIssueFlow extends AbstractTokenFlow { //FlowLogic<SignedTransa
     @Suspendable
     @Override
     public SignedTransaction call() throws FlowException {
+        super.call(); //for testing additional call aspects
+
         // We choose our transaction's notary (the notary prevents double-spends).
         Party notary = getServiceHub().getNetworkMapCache().getNotaryIdentities().get(0);
         // We get a reference to our own identity.
@@ -47,6 +49,8 @@ public class TokenIssueFlow extends AbstractTokenFlow { //FlowLogic<SignedTransa
         // We build our transaction.
         //StateAndRef<ContractState> inputState= new StateAndRef<TokenState>;
 
+        getProgressTracker().setCurrentStep(GENERATING_ISSUE_TRANSACTION);
+
         PublicKey reqdSigner= issuer.getOwningKey();
         List<PublicKey> reqdSigners= ImmutableList.of(reqdSigner);
 
@@ -62,12 +66,15 @@ public class TokenIssueFlow extends AbstractTokenFlow { //FlowLogic<SignedTransa
          *          STEP 2 - Write our TokenContract to control token issuance!
          * ===========================================================================*/
         // We check our transaction is valid based on its contracts.
+        getProgressTracker().setCurrentStep(VERIFYING_TRANSACTION);
         transactionBuilder.verify(getServiceHub());
 
         // We sign the transaction with our private key, making it immutable.
+        getProgressTracker().setCurrentStep(SIGNING_TRANSACTION);
         SignedTransaction signedTransaction = getServiceHub().signInitialTransaction(transactionBuilder);
 
         // We get the transaction notarised and recorded automatically by the platform.
+        getProgressTracker().setCurrentStep(FINALISING_TRANSACTION);
         return subFlow(new FinalityFlow(signedTransaction));
     }
 }

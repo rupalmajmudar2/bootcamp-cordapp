@@ -71,7 +71,7 @@ public class TokenApi {
         return ImmutableMap.of("peers", nodeInfoSnapshot
                 .stream()
                 .map(node -> node.getLegalIdentities().get(0).getName())
-                .filter(name -> !name.equals(myLegalName) && !serviceNames.contains(name.getOrganisation()))
+                //.filter(name -> !name.equals(myLegalName) && !serviceNames.contains(name.getOrganisation()))
                 .collect(toList()));
     }
 

@@ -118,7 +118,7 @@ task deployNodesJava(type: net.corda.plugins.Cordform, dependsOn: ['jar']) {
         cordapps = [
                 "$project.group:cordapp:$project.version"
         ]
-        rpcUsers = [[user: "user1", password: "test", permissions: ["ALL"]]]
+        rpcUsers = [[user: "user1", password: "test", permissions: ["StartFlow.org.vloyalty.flow.TokenTransferFlowInitiator"]]]; //Alpamare cannot Issue tokens!
     }
 }
 

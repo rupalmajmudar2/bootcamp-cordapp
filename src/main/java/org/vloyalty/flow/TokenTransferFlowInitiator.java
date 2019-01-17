@@ -66,6 +66,8 @@ public class TokenTransferFlowInitiator extends AbstractTokenFlow { //FlowLogic<
             //@TODO: Should use InsufficientBalanceException instead.
         }
 
+        getProgressTracker().setCurrentStep(GENERATING_TXFR_INITIATOR_TRANSACTION);
+
         // We use the notary used by the input state.
         Party notary = inputTokenStateAndRef.getState().getNotary();
 
@@ -104,17 +106,24 @@ public class TokenTransferFlowInitiator extends AbstractTokenFlow { //FlowLogic<
                 inputTokenState.getOwner().getOwningKey(), _newOwner.getOwningKey()); //BOTH sign.
         txBuilder.addCommand(commandData, requiredSigners);
 
+        //Add a dummy PDF attachment
+        //pdfAttachment
+        //txBuilder.addAttachment(pdfAttachment);
+
         // We check that the transaction builder we've created meets the
         // contracts of the input and output states.
+        getProgressTracker().setCurrentStep(VERIFYING_TRANSACTION);
         txBuilder.verify(getServiceHub());
 
         // We finalise the transaction builder by signing it,
         // converting it into a `SignedTransaction`.
+        getProgressTracker().setCurrentStep(SIGNING_TRANSACTION);
         SignedTransaction partlySignedTx = getServiceHub().signInitialTransaction(txBuilder);
 
         // We use `CollectSignaturesFlow` to automatically gather a
         // signature from each counterparty. The counterparty will need to
         // call `SignTransactionFlow` to decided whether or not to sign.
+        getProgressTracker().setCurrentStep(GATHERING_SIGS);
         FlowSession ownerSession = initiateFlow(_newOwner);
         SignedTransaction fullySignedTx = subFlow(
                 new CollectSignaturesFlow(partlySignedTx, ImmutableSet.of(ownerSession)));
@@ -122,6 +131,7 @@ public class TokenTransferFlowInitiator extends AbstractTokenFlow { //FlowLogic<
         // We use `FinalityFlow` to automatically notarise the transaction
         // and have it recorded by all the `participants` of all the
         // transaction's states.
+        getProgressTracker().setCurrentStep(FINALISING_TRANSACTION);
         return subFlow(new FinalityFlow(fullySignedTx));
 
         //return null;

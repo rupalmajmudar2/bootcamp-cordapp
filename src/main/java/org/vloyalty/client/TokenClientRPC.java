@@ -6,7 +6,6 @@ import net.corda.core.contracts.ContractState;
 import net.corda.core.contracts.StateAndRef;
 import net.corda.core.contracts.StateRef;
 import net.corda.core.contracts.TransactionState;
-import net.corda.core.crypto.SecureHash;
 import net.corda.core.identity.CordaX500Name;
 import net.corda.core.identity.Party;
 import net.corda.core.messaging.CordaRPCOps;
@@ -18,7 +17,6 @@ import net.corda.core.node.services.vault.QueryCriteria;
 import net.corda.core.transactions.SignedTransaction;
 import net.corda.core.utilities.NetworkHostAndPort;
 import org.apache.activemq.artemis.api.core.ActiveMQException;
-import org.graphstream.graph.Edge;
 import org.graphstream.graph.implementations.MultiGraph;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,7 +25,6 @@ import org.vloyalty.state.TokenState;
 import rx.Observable;
 
 import java.lang.reflect.Field;
-import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
