@@ -17,7 +17,7 @@ import java.util.List;
  * See src/main/java/examples/ArtTransferFlowInitiator.java for an example. */
 @InitiatingFlow
 @StartableByRPC
-public class TokenIssueFlow extends FlowLogic<SignedTransaction> {
+public class TokenIssueFlow extends AbstractTokenFlow { //FlowLogic<SignedTransaction> {
     private final Party owner;
     private final int amount;
 
@@ -25,13 +25,6 @@ public class TokenIssueFlow extends FlowLogic<SignedTransaction> {
         this.owner = owner;
         this.amount = amount;
     }
-
-    /*private final ProgressTracker progressTracker = new ProgressTracker();
-
-    @Override
-    public ProgressTracker getProgressTracker() {
-        return progressTracker;
-    }*/
 
     @Suspendable
     @Override

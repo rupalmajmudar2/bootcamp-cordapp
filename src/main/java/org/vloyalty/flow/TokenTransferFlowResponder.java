@@ -15,7 +15,7 @@ import java.util.List;
 // `InitiatedBy` means that we will start this flow in response to a
 // message from `TokenTransferFlow.Initiator`.
 @InitiatedBy(TokenTransferFlowInitiator.class)
-public class TokenTransferFlowResponder extends FlowLogic<SignedTransaction> {
+public class TokenTransferFlowResponder extends AbstractTokenFlow { //FlowLogic<SignedTransaction> {
     private final FlowSession counterpartySession;
 
     // Responder flows always have a single constructor argument - a

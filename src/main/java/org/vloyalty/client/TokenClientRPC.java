@@ -5,6 +5,7 @@ import net.corda.client.rpc.CordaRPCClientConfiguration;
 import net.corda.core.contracts.ContractState;
 import net.corda.core.contracts.StateAndRef;
 import net.corda.core.contracts.StateRef;
+import net.corda.core.contracts.TransactionState;
 import net.corda.core.crypto.SecureHash;
 import net.corda.core.identity.CordaX500Name;
 import net.corda.core.identity.Party;
@@ -17,6 +18,8 @@ import net.corda.core.node.services.vault.QueryCriteria;
 import net.corda.core.transactions.SignedTransaction;
 import net.corda.core.utilities.NetworkHostAndPort;
 import org.apache.activemq.artemis.api.core.ActiveMQException;
+import org.graphstream.graph.Edge;
+import org.graphstream.graph.implementations.MultiGraph;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.vloyalty.schema.TokenSchema;
@@ -35,10 +38,17 @@ import java.util.concurrent.ExecutionException;
 public class TokenClientRPC {
     private static final Logger logger = LoggerFactory.getLogger(TokenClientRPC.class);
 
-    private static void logState(StateAndRef<TokenState> state) {
+    private static void logState(StateAndRef<TokenState> state, MultiGraph graph) {
         logger.info("#TokenClientRPC.logState");
         logger.info("{}", state.getState().getData());
-        System.out.println("RM TokenClientRPC.logState : "+ state.toString());
+        System.out.println("RM TokenClientRPC.logState : Ref#"+ state.getRef() + " : " + state.toString());
+        StateRef stateRef= state.getRef();
+        TransactionState<TokenState> tokenState= state.getState();
+        TokenState ts= tokenState.getData();
+
+        graph.addNode(stateRef.toString());
+
+        graph.display();
     }
 
     /*
@@ -46,7 +56,7 @@ public class TokenClientRPC {
                 Each transaction is a vertex, represented by printing NODE <txhash>
                 Each input-output relationship is an edge, represented by prining EDGE <txhash> <txhash>
     */
-    private static void logFeedTxn(SignedTransaction nextTxn) {
+    private static void logFeedTxn(SignedTransaction nextTxn, MultiGraph graph) {
         //System.out.println("NODE: " + nextTxn.getId() + " Inputs size=" );
         List<StateRef> inputStateRefs= nextTxn.getInputs();
         //System.out.println("NODE: " + nextTxn.getId() + " Inputs size=" + inputStateRefs.size());
@@ -55,12 +65,15 @@ public class TokenClientRPC {
         //                println("EDGE $txhash ${transaction.id}")
         List<ContractState> outputStates= nextTxn.getTx().getOutputStates();
         String nextTxnId= nextTxn.getId().toString();
+        graph.addNode(nextTxnId);
         System.out.println("Txn#: " + nextTxnId + " #Inputs=" + inputStateRefs.size() + " #Outputs=" + outputStates.size());
 
         if (inputStateRefs.size() == 0) System.out.println("   InputRef: {}");
         else {
             for (StateRef stateRef : inputStateRefs) {
                 System.out.println("   InputRef: " + stateRef.getTxhash() + " Index=" + stateRef.getIndex());
+                //graph.addEdge<Edge>("$ref", "${ref.txhash}", "${transaction.id}")
+                graph.addEdge(stateRef.toString(), stateRef.getTxhash().toString(), nextTxnId);
             }
         }
 
@@ -69,6 +82,8 @@ public class TokenClientRPC {
             System.out.println("   OutputRef=" + nextTxnId + " Index=" + ind++);
             System.out.println("              OutputState=" + outState.toString());
         }
+
+        graph.display();
         System.out.println("Break");
     }
 
@@ -136,11 +151,21 @@ public class TokenClientRPC {
         /// -- End txn hist
 
         //Tracking from https://docs.corda.net/tutorial-clientrpc-api.html
+        MultiGraph graph = new MultiGraph("transactions");
+
+        //First the already posted txns
+        final DataFeed<Vault.Page<TokenState>, Vault.Update<TokenState>> dataFeed = proxy.vaultTrack(TokenState.class);
+        final Vault.Page<TokenState> snapshot = dataFeed.getSnapshot();
+        for (StateAndRef<TokenState> tokenStateStateAndRef : snapshot.getStates()) {
+            logState(tokenStateStateAndRef, graph);
+        }
+        //graph.display();
+
         proxy.internalVerifiedTransactionsFeed();
         DataFeed<List<SignedTransaction>, SignedTransaction> txnsFeed = proxy.internalVerifiedTransactionsFeed();
         Observable<SignedTransaction> futureTxns= txnsFeed.getUpdates();
         futureTxns.toBlocking().subscribe(
-                nextTxn -> TokenClientRPC.logFeedTxn(nextTxn)
+                nextTxn -> TokenClientRPC.logFeedTxn(nextTxn, graph)
         );
 
         /*System.out.println("NODE : " + nextTxn.toString());
@@ -153,7 +178,7 @@ public class TokenClientRPC {
 
 
         // Grab all existing and future IOU states in the vault. *** For the node that this client is connected to. ***
-        final DataFeed<Vault.Page<TokenState>, Vault.Update<TokenState>> dataFeed = proxy.vaultTrack(TokenState.class);
+        /*final DataFeed<Vault.Page<TokenState>, Vault.Update<TokenState>> dataFeed = proxy.vaultTrack(TokenState.class);
         final Vault.Page<TokenState> snapshot = dataFeed.getSnapshot();
         final Observable<Vault.Update<TokenState>> updates = dataFeed.getUpdates();
 
@@ -161,6 +186,6 @@ public class TokenClientRPC {
         snapshot.getStates().forEach(TokenClientRPC::logState);
         updates.toBlocking().subscribe(update -> update.getProduced().forEach(TokenClientRPC::logState));
 
-        System.out.println("Post-block");
+        System.out.println("Post-block");*/
     }
 }

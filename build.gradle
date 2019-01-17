@@ -53,19 +53,15 @@ sourceSets {
 
 dependencies {
     compileClasspath fileTree(dir: 'lib/dependencies', include: '*.jar')
-
     cordaCompile "$corda_release_group:corda-core:$corda_release_version"
     cordaCompile "$corda_release_group:corda-jackson:$corda_release_version"
     cordaCompile "$corda_release_group:corda-rpc:$corda_release_version"
     cordaCompile "$corda_release_group:corda-node-api:$corda_release_version"
     cordaRuntime "$corda_release_group:corda:$corda_release_version"
-
     //rm adding from corda-example projecct:
     cordaRuntime "$corda_release_group:corda-webserver:$corda_release_version"
     cordaCompile "$corda_release_group:corda-webserver-impl:$corda_release_version"
-    
     testCompile "$corda_release_group:corda-node-driver:$corda_release_version"
-
     testCompileClasspath fileTree(dir: 'lib/dependencies', include: '*.jar')
     testCompile "$corda_release_group:corda-node-driver:$corda_release_version"
     testCompile "$corda_release_group:corda-test-utils:$corda_release_version"
@@ -136,8 +132,8 @@ task gatherDependencies(type: Copy) {
     from configurations.quasar
 }
 
-task runTokenClientRPCJava(type: JavaExec) {
+/*task runTokenClientRPCJava(type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
     main = 'org.vloyalty.client.TokenClientRPC'
     args 'localhost:10008' //RM 17Dec18: All ports set same as for ExampleApp
-}
+}*/

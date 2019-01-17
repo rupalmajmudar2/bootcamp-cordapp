@@ -18,7 +18,7 @@ import java.util.List;
 
 @InitiatingFlow
 @StartableByRPC
-public class TokenTransferFlowInitiator extends FlowLogic<SignedTransaction> {
+public class TokenTransferFlowInitiator extends AbstractTokenFlow { //FlowLogic<SignedTransaction> {
     private final Party _newOwner;
     private final int _numTokensToTxfr;
 
