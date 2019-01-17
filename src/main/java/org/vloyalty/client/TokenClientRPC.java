@@ -38,6 +38,38 @@ public class TokenClientRPC {
     private static void logState(StateAndRef<TokenState> state) {
         logger.info("#TokenClientRPC.logState");
         logger.info("{}", state.getState().getData());
+        System.out.println("RM TokenClientRPC.logState : "+ state.toString());
+    }
+
+    /*
+        The graph will be defined as follows:
+                Each transaction is a vertex, represented by printing NODE <txhash>
+                Each input-output relationship is an edge, represented by prining EDGE <txhash> <txhash>
+    */
+    private static void logFeedTxn(SignedTransaction nextTxn) {
+        //System.out.println("NODE: " + nextTxn.getId() + " Inputs size=" );
+        List<StateRef> inputStateRefs= nextTxn.getInputs();
+        //System.out.println("NODE: " + nextTxn.getId() + " Inputs size=" + inputStateRefs.size());
+        //HashMap<StateRef, Integer> txn_io= new HashMap<>();
+        //transaction.tx.inputs.forEach { (txhash) ->
+        //                println("EDGE $txhash ${transaction.id}")
+        List<ContractState> outputStates= nextTxn.getTx().getOutputStates();
+        String nextTxnId= nextTxn.getId().toString();
+        System.out.println("Txn#: " + nextTxnId + " #Inputs=" + inputStateRefs.size() + " #Outputs=" + outputStates.size());
+
+        if (inputStateRefs.size() == 0) System.out.println("   InputRef: {}");
+        else {
+            for (StateRef stateRef : inputStateRefs) {
+                System.out.println("   InputRef: " + stateRef.getTxhash() + " Index=" + stateRef.getIndex());
+            }
+        }
+
+        int ind=0;
+        for (ContractState outState: outputStates) {
+            System.out.println("   OutputRef=" + nextTxnId + " Index=" + ind++);
+            System.out.println("              OutputState=" + outState.toString());
+        }
+        System.out.println("Break");
     }
 
     public static void main(String[] args) throws ActiveMQException, InterruptedException, ExecutionException, Exception {
@@ -75,7 +107,7 @@ public class TokenClientRPC {
 
         //
         //Txn history list - @see https://stackoverflow.com/questions/50594282/how-to-get-transaction-history-in-corda
-        String txnHash= "1661F28BBBB4839F601B745E4C83D67F97C31F3C1A950341D168153D2B7D35F0";
+       /* String txnHash= "B43107D09FDDA1A552B0D68AB716B1B5759581AC0F16B1BAC7271F77C70EEA29";
         List<SignedTransaction> txns= proxy.internalVerifiedTransactionsSnapshot();
         SignedTransaction myTxn = txns.stream()
                 .filter(txn -> txnHash.equals(txn.getId().toString()))
@@ -92,7 +124,7 @@ public class TokenClientRPC {
                     .findAny()
                     .orElse(null);
             System.out.println("Input for C18B40 is: " + prevTxn);
-        }
+        }*/
        /* List<ContractState> inputStates= inputStateRefs.
         val inputStates = inputStateRefs.
                 map { stateRef ->
@@ -103,7 +135,24 @@ public class TokenClientRPC {
 
         /// -- End txn hist
 
-        // Grab all existing and future IOU states in the vault.
+        //Tracking from https://docs.corda.net/tutorial-clientrpc-api.html
+        proxy.internalVerifiedTransactionsFeed();
+        DataFeed<List<SignedTransaction>, SignedTransaction> txnsFeed = proxy.internalVerifiedTransactionsFeed();
+        Observable<SignedTransaction> futureTxns= txnsFeed.getUpdates();
+        futureTxns.toBlocking().subscribe(
+                nextTxn -> TokenClientRPC.logFeedTxn(nextTxn)
+        );
+
+        /*System.out.println("NODE : " + nextTxn.toString());
+
+                println("NODE ${transaction.id}")
+            transaction.tx.inputs.forEach { (txhash) ->
+                    println("EDGE $txhash ${transaction.id}")
+            }
+        }*/
+
+
+        // Grab all existing and future IOU states in the vault. *** For the node that this client is connected to. ***
         final DataFeed<Vault.Page<TokenState>, Vault.Update<TokenState>> dataFeed = proxy.vaultTrack(TokenState.class);
         final Vault.Page<TokenState> snapshot = dataFeed.getSnapshot();
         final Observable<Vault.Update<TokenState>> updates = dataFeed.getUpdates();
@@ -111,5 +160,7 @@ public class TokenClientRPC {
         // Log the 'placed' Tokens and listen for new ones.
         snapshot.getStates().forEach(TokenClientRPC::logState);
         updates.toBlocking().subscribe(update -> update.getProduced().forEach(TokenClientRPC::logState));
+
+        System.out.println("Post-block");
     }
 }
