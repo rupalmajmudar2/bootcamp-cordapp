@@ -10,18 +10,24 @@ import net.corda.core.identity.CordaX500Name;
 import net.corda.core.identity.Party;
 import net.corda.core.messaging.CordaRPCOps;
 import net.corda.core.messaging.DataFeed;
+import net.corda.core.node.ServiceHub;
 import net.corda.core.node.services.Vault;
+import net.corda.core.node.services.VaultService;
 import net.corda.core.node.services.vault.Builder;
 import net.corda.core.node.services.vault.CriteriaExpression;
 import net.corda.core.node.services.vault.QueryCriteria;
 import net.corda.core.transactions.SignedTransaction;
 import net.corda.core.utilities.NetworkHostAndPort;
 import org.apache.activemq.artemis.api.core.ActiveMQException;
+import org.graphstream.graph.Node;
 import org.graphstream.graph.implementations.MultiGraph;
+import org.graphstream.ui.spriteManager.Sprite;
+import org.graphstream.ui.spriteManager.SpriteManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.vloyalty.schema.TokenSchema;
 import org.vloyalty.state.TokenState;
+import org.vloyalty.token.Token;
 import rx.Observable;
 
 import java.lang.reflect.Field;
@@ -34,7 +40,9 @@ import java.util.concurrent.ExecutionException;
  */
 public class TokenClientRPC {
     private static final Logger logger = LoggerFactory.getLogger(TokenClientRPC.class);
-    private static MultiGraph _graph = new MultiGraph("transactions");
+    private static MultiGraph _graph = new MultiGraph("Corda transactions");
+    private static SpriteManager _sman = new SpriteManager(_graph);
+    private static int _nodeNr = 0;
 
     private static void logState(StateAndRef<TokenState> state) {
         logger.info("#TokenClientRPC.logState");
@@ -50,6 +58,8 @@ public class TokenClientRPC {
             stateRefStr= stateRefStr.substring(0, (indx));
         }
         _graph.addNode(stateRefStr);
+        Sprite s = _sman.addSprite("S" + _nodeNr++);
+        s.attachToNode(stateRefStr);
         System.out.println("Node added: " + stateRefStr);
 
         //_graph.display();
@@ -69,7 +79,9 @@ public class TokenClientRPC {
         //                println("EDGE $txhash ${transaction.id}")
         List<ContractState> outputStates= nextTxn.getTx().getOutputStates();
         String nextTxnId= nextTxn.getId().toString();
-        _graph.addNode(nextTxnId);
+        Node n= _graph.addNode(nextTxnId);
+        Sprite s = _sman.addSprite("S" + _nodeNr++);
+        s.attachToNode(nextTxnId);
         System.out.println("Node added: " + nextTxnId);
         System.out.println("Txn#: " + nextTxnId + " #Inputs=" + inputStateRefs.size() + " #Outputs=" + outputStates.size());
 
@@ -105,6 +117,7 @@ public class TokenClientRPC {
         }
 
         final NetworkHostAndPort nodeAddress = NetworkHostAndPort.parse(args[0]);
+        System.out.println("Client running at: " + nodeAddress.toString());
         final CordaRPCClient client = new CordaRPCClient(nodeAddress, CordaRPCClientConfiguration.DEFAULT);
 
         // Can be amended in the com.example.Main file.
@@ -171,6 +184,8 @@ public class TokenClientRPC {
             logState(tokenStateStateAndRef);
         }
         //graph.display();
+
+        Vault.Page<TokenState> allStates = proxy.vaultQuery(TokenState.class);
 
         proxy.internalVerifiedTransactionsFeed();
         DataFeed<List<SignedTransaction>, SignedTransaction> txnsFeed = proxy.internalVerifiedTransactionsFeed();
