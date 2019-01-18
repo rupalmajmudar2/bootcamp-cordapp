@@ -1,35 +1,100 @@
-[INFO ] 2019-01-15T10:02:27,250Z [main] internal.RPCClient.logElapsedTime - Startup took 2528 msec {}
-[INFO ] 2019-01-15T10:03:37,446Z [main] client.TokenClientRPC.logState - #TokenClientRPC.logState {}
-[INFO ] 2019-01-15T10:03:37,449Z [main] client.TokenClientRPC.logState - TokenState(#tokens=45, owner=O=SBB, L=Bern, C=CH, issuer=O=Loyalty_AG, L=Zurich, C=CH) {}
-[INFO ] 2019-01-15T10:03:52,680Z [main] internal.RPCClient.logElapsedTime - Startup took 3813 msec {}
-[INFO ] 2019-01-15T10:04:52,898Z [main] internal.RPCClient.logElapsedTime - Startup took 2647 msec {}
-[WARN ] 2019-01-15T10:20:21,106Z [Thread-2 (ActiveMQ-client-global-threads)] core.client.fail - AMQ212037: Connection failure has been detected: AMQ119011: Did not receive data from server for org.apache.activemq.artemis.core.remoting.impl.netty.NettyConnection@1dd6a1[local= 0.0.0.0/0.0.0.0:51132, remote=null] [code=CONNECTION_TIMEDOUT] {}
-[INFO ] 2019-01-15T10:20:33,947Z [main] internal.RPCClient.logElapsedTime - Startup took 2532 msec {}
-[INFO ] 2019-01-15T10:21:02,905Z [main] internal.RPCClient.logElapsedTime - Startup took 2542 msec {}
-[INFO ] 2019-01-15T10:21:27,409Z [main] internal.RPCClient.logElapsedTime - Startup took 2883 msec {}
-[INFO ] 2019-01-15T10:43:04,014Z [main] internal.RPCClient.logElapsedTime - Startup took 2708 msec {}
-[INFO ] 2019-01-15T14:25:45,089Z [main] internal.RPCClient.logElapsedTime - Startup took 2947 msec {}
-[WARN ] 2019-01-15T14:49:21,268Z [Thread-2 (ActiveMQ-client-global-threads)] core.client.fail - AMQ212037: Connection failure has been detected: AMQ119011: Did not receive data from server for org.apache.activemq.artemis.core.remoting.impl.netty.NettyConnection@29c6a33e[local= /127.0.0.1:51815, remote=localhost/127.0.0.1:10011] [code=CONNECTION_TIMEDOUT] {}
-[INFO ] 2019-01-15T14:49:36,680Z [main] internal.RPCClient.logElapsedTime - Startup took 3338 msec {}
-[WARN ] 2019-01-15T14:54:00,728Z [Thread-2 (ActiveMQ-client-global-threads)] core.client.fail - AMQ212037: Connection failure has been detected: AMQ119011: Did not receive data from server for org.apache.activemq.artemis.core.remoting.impl.netty.NettyConnection@1c6b6ab1[local= 0.0.0.0/0.0.0.0:57158, remote=localhost/127.0.0.1:10011] [code=CONNECTION_TIMEDOUT] {}
-[INFO ] 2019-01-15T14:54:14,883Z [main] internal.RPCClient.logElapsedTime - Startup took 3241 msec {}
-[INFO ] 2019-01-15T14:55:45,445Z [main] internal.RPCClient.logElapsedTime - Startup took 2843 msec {}
-[INFO ] 2019-01-15T14:57:38,283Z [main] internal.RPCClient.logElapsedTime - Startup took 2822 msec {}
-[INFO ] 2019-01-15T15:28:57,791Z [main] internal.RPCClient.logElapsedTime - Startup took 3106 msec {}
-[WARN ] 2019-01-15T16:31:49,492Z [Thread-2 (ActiveMQ-client-global-threads)] core.client.fail - AMQ212037: Connection failure has been detected: AMQ119011: Did not receive data from server for org.apache.activemq.artemis.core.remoting.impl.netty.NettyConnection@e2af46b[local= 0.0.0.0/0.0.0.0:57457, remote=null] [code=CONNECTION_TIMEDOUT] {}
-[INFO ] 2019-01-15T16:51:31,330Z [main] internal.RPCClient.logElapsedTime - Startup took 31917 msec {}
-[INFO ] 2019-01-15T16:53:46,335Z [main] internal.RPCClient.logElapsedTime - Startup took 2722 msec {}
-[INFO ] 2019-01-15T16:57:21,225Z [main] internal.RPCClient.logElapsedTime - Startup took 2914 msec {}
-[INFO ] 2019-01-15T16:57:49,360Z [main] internal.RPCClient.logElapsedTime - Startup took 2946 msec {}
-[INFO ] 2019-01-15T16:58:12,895Z [main] internal.RPCClient.logElapsedTime - Startup took 2775 msec {}
-[INFO ] 2019-01-15T17:00:12,654Z [main] internal.RPCClient.logElapsedTime - Startup took 2737 msec {}
-[INFO ] 2019-01-15T17:00:50,235Z [main] internal.RPCClient.logElapsedTime - Startup took 2922 msec {}
-[INFO ] 2019-01-15T17:19:22,962Z [main] internal.RPCClient.logElapsedTime - Startup took 20927 msec {}
-[INFO ] 2019-01-15T17:25:33,692Z [main] internal.RPCClient.logElapsedTime - Startup took 2661 msec {}
-[WARN ] 2019-01-15T17:31:54,314Z [Thread-2 (ActiveMQ-client-global-threads)] core.client.fail - AMQ212037: Connection failure has been detected: AMQ119011: Did not receive data from server for org.apache.activemq.artemis.core.remoting.impl.netty.NettyConnection@614c8b1e[local= 0.0.0.0/0.0.0.0:53632, remote=null] [code=CONNECTION_TIMEDOUT] {}
-[INFO ] 2019-01-15T17:32:21,717Z [main] internal.RPCClient.logElapsedTime - Startup took 3378 msec {}
-[INFO ] 2019-01-15T17:39:17,483Z [main] internal.RPCClient.logElapsedTime - Startup took 2320 msec {}
-[INFO ] 2019-01-15T17:43:36,882Z [main] internal.RPCClient.logElapsedTime - Startup took 2537 msec {}
-[INFO ] 2019-01-15T17:46:31,348Z [main] internal.RPCClient.logElapsedTime - Startup took 2432 msec {}
-[INFO ] 2019-01-15T17:48:21,305Z [main] internal.RPCClient.logElapsedTime - Startup took 2399 msec {}
-[INFO ] 2019-01-15T17:50:43,343Z [main] internal.RPCClient.logElapsedTime - Startup took 2422 msec {}
+[INFO ] 2019-01-18T08:37:55,853Z [main] internal.RPCClient.logElapsedTime - Startup took 1779 msec {}
+[INFO ] 2019-01-18T08:37:56,501Z [main] client.TokenClientRPC.logState - #TokenClientRPC.logState {}
+[INFO ] 2019-01-18T08:37:56,504Z [main] client.TokenClientRPC.logState - TokenState(#tokens=100, owner=O=SBB, L=Bern, C=CH, issuer=O=Loyalty_AG, L=Zurich, C=CH) {}
+[WARN ] 2019-01-18T08:39:13,511Z [rpc-client-reaper-0] internal.RPCClientProxyHandler.onRemoval - A hot observable returned from an RPC was never subscribed to. This wastes server-side resources because it was queueing observations for retrieval. It is being closed now, but please adjust your code to call .notUsed() on the observable to close it explicitly. (Java users: subscribe to it then unsubscribe). This warning will appear less frequently in future versions of the platform and you can ignore it if you want to. {}
+[INFO ] 2019-01-18T08:39:34,424Z [main] internal.RPCClient.logElapsedTime - Startup took 2043 msec {}
+[INFO ] 2019-01-18T08:39:35,084Z [main] client.TokenClientRPC.logState - #TokenClientRPC.logState {}
+[INFO ] 2019-01-18T08:39:35,086Z [main] client.TokenClientRPC.logState - TokenState(#tokens=60, owner=O=SBB, L=Bern, C=CH, issuer=O=Loyalty_AG, L=Zurich, C=CH) {}
+[WARN ] 2019-01-18T08:41:30,939Z [rpc-client-reaper-0] internal.RPCClientProxyHandler.onRemoval - A hot observable returned from an RPC was never subscribed to. This wastes server-side resources because it was queueing observations for retrieval. It is being closed now, but please adjust your code to call .notUsed() on the observable to close it explicitly. (Java users: subscribe to it then unsubscribe). This warning will appear less frequently in future versions of the platform and you can ignore it if you want to. {}
+[INFO ] 2019-01-18T08:51:25,363Z [main] internal.RPCClient.logElapsedTime - Startup took 2199 msec {}
+[WARN ] 2019-01-18T08:51:46,914Z [rpc-client-reaper-0] internal.RPCClientProxyHandler.onRemoval - A hot observable returned from an RPC was never subscribed to. This wastes server-side resources because it was queueing observations for retrieval. It is being closed now, but please adjust your code to call .notUsed() on the observable to close it explicitly. (Java users: subscribe to it then unsubscribe). This warning will appear less frequently in future versions of the platform and you can ignore it if you want to. {}
+[INFO ] 2019-01-18T09:18:48,055Z [main] internal.RPCClient.logElapsedTime - Startup took 31553 msec {}
+[INFO ] 2019-01-18T09:19:17,044Z [main] internal.RPCClient.logElapsedTime - Startup took 1837 msec {}
+[INFO ] 2019-01-18T09:30:34,141Z [main] internal.RPCClient.logElapsedTime - Startup took 1490 msec {}
+[INFO ] 2019-01-18T09:33:31,762Z [main] internal.RPCClient.logElapsedTime - Startup took 2423 msec {}
+[INFO ] 2019-01-18T09:34:04,912Z [main] internal.RPCClient.logElapsedTime - Startup took 2411 msec {}
+[INFO ] 2019-01-18T09:34:58,801Z [main] internal.RPCClient.logElapsedTime - Startup took 2223 msec {}
+[INFO ] 2019-01-18T09:36:07,487Z [main] internal.RPCClient.logElapsedTime - Startup took 31162 msec {}
+[WARN ] 2019-01-18T09:36:07,487Z [Thread-0 (ActiveMQ-client-global-threads)] core.client.reconnectSessions - AMQ212004: Failed to connect to server. {}
+[INFO ] 2019-01-18T09:38:10,129Z [main] internal.RPCClient.logElapsedTime - Startup took 2487 msec {}
+[INFO ] 2019-01-18T09:46:43,158Z [main] internal.RPCClient.logElapsedTime - Startup took 2293 msec {}
+[WARN ] 2019-01-18T09:47:36,465Z [rpc-client-reaper-0] internal.RPCClientProxyHandler.onRemoval - A hot observable returned from an RPC was never subscribed to. This wastes server-side resources because it was queueing observations for retrieval. It is being closed now, but please adjust your code to call .notUsed() on the observable to close it explicitly. (Java users: subscribe to it then unsubscribe). This warning will appear less frequently in future versions of the platform and you can ignore it if you want to. {}
+[INFO ] 2019-01-18T09:51:10,445Z [main] internal.RPCClient.logElapsedTime - Startup took 32040 msec {}
+[INFO ] 2019-01-18T09:56:54,651Z [main] internal.RPCClient.logElapsedTime - Startup took 31373 msec {}
+[INFO ] 2019-01-18T09:57:49,433Z [main] internal.RPCClient.logElapsedTime - Startup took 31314 msec {}
+[INFO ] 2019-01-18T09:58:54,631Z [main] internal.RPCClient.logElapsedTime - Startup took 31424 msec {}
+[INFO ] 2019-01-18T10:01:22,682Z [main] internal.RPCClient.logElapsedTime - Startup took 3084 msec {}
+[WARN ] 2019-01-18T10:01:32,403Z [rpc-client-reaper-0] internal.RPCClientProxyHandler.onRemoval - A hot observable returned from an RPC was never subscribed to. This wastes server-side resources because it was queueing observations for retrieval. It is being closed now, but please adjust your code to call .notUsed() on the observable to close it explicitly. (Java users: subscribe to it then unsubscribe). This warning will appear less frequently in future versions of the platform and you can ignore it if you want to. {}
+[INFO ] 2019-01-18T10:23:29,206Z [main] internal.RPCClient.logElapsedTime - Startup took 2013 msec {}
+[INFO ] 2019-01-18T10:24:10,898Z [main] internal.RPCClient.logElapsedTime - Startup took 31515 msec {}
+[INFO ] 2019-01-18T10:25:04,767Z [main] internal.RPCClient.logElapsedTime - Startup took 31569 msec {}
+[INFO ] 2019-01-18T10:26:08,406Z [main] internal.RPCClient.logElapsedTime - Startup took 31390 msec {}
+[INFO ] 2019-01-18T10:27:54,431Z [main] internal.RPCClient.logElapsedTime - Startup took 31440 msec {}
+[INFO ] 2019-01-18T10:30:56,658Z [main] internal.RPCClient.logElapsedTime - Startup took 31488 msec {}
+[INFO ] 2019-01-18T10:35:34,196Z [main] internal.RPCClient.logElapsedTime - Startup took 31495 msec {}
+[INFO ] 2019-01-18T10:35:58,392Z [main] internal.RPCClient.logElapsedTime - Startup took 2144 msec {}
+[INFO ] 2019-01-18T10:35:59,376Z [main] client.TokenClientRPC.logState - #TokenClientRPC.logState {}
+[INFO ] 2019-01-18T10:35:59,379Z [main] client.TokenClientRPC.logState - TokenState(#tokens=40, owner=O=Loyalty_AG, L=Zurich, C=CH, issuer=O=Loyalty_AG, L=Zurich, C=CH) {}
+[WARN ] 2019-01-18T10:37:38,785Z [rpc-client-reaper-0] internal.RPCClientProxyHandler.onRemoval - A hot observable returned from an RPC was never subscribed to. This wastes server-side resources because it was queueing observations for retrieval. It is being closed now, but please adjust your code to call .notUsed() on the observable to close it explicitly. (Java users: subscribe to it then unsubscribe). This warning will appear less frequently in future versions of the platform and you can ignore it if you want to. {}
+[INFO ] 2019-01-18T10:38:20,852Z [main] internal.RPCClient.logElapsedTime - Startup took 2324 msec {}
+[INFO ] 2019-01-18T10:38:21,559Z [main] client.TokenClientRPC.logState - #TokenClientRPC.logState {}
+[INFO ] 2019-01-18T10:38:21,562Z [main] client.TokenClientRPC.logState - TokenState(#tokens=40, owner=O=Loyalty_AG, L=Zurich, C=CH, issuer=O=Loyalty_AG, L=Zurich, C=CH) {}
+[INFO ] 2019-01-18T10:38:21,850Z [main] client.TokenClientRPC.logState - #TokenClientRPC.logState {}
+[INFO ] 2019-01-18T10:38:21,850Z [main] client.TokenClientRPC.logState - TokenState(#tokens=50, owner=O=Loyalty_AG, L=Zurich, C=CH, issuer=O=Loyalty_AG, L=Zurich, C=CH) {}
+[INFO ] 2019-01-18T10:41:43,396Z [main] internal.RPCClient.logElapsedTime - Startup took 2220 msec {}
+[INFO ] 2019-01-18T10:44:17,702Z [main] internal.RPCClient.logElapsedTime - Startup took 2502 msec {}
+[INFO ] 2019-01-18T10:45:37,290Z [main] internal.RPCClient.logElapsedTime - Startup took 31623 msec {}
+[INFO ] 2019-01-18T10:46:00,401Z [main] internal.RPCClient.logElapsedTime - Startup took 2048 msec {}
+[INFO ] 2019-01-18T10:46:01,130Z [main] client.TokenClientRPC.logState - #TokenClientRPC.logState {}
+[INFO ] 2019-01-18T10:46:01,132Z [main] client.TokenClientRPC.logState - TokenState(#tokens=40, owner=O=Loyalty_AG, L=Zurich, C=CH, issuer=O=Loyalty_AG, L=Zurich, C=CH) {}
+[INFO ] 2019-01-18T10:46:01,394Z [main] client.TokenClientRPC.logState - #TokenClientRPC.logState {}
+[INFO ] 2019-01-18T10:46:01,394Z [main] client.TokenClientRPC.logState - TokenState(#tokens=50, owner=O=Loyalty_AG, L=Zurich, C=CH, issuer=O=Loyalty_AG, L=Zurich, C=CH) {}
+[WARN ] 2019-01-18T10:46:19,830Z [rpc-client-reaper-0] internal.RPCClientProxyHandler.onRemoval - A hot observable returned from an RPC was never subscribed to. This wastes server-side resources because it was queueing observations for retrieval. It is being closed now, but please adjust your code to call .notUsed() on the observable to close it explicitly. (Java users: subscribe to it then unsubscribe). This warning will appear less frequently in future versions of the platform and you can ignore it if you want to. {}
+[INFO ] 2019-01-18T10:49:54,387Z [main] internal.RPCClient.logElapsedTime - Startup took 2270 msec {}
+[INFO ] 2019-01-18T10:50:48,527Z [main] internal.RPCClient.logElapsedTime - Startup took 1998 msec {}
+[INFO ] 2019-01-18T10:50:49,201Z [main] client.TokenClientRPC.logState - #TokenClientRPC.logState {}
+[INFO ] 2019-01-18T10:50:49,203Z [main] client.TokenClientRPC.logState - TokenState(#tokens=100, owner=O=Loyalty_AG, L=Zurich, C=CH, issuer=O=Loyalty_AG, L=Zurich, C=CH) {}
+[WARN ] 2019-01-18T10:51:16,660Z [rpc-client-reaper-0] internal.RPCClientProxyHandler.onRemoval - A hot observable returned from an RPC was never subscribed to. This wastes server-side resources because it was queueing observations for retrieval. It is being closed now, but please adjust your code to call .notUsed() on the observable to close it explicitly. (Java users: subscribe to it then unsubscribe). This warning will appear less frequently in future versions of the platform and you can ignore it if you want to. {}
+[WARN ] 2019-01-18T10:51:20,033Z [rpc-client-reaper-0] internal.RPCClientProxyHandler.onRemoval - A hot observable returned from an RPC was never subscribed to. This wastes server-side resources because it was queueing observations for retrieval. It is being closed now, but please adjust your code to call .notUsed() on the observable to close it explicitly. (Java users: subscribe to it then unsubscribe). This warning will appear less frequently in future versions of the platform and you can ignore it if you want to. {}
+[INFO ] 2019-01-18T10:57:43,161Z [main] internal.RPCClient.logElapsedTime - Startup took 1992 msec {}
+[INFO ] 2019-01-18T10:57:43,845Z [main] client.TokenClientRPC.logState - #TokenClientRPC.logState {}
+[INFO ] 2019-01-18T10:57:43,849Z [main] client.TokenClientRPC.logState - TokenState(#tokens=30, owner=O=Loyalty_AG, L=Zurich, C=CH, issuer=O=Loyalty_AG, L=Zurich, C=CH) {}
+[WARN ] 2019-01-18T10:58:57,664Z [rpc-client-reaper-0] internal.RPCClientProxyHandler.onRemoval - A hot observable returned from an RPC was never subscribed to. This wastes server-side resources because it was queueing observations for retrieval. It is being closed now, but please adjust your code to call .notUsed() on the observable to close it explicitly. (Java users: subscribe to it then unsubscribe). This warning will appear less frequently in future versions of the platform and you can ignore it if you want to. {}
+[INFO ] 2019-01-18T11:00:22,974Z [main] internal.RPCClient.logElapsedTime - Startup took 2349 msec {}
+[INFO ] 2019-01-18T11:00:44,722Z [main] client.TokenClientRPC.logState - #TokenClientRPC.logState {}
+[INFO ] 2019-01-18T11:00:44,725Z [main] client.TokenClientRPC.logState - TokenState(#tokens=10, owner=O=Loyalty_AG, L=Zurich, C=CH, issuer=O=Loyalty_AG, L=Zurich, C=CH) {}
+[WARN ] 2019-01-18T11:01:35,262Z [rpc-client-reaper-0] internal.RPCClientProxyHandler.onRemoval - A hot observable returned from an RPC was never subscribed to. This wastes server-side resources because it was queueing observations for retrieval. It is being closed now, but please adjust your code to call .notUsed() on the observable to close it explicitly. (Java users: subscribe to it then unsubscribe). This warning will appear less frequently in future versions of the platform and you can ignore it if you want to. {}
+[INFO ] 2019-01-18T11:03:30,858Z [main] internal.RPCClient.logElapsedTime - Startup took 2484 msec {}
+[INFO ] 2019-01-18T11:03:37,398Z [main] client.TokenClientRPC.logState - #TokenClientRPC.logState {}
+[INFO ] 2019-01-18T11:03:37,401Z [main] client.TokenClientRPC.logState - TokenState(#tokens=2, owner=O=Loyalty_AG, L=Zurich, C=CH, issuer=O=Loyalty_AG, L=Zurich, C=CH) {}
+[INFO ] 2019-01-18T11:11:48,697Z [main] internal.RPCClient.logElapsedTime - Startup took 2358 msec {}
+[INFO ] 2019-01-18T11:11:49,572Z [main] client.TokenClientRPC.logState - #TokenClientRPC.logState {}
+[INFO ] 2019-01-18T11:11:49,575Z [main] client.TokenClientRPC.logState - TokenState(#tokens=4, owner=O=Loyalty_AG, L=Zurich, C=CH, issuer=O=Loyalty_AG, L=Zurich, C=CH) {}
+[WARN ] 2019-01-18T11:12:52,030Z [rpc-client-reaper-0] internal.RPCClientProxyHandler.onRemoval - A hot observable returned from an RPC was never subscribed to. This wastes server-side resources because it was queueing observations for retrieval. It is being closed now, but please adjust your code to call .notUsed() on the observable to close it explicitly. (Java users: subscribe to it then unsubscribe). This warning will appear less frequently in future versions of the platform and you can ignore it if you want to. {}
+[INFO ] 2019-01-18T11:15:03,663Z [main] internal.RPCClient.logElapsedTime - Startup took 2221 msec {}
+[INFO ] 2019-01-18T11:15:04,261Z [main] client.TokenClientRPC.logState - #TokenClientRPC.logState {}
+[INFO ] 2019-01-18T11:15:04,264Z [main] client.TokenClientRPC.logState - TokenState(#tokens=2, owner=O=Loyalty_AG, L=Zurich, C=CH, issuer=O=Loyalty_AG, L=Zurich, C=CH) {}
+[WARN ] 2019-01-18T11:15:27,009Z [rpc-client-reaper-0] internal.RPCClientProxyHandler.onRemoval - A hot observable returned from an RPC was never subscribed to. This wastes server-side resources because it was queueing observations for retrieval. It is being closed now, but please adjust your code to call .notUsed() on the observable to close it explicitly. (Java users: subscribe to it then unsubscribe). This warning will appear less frequently in future versions of the platform and you can ignore it if you want to. {}
+[INFO ] 2019-01-18T11:19:12,674Z [main] internal.RPCClient.logElapsedTime - Startup took 2154 msec {}
+[INFO ] 2019-01-18T11:19:13,593Z [main] client.TokenClientRPC.logState - #TokenClientRPC.logState {}
+[INFO ] 2019-01-18T11:19:13,595Z [main] client.TokenClientRPC.logState - TokenState(#tokens=30, owner=O=Loyalty_AG, L=Zurich, C=CH, issuer=O=Loyalty_AG, L=Zurich, C=CH) {}
+[WARN ] 2019-01-18T11:19:50,080Z [rpc-client-reaper-0] internal.RPCClientProxyHandler.onRemoval - A hot observable returned from an RPC was never subscribed to. This wastes server-side resources because it was queueing observations for retrieval. It is being closed now, but please adjust your code to call .notUsed() on the observable to close it explicitly. (Java users: subscribe to it then unsubscribe). This warning will appear less frequently in future versions of the platform and you can ignore it if you want to. {}
+[INFO ] 2019-01-18T12:03:47,536Z [main] internal.RPCClient.logElapsedTime - Startup took 2299 msec {}
+[INFO ] 2019-01-18T12:03:48,267Z [main] client.TokenClientRPC.logState - #TokenClientRPC.logState {}
+[INFO ] 2019-01-18T12:03:48,270Z [main] client.TokenClientRPC.logState - TokenState(#tokens=15, owner=O=Loyalty_AG, L=Zurich, C=CH, issuer=O=Loyalty_AG, L=Zurich, C=CH) {}
+[INFO ] 2019-01-18T12:04:29,970Z [main] internal.RPCClient.logElapsedTime - Startup took 2206 msec {}
+[INFO ] 2019-01-18T12:04:30,615Z [main] client.TokenClientRPC.logState - #TokenClientRPC.logState {}
+[INFO ] 2019-01-18T12:04:30,618Z [main] client.TokenClientRPC.logState - TokenState(#tokens=15, owner=O=Loyalty_AG, L=Zurich, C=CH, issuer=O=Loyalty_AG, L=Zurich, C=CH) {}
+[WARN ] 2019-01-18T12:04:56,262Z [rpc-client-reaper-0] internal.RPCClientProxyHandler.onRemoval - A hot observable returned from an RPC was never subscribed to. This wastes server-side resources because it was queueing observations for retrieval. It is being closed now, but please adjust your code to call .notUsed() on the observable to close it explicitly. (Java users: subscribe to it then unsubscribe). This warning will appear less frequently in future versions of the platform and you can ignore it if you want to. {}
+[INFO ] 2019-01-18T12:10:23,935Z [main] internal.RPCClient.logElapsedTime - Startup took 1879 msec {}
+[WARN ] 2019-01-18T12:10:38,542Z [rpc-client-reaper-0] internal.RPCClientProxyHandler.onRemoval - A hot observable returned from an RPC was never subscribed to. This wastes server-side resources because it was queueing observations for retrieval. It is being closed now, but please adjust your code to call .notUsed() on the observable to close it explicitly. (Java users: subscribe to it then unsubscribe). This warning will appear less frequently in future versions of the platform and you can ignore it if you want to. {}
+[INFO ] 2019-01-18T12:16:25,378Z [main] internal.RPCClient.logElapsedTime - Startup took 1949 msec {}
+[INFO ] 2019-01-18T12:17:19,419Z [main] internal.RPCClient.logElapsedTime - Startup took 2004 msec {}
+[INFO ] 2019-01-18T12:17:51,447Z [main] internal.RPCClient.logElapsedTime - Startup took 1864 msec {}
+[INFO ] 2019-01-18T12:18:54,829Z [main] internal.RPCClient.logElapsedTime - Startup took 31257 msec {}
+[INFO ] 2019-01-18T12:19:20,342Z [main] internal.RPCClient.logElapsedTime - Startup took 1945 msec {}
+[WARN ] 2019-01-18T12:19:36,849Z [rpc-client-reaper-0] internal.RPCClientProxyHandler.onRemoval - A hot observable returned from an RPC was never subscribed to. This wastes server-side resources because it was queueing observations for retrieval. It is being closed now, but please adjust your code to call .notUsed() on the observable to close it explicitly. (Java users: subscribe to it then unsubscribe). This warning will appear less frequently in future versions of the platform and you can ignore it if you want to. {}
+[INFO ] 2019-01-18T12:33:09,719Z [main] internal.RPCClient.logElapsedTime - Startup took 1826 msec {}
+[WARN ] 2019-01-18T12:34:17,690Z [rpc-client-reaper-0] internal.RPCClientProxyHandler.onRemoval - A hot observable returned from an RPC was never subscribed to. This wastes server-side resources because it was queueing observations for retrieval. It is being closed now, but please adjust your code to call .notUsed() on the observable to close it explicitly. (Java users: subscribe to it then unsubscribe). This warning will appear less frequently in future versions of the platform and you can ignore it if you want to. {}
+[INFO ] 2019-01-18T12:37:56,542Z [main] internal.RPCClient.logElapsedTime - Startup took 1959 msec {}
+[WARN ] 2019-01-18T12:39:56,061Z [rpc-client-reaper-0] internal.RPCClientProxyHandler.onRemoval - A hot observable returned from an RPC was never subscribed to. This wastes server-side resources because it was queueing observations for retrieval. It is being closed now, but please adjust your code to call .notUsed() on the observable to close it explicitly. (Java users: subscribe to it then unsubscribe). This warning will appear less frequently in future versions of the platform and you can ignore it if you want to. {}

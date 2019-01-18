@@ -34,8 +34,9 @@ import java.util.concurrent.ExecutionException;
  */
 public class TokenClientRPC {
     private static final Logger logger = LoggerFactory.getLogger(TokenClientRPC.class);
+    private static MultiGraph _graph = new MultiGraph("transactions");
 
-    private static void logState(StateAndRef<TokenState> state, MultiGraph graph) {
+    private static void logState(StateAndRef<TokenState> state) {
         logger.info("#TokenClientRPC.logState");
         logger.info("{}", state.getState().getData());
         System.out.println("RM TokenClientRPC.logState : Ref#"+ state.getRef() + " : " + state.toString());
@@ -43,9 +44,15 @@ public class TokenClientRPC {
         TransactionState<TokenState> tokenState= state.getState();
         TokenState ts= tokenState.getData();
 
-        graph.addNode(stateRef.toString());
+        String stateRefStr= stateRef.toString();
+        int indx= stateRefStr.indexOf("(");
+        if (indx > -1) {
+            stateRefStr= stateRefStr.substring(0, (indx));
+        }
+        _graph.addNode(stateRefStr);
+        System.out.println("Node added: " + stateRefStr);
 
-        graph.display();
+        //_graph.display();
     }
 
     /*
@@ -53,7 +60,7 @@ public class TokenClientRPC {
                 Each transaction is a vertex, represented by printing NODE <txhash>
                 Each input-output relationship is an edge, represented by prining EDGE <txhash> <txhash>
     */
-    private static void logFeedTxn(SignedTransaction nextTxn, MultiGraph graph) {
+    private static void logFeedTxn(SignedTransaction nextTxn) {
         //System.out.println("NODE: " + nextTxn.getId() + " Inputs size=" );
         List<StateRef> inputStateRefs= nextTxn.getInputs();
         //System.out.println("NODE: " + nextTxn.getId() + " Inputs size=" + inputStateRefs.size());
@@ -62,7 +69,8 @@ public class TokenClientRPC {
         //                println("EDGE $txhash ${transaction.id}")
         List<ContractState> outputStates= nextTxn.getTx().getOutputStates();
         String nextTxnId= nextTxn.getId().toString();
-        graph.addNode(nextTxnId);
+        _graph.addNode(nextTxnId);
+        System.out.println("Node added: " + nextTxnId);
         System.out.println("Txn#: " + nextTxnId + " #Inputs=" + inputStateRefs.size() + " #Outputs=" + outputStates.size());
 
         if (inputStateRefs.size() == 0) System.out.println("   InputRef: {}");
@@ -70,7 +78,13 @@ public class TokenClientRPC {
             for (StateRef stateRef : inputStateRefs) {
                 System.out.println("   InputRef: " + stateRef.getTxhash() + " Index=" + stateRef.getIndex());
                 //graph.addEdge<Edge>("$ref", "${ref.txhash}", "${transaction.id}")
-                graph.addEdge(stateRef.toString(), stateRef.getTxhash().toString(), nextTxnId);
+                _graph.addEdge(stateRef.toString(), stateRef.getTxhash().toString(), nextTxnId);
+                //Testing:
+                if (outputStates.size() == 2) {
+                    //Node to itseld
+                    System.out.println("   Graphing self-ref");
+                    _graph.addEdge(stateRef.toString()+"Self", stateRef.getTxhash().toString(), stateRef.getTxhash().toString());
+                }
             }
         }
 
@@ -80,7 +94,7 @@ public class TokenClientRPC {
             System.out.println("              OutputState=" + outState.toString());
         }
 
-        graph.display();
+        _graph.display();
         System.out.println("Break");
     }
 
@@ -148,13 +162,13 @@ public class TokenClientRPC {
         /// -- End txn hist
 
         //Tracking from https://docs.corda.net/tutorial-clientrpc-api.html
-        MultiGraph graph = new MultiGraph("transactions");
+        //MultiGraph graph = new MultiGraph("transactions");
 
         //First the already posted txns
         final DataFeed<Vault.Page<TokenState>, Vault.Update<TokenState>> dataFeed = proxy.vaultTrack(TokenState.class);
         final Vault.Page<TokenState> snapshot = dataFeed.getSnapshot();
         for (StateAndRef<TokenState> tokenStateStateAndRef : snapshot.getStates()) {
-            logState(tokenStateStateAndRef, graph);
+            logState(tokenStateStateAndRef);
         }
         //graph.display();
 
@@ -162,7 +176,7 @@ public class TokenClientRPC {
         DataFeed<List<SignedTransaction>, SignedTransaction> txnsFeed = proxy.internalVerifiedTransactionsFeed();
         Observable<SignedTransaction> futureTxns= txnsFeed.getUpdates();
         futureTxns.toBlocking().subscribe(
-                nextTxn -> TokenClientRPC.logFeedTxn(nextTxn, graph)
+                nextTxn -> TokenClientRPC.logFeedTxn(nextTxn)
         );
 
         /*System.out.println("NODE : " + nextTxn.toString());
