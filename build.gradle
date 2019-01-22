@@ -65,6 +65,7 @@ dependencies {
     testCompileClasspath fileTree(dir: 'lib/dependencies', include: '*.jar')
     testCompile "$corda_release_group:corda-node-driver:$corda_release_version"
     testCompile "$corda_release_group:corda-test-utils:$corda_release_version"
+    compile group: 'org.graphstream', name: 'gs-core', version: '1.1.1' //rupal added 18jan19
 }
 
 tasks.withType(JavaCompile) {
