@@ -5,7 +5,6 @@ import net.corda.core.flows.CollectSignaturesFlow;
 import net.corda.core.flows.FinalityFlow;
 import net.corda.core.flows.FlowException;
 import net.corda.core.flows.FlowLogic;
-import net.corda.core.identity.CordaX500Name;
 import net.corda.core.identity.Party;
 import net.corda.core.transactions.SignedTransaction;
 import net.corda.core.utilities.ProgressTracker;
@@ -69,14 +68,14 @@ abstract class AbstractTokenFlow extends FlowLogic<SignedTransaction> {
         Party firstNotary = getServiceHub().getNetworkMapCache().getNotaryIdentities().get(0);
         System.out.println("Found Notary=" + firstNotary.getName());
 
-        CordaX500Name counterpartyName = new CordaX500Name(
+        /*CordaX500Name counterpartyName = new CordaX500Name(
                 "SBB",
                 "Bern",
                 "CH");
         Party namedCounterparty = getServiceHub().getIdentityService().wellKnownPartyFromX500Name(counterpartyName);
         if (namedCounterparty == null)
             throw new IllegalArgumentException("Couldn't find counterparty for NodeA in identity service");
-        System.out.println("Found SBB Node=" + namedCounterparty.getName());
+        System.out.println("Found SBB Node=" + namedCounterparty.getName());*/
 
         return null;
     }

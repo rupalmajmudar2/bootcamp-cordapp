@@ -3,15 +3,13 @@ package org.vloyalty.flow;
 import co.paralleluniverse.fibers.Suspendable;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
-import org.vloyalty.contract.TokenContract;
-import org.vloyalty.state.TokenState;
 import net.corda.core.contracts.StateAndRef;
 import net.corda.core.flows.*;
 import net.corda.core.identity.Party;
 import net.corda.core.transactions.SignedTransaction;
 import net.corda.core.transactions.TransactionBuilder;
-import net.corda.core.utilities.ProgressTracker;
-import org.vloyalty.token.Token;
+import org.vloyalty.contract.TokenContract;
+import org.vloyalty.state.TokenState;
 
 import java.security.PublicKey;
 import java.util.List;
@@ -106,9 +104,22 @@ public class TokenTransferFlowInitiator extends AbstractTokenFlow { //FlowLogic<
                 inputTokenState.getOwner().getOwningKey(), _newOwner.getOwningKey()); //BOTH sign.
         txBuilder.addCommand(commandData, requiredSigners);
 
-        //Add a dummy PDF attachment
-        //pdfAttachment
-        //txBuilder.addAttachment(pdfAttachment);
+        //Add a dummy attachment- done separately in TokenClientAttachmentRPC.java
+        /*List<NetworkHostAndPort> ourOwnHostPortList= getServiceHub().getNetworkMapCache().getNodeByLegalIdentity(getOurIdentity()).getAddresses();
+        String ourOwnHostPort= ourOwnHostPortList.get(0).toString();
+        System.out.println("Getting Attachment from : " + getOurIdentity().getName() + " ] @ HostPort= " + ourOwnHostPort.toString()); //e.g. "localhost:10008"
+        List<NetworkHostAndPort> hostPortList= getServiceHub().getNetworkMapCache().getNodeByLegalIdentity(_newOwner).getAddresses();
+        String hostPort= hostPortList.get(0).toString();
+        System.out.println("Sending to New Owner [ " + _newOwner.getName() + " ] @ HostPort= " + hostPort.toString()); //e.g. "localhost:10008"
+        try {
+            //Note that this will NOT work with JUnits since the server CorDapp is not running sp client cannot start...
+            SecureHash attachmentHash= TokenClientAttachmentRPC.doAttachZipFile(hostPort, "C:\\Users\\rupal\\corda-attach.zip");
+            txBuilder.addAttachment(attachmentHash);
+
+            System.out.println("Attached corda-attach.zip ");
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }*/
 
         // We check that the transaction builder we've created meets the
         // contracts of the input and output states.

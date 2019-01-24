@@ -1,30 +1,32 @@
 package org.vloyalty.api;
 
-import net.corda.core.contracts.FungibleAsset;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
 import net.corda.core.contracts.StateAndRef;
+import net.corda.core.crypto.SecureHash;
+import net.corda.core.identity.CordaX500Name;
 import net.corda.core.identity.Party;
+import net.corda.core.messaging.CordaRPCOps;
+import net.corda.core.node.NodeInfo;
 import net.corda.core.node.services.Vault;
 import net.corda.core.node.services.vault.Builder;
 import net.corda.core.node.services.vault.CriteriaExpression;
 import net.corda.core.node.services.vault.QueryCriteria;
 import net.corda.core.transactions.SignedTransaction;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.vloyalty.client.TokenClientAttachmentRPC;
+import org.vloyalty.flow.TokenAttachmentSender;
 import org.vloyalty.flow.TokenIssueFlow;
 import org.vloyalty.flow.TokenTransferFlowInitiator;
 import org.vloyalty.schema.TokenSchema;
 import org.vloyalty.state.TokenState;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
-import net.corda.core.identity.CordaX500Name;
-import net.corda.core.messaging.CordaRPCOps;
-import net.corda.core.node.NodeInfo;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.vloyalty.token.Token;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.lang.reflect.Field;
+import java.nio.file.FileAlreadyExistsException;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
@@ -103,6 +105,7 @@ public class TokenApi {
     public Response createTokens( //createIOU(
                 @QueryParam("numtokens") int numTokens,
                 @QueryParam("owner") CordaX500Name ownerPartyName) throws InterruptedException, ExecutionException {
+        System.out.println("In TokenApi#issueTokens");
         if (numTokens <= 0) {
             return Response.status(BAD_REQUEST).entity("Query parameter 'numtokens' must be non-negative.\n").build();
         }
@@ -168,6 +171,59 @@ public class TokenApi {
             return Response.status(BAD_REQUEST).entity(msg).build();
         }
     }
+
+    @PUT
+    @Path("send-attachment")
+    public Response sendAttachment(
+            @QueryParam("filename") String zipFileName,
+            @QueryParam("newowner") CordaX500Name newOwnerPartyName) throws InterruptedException, ExecutionException, Exception {
+        System.out.println("In TokenApi#sendAttachment");
+        if (zipFileName == null) {
+            return Response.status(BAD_REQUEST).entity("Query parameter 'filename' must be valid.\n").build();
+        }
+        if (newOwnerPartyName == null) {
+            return Response.status(BAD_REQUEST).entity("Query parameter 'newowner' missing or has wrong format.\n").build();
+        }
+
+        System.out.println("#sendAttachment: newowner="+newOwnerPartyName+ " attachment file="+zipFileName);
+        final Party otherParty = rpcOps.wellKnownPartyFromX500Name(newOwnerPartyName);
+        if (otherParty == null) {
+            return Response.status(BAD_REQUEST).entity("Party named " + newOwnerPartyName + "cannot be found.\n").build();
+        }
+
+        SecureHash attachmentHash= null;
+        try {
+            attachmentHash = TokenClientAttachmentRPC.doAttachZipFile(rpcOps, zipFileName);
+        }
+        catch (Exception e) {
+            if (e instanceof FileAlreadyExistsException) {
+                System.out.println("fyi: File already exists. Noprobs!"); //Thats ok.  Keep going.
+            } else {
+                throw new Exception("error");
+            }
+        }
+            System.out.println("TokenClientAttachmentRPC#doAttachZipFile Done uploading pdf - AtachmentHash#"+attachmentHash);
+
+                   /* startTrackedFlow(::AttachmentDemoFlow, otherSideFuture.get(), notaryFuture.get(), hash)
+            flowHandle.progress.subscribe(::println)
+            val stx = flowHandle.returnValue.getOrThrow()
+            println("Sent ${stx.id}")*/
+        try {
+            final SignedTransaction signedTx2 = rpcOps
+                    .startTrackedFlowDynamic(TokenAttachmentSender.class, otherParty, attachmentHash)
+                    .getReturnValue()
+                    .get();
+
+            final String msg = String.format("TokenAttachmentSender Transaction id %s committed to ledger.\n", signedTx2.getId());
+            return Response.status(CREATED).entity(msg).build();
+
+        } catch (Throwable ex) {
+            final String msg = ex.getMessage();
+            logger.error(ex.getMessage(), ex);
+            return Response.status(BAD_REQUEST).entity(msg).build();
+        }
+    }
+
 
 	/**
      * Displays all Token states that are created by this Party.

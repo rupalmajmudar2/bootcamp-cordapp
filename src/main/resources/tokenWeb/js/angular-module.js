@@ -64,6 +64,21 @@ app.controller('DemoAppController', function($http, $location, $uibModal) {
         modalInstance.result.then(() => {}, () => {});
     };
 
+    demoApp.openModalForAttachmentSend = () => {
+             const modalInstance = $uibModal.open({
+                 templateUrl: 'demoAppModalAttachment.html',
+                 controller: 'ModalInstanceCtrl',
+                 controllerAs: 'modalInstance',
+                 resolve: {
+                     demoApp: () => demoApp,
+                     apiBaseURL: () => apiBaseURL,
+                     peers: () => peers
+                 }
+             });
+
+             modalInstance.result.then(() => {}, () => {});
+    }
+
     demoApp.getTokens = () => $http.get(apiBaseURL + "tokens")
         .then((response) => demoApp.tokens = Object.keys(response.data)
             .map((key) => response.data[key].state.data)
@@ -134,6 +149,29 @@ app.controller('ModalInstanceCtrl', function ($http, $location, $uibModalInstanc
         }
     };
 
+    modalInstance.sendAttachment = () => {
+        if (invalidAttachmtFormInput()) {
+            modalInstance.formError = true;
+        } else {
+            modalInstance.formError = false;
+
+             $uibModalInstance.close();
+             console.log("In #sendAttachment");
+             const txfrTokenEndpoint = `${apiBaseURL}send-attachment?filename=${modalInstance.form.formfilename}&newowner=${modalInstance.form.counterparty}`;
+
+             // Create PO and handle success / fail responses.
+             $http.put(txfrTokenEndpoint).then(
+                (result) => {
+                    modalInstance.displayMessage(result);
+                     demoApp.getTokens();
+                 },
+                 (result) => {
+                    modalInstance.displayMessage(result);
+                 }
+               );
+             }
+         };
+
     modalInstance.displayMessage = (message) => {
         const modalInstanceTwo = $uibModal.open({
             templateUrl: 'messageContent.html',
@@ -152,6 +190,11 @@ app.controller('ModalInstanceCtrl', function ($http, $location, $uibModalInstanc
     // Validate the Token.
     function invalidFormInput() {
         return isNaN(modalInstance.form.value) || (modalInstance.form.counterparty === undefined);
+    }
+
+    // Validate the attachment
+    function invalidAttachmtFormInput() {
+        return !isNaN(modalInstance.form.formfilename) || (modalInstance.form.counterparty === undefined);
     }
 });
 

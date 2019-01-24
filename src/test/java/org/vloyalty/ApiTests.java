@@ -1,28 +1,16 @@
 package org.vloyalty;
 
-import com.google.common.collect.ImmutableList;
 import net.corda.client.rpc.CordaRPCClient;
 import net.corda.client.rpc.CordaRPCClientConfiguration;
-import net.corda.core.concurrent.CordaFuture;
-import net.corda.core.contracts.Command;
-import net.corda.core.contracts.TransactionState;
 import net.corda.core.identity.CordaX500Name;
-import net.corda.core.identity.Party;
 import net.corda.core.messaging.CordaRPCOps;
-import net.corda.core.transactions.SignedTransaction;
 import net.corda.core.utilities.NetworkHostAndPort;
-import net.corda.testing.core.TestIdentity;
 import net.corda.testing.node.MockNetwork;
 import net.corda.testing.node.StartedMockNode;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.vloyalty.contract.TokenContract;
-import org.vloyalty.flow.TokenIssueFlow;
-import org.vloyalty.state.TokenState;
 import org.vloyalty.api.TokenApi;
-
-import static org.junit.Assert.assertEquals;
 
 /**
  * Rupal 18Dec18 - try automate the things done inside TokenApi.
@@ -35,32 +23,46 @@ public class ApiTests {
 
     @Before
     public void setup() {
-        network = new MockNetwork(ImmutableList.of("org.vloyalty.contract"));
+        /*network = new MockNetwork(ImmutableList.of("org.vloyalty.contract"));
         nodeA = network.createPartyNode(new CordaX500Name("Valora", "Bern", "CH"));
         nodeB = network.createPartyNode(new CordaX500Name("SBB", "Bern", "CH"));
         nodeC = network.createPartyNode(new CordaX500Name("Alpamare", "Bern", "CH"));
-        network.runNetwork();
+        network.runNetwork();*/
     }
 
     @After
     public void tearDown() {
-        network.stopNodes();
+        //network.stopNodes();
     }
 
     @Test
-    public void createTokenCreationFlow() throws Exception {
+    public void sendAttachmentToPeer() throws Exception {
+        final NetworkHostAndPort nodeAddress = NetworkHostAndPort.parse("localhost:10008");
+        final CordaRPCClient rpcOps = new CordaRPCClient(nodeAddress, CordaRPCClientConfiguration.DEFAULT);
+        final CordaRPCOps proxy = rpcOps.start("user1", "test").getProxy();
 
+        TokenApi api= new TokenApi(proxy);
+        String attachmentFn= "c:\\users\\rupal\\corda-attach.zip";
+        CordaX500Name sbb= new CordaX500Name("SBB", "Bern", "CH");
+        api.sendAttachment(attachmentFn, sbb);
+        assert(true);
+    }
+
+    /*
+    @Test
+    public void createTokenCreationFlow() throws Exception {
+*/
         //Party otherParty= new TestIdentity(new CordaX500Name("SBB", "Bern", "CH")).getParty();
         //StartedMockNode nodeC = network.createPartyNode( new CordaX500Name("SBB", "Bern", "CH") );
-        int numTokens= 20;
+       /* int numTokens= 20;
 
         final NetworkHostAndPort nodeAddress = NetworkHostAndPort.parse("localhost:10008");
         final CordaRPCClient rpcOps = new CordaRPCClient(nodeAddress, CordaRPCClientConfiguration.DEFAULT);
         final CordaRPCOps proxy = rpcOps.start("user1", "test").getProxy();
-        System.out.println( proxy.nodeInfo() );
+        System.out.println( proxy.nodeInfo() );*/
 
         //nodeB.getServices();
-        System.out.println( nodeB.getId() );
+        //System.out.println( nodeB.getId() );
 
         /*final SignedTransaction signedTx = proxy
                 .startTrackedFlowDynamic(TokenIssueFlow.class, nodeB.getInfo().getLegalIdentities().get(0), numTokens)
@@ -78,5 +80,5 @@ public class ApiTests {
         TransactionState output = signedTransaction.getTx().getOutputs().get(0);
 
         assertEquals(network.getNotaryNodes().get(0).getInfo().getLegalIdentities().get(0), output.getNotary());*/
-    }
+    //}
 }

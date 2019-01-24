@@ -17,7 +17,6 @@ import org.vloyalty.state.TokenState;
 
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 
 public class TransferFlowTests {
     private MockNetwork network;

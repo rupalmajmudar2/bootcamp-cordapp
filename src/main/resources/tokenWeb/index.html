@@ -36,7 +36,7 @@ COMING WEEKS WE'LL WRITE A TUTORIAL ON HOW BEST TO DO THIS.
             <a class="navbar-brand" href="#">{{demoApp.thisNode}}</a>
         </div>
         <button ng-click="demoApp.openModalForTokenCreation()" type="button" class="btn btn-primary navbar-btn">Create Tokens</button>
-        To be signed by: Txn Initiator
+        Signed by: Txn Initiator
         <!-- <button ng-click="demoApp.openModalForTokenTransfer()" type="button" class="btn btn-primary navbar-btn">Transfer Tokens</button> -->
     </div>
 </nav>
@@ -110,6 +110,46 @@ COMING WEEKS WE'LL WRITE A TUTORIAL ON HOW BEST TO DO THIS.
         </div>
     </form>
 </script>
+<!-- -------------------------- -->
+<nav class="navbar navbar-default">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <a class="navbar-brand" href="#">{{demoApp.thisNode}}</a>
+        </div>
+        <button ng-click="demoApp.openModalForAttachmentSend()" type="button" class="btn btn-primary navbar-btn">Send Attachment</button>
+    </div>
+</nav>
+<script type="text/ng-template" id="demoAppModalAttachment.html">
+    <div class="modal-header">
+        <h4 class="modal-title">Send Legal Docs as Attachment</h4>
+    </div>
+    <form>
+        <div class="modal-body">
+            <div class="form-group">
+                <label for="counterparty" class="control-label">Send Attachment To:</label>
+                <select ng-model="modalInstance.form.counterparty" class="form-control" id="counterparty"
+                        ng-options="peer as peer for peer in modalInstance.peers">
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="formfilename" class="control-label">Filename:</label>
+                <input type="text" ng-model="modalInstance.form.formfilename" class="form-control" id="formfilename">
+            </div>
+            <div ng-show="modalInstance.formError" class="form-group">
+                <div class="alert alert-danger" role="alert">
+                    <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+                    <span class="sr-only">Error:</span>
+                    Enter valid Filename
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button ng-click="modalInstance.cancel()" type="button" class="btn btn-default">Close</button>
+            <button ng-click="modalInstance.sendAttachment()" type="button" class="btn btn-primary">Send Attachment</button>
+        </div>
+    </form>
+</script>
+<!-- -------------------------- -->
 <script type="text/ng-template" id="messageContent.html">
     <div class="modal-body" id="modal-body">
         {{ modalInstanceTwo.message }}
