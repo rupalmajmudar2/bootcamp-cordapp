@@ -18,6 +18,7 @@ import net.corda.core.transactions.SignedTransaction;
 import net.corda.core.transactions.WireTransaction;
 import net.corda.core.utilities.NetworkHostAndPort;
 import org.apache.activemq.artemis.api.core.ActiveMQException;
+import org.graphstream.graph.Edge;
 import org.graphstream.graph.Node;
 import org.graphstream.graph.implementations.MultiGraph;
 import org.graphstream.ui.spriteManager.SpriteManager;
@@ -102,7 +103,7 @@ public class TokenClientRPC {
 
         // Can be amended in the com.example.Main file.
         final CordaRPCOps proxy = client.start("user1", "test").getProxy();
-        _graph.display();
+        _graph.display(true);
 
         //SecureHash txnId= SecureHash.parse(""); //4C9CF9FDD1648F0FCF9DCE536665F07D8D4A13E165CAC37694339095BCF4C164 ");
         //proxy.getVaultTransactionNotes(txnId); //4C9CF9FDD1648F0FCF9DCE536665F07D8D4A13E165CAC37694339095BCF4C164);
@@ -250,6 +251,26 @@ public class TokenClientRPC {
         return node;
     }
 
+    //@TODO: Cleanup with prev methods
+    //stateRefStr is already stateRef(0) etc.
+    //index being provided separately just for convenience.
+    private static Node basicAddNodeToGraph(String stateRefStr, int index) {
+        //String stateRefStr= stateRef.toString();
+        //int index= stateRef.getIndex();
+
+        //String nodeId= _nodeNr + "";
+        String nodeId= stateRefStr;// + "(" + index + ")";
+        Node node= _graph.addNode(nodeId);
+        //node.addAttribute("ui.style", "shape:circle;fill-color: yellow;size: 20px;");
+        node.addAttribute("ui.label", "Node#" + _nodeNr + ":" + stateRefStr.substring(0,4) + "(" + index + ")"); //Just for easier display
+        node.addAttribute("ui.style", "shape:circle;fill-color: yellow;size: 20px; text-alignment: center;");
+
+        System.out.println("Adding node#" + _nodeNr + " -> Txn#" + stateRefStr.substring(0,4));
+        _nodeNr++;
+
+        return node;
+    }
+
     private static void addNewNodeToGraph(SignedTransaction nextTxn) {
         List<StateRef> inputStateRefs= nextTxn.getInputs();
         WireTransaction wtx= nextTxn.getTx();
@@ -273,16 +294,40 @@ public class TokenClientRPC {
     }
 
     private static void addEdge(StateRef stateRef, SignedTransaction sTxn) {
-        String edgeId= stateRef.toString();// + "(" + stateRef.getIndex() + ")";
+        String edgeId= stateRef.toString() + Math.random();// + "(" + stateRef.getIndex() + ")";
+        //@TODO cleanup the above. Currently same edgeId used 2 times.
         String n1= stateRef.getTxhash().toString() + "(" + stateRef.getIndex() + ")"; //This should exist.
         Node node1= _graph.getNode(n1);
+        if (node1 == null) {
+            System.out.println("This would be a node from a different Partner. Create it here with new colour!");
+            node1= basicAddNodeToGraph(n1, stateRef.getIndex());
+        }
         String n2= sTxn.getId().toString();
         Node node2= _graph.getNode(n2); //Will typically not be there since this is a new txn.
         if (node2 == null) {
             node2= basicAddNodeToGraph(sTxn);
         }
-        _graph.addEdge(edgeId, node1, node2);
-        System.out.println("Adding Edge" + edgeId + " : Node#" + node1.getId() + " -> Node#" + node2.getId());
-        //_nodeToIdMap
+        Edge edge= _graph.addEdge(edgeId, node1, node2);
+        //edge.addAttribute("ui.label", "Edge#" + edgeId); //Just for easier display
+        //node.addAttribute("ui.style", "shape:circle;fill-color: yellow;size: 20px; text-alignment: center;");
+        System.out.println("Adding Edge from Input to Txn: Edge#" + edgeId + " : Node#" + node1.getId() + " -> Node#" + node2.getId());
+
+        //Now that the new Txn node is there, add the Output nodes (0) (1) etc. right here!
+        //SO that the next txn can use them as-is, and we can view them right now!
+        List<ContractState> outputStates= sTxn.getTx().getOutputStates();
+        int ind=0;
+        String edgeId2;
+        for (ContractState outState: outputStates) {
+            String outRef= node2.getId() + "(" + ind + ")";
+            System.out.println("   OutputRef=" + outRef + " OutputState=" + outState.toString());
+            Node outNode= basicAddNodeToGraph(outRef, ind);
+            edgeId2= outRef;
+            System.out.println("Adding Edge from Txn to Output#" + ind + " : Edge#" + edgeId2 + " : Node#" + node2.getId() + " -> Node#" + outNode.getId());
+            Edge edge2= _graph.addEdge(edgeId2, node2, outNode);
+            //edge2.addAttribute("ui.label", "Edge#" + edgeId2); //Just for easier display
+
+            ind++;
+        }
+
     }
 }
