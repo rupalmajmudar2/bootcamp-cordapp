@@ -10,27 +10,25 @@ import net.corda.core.identity.CordaX500Name;
 import net.corda.core.identity.Party;
 import net.corda.core.messaging.CordaRPCOps;
 import net.corda.core.messaging.DataFeed;
-import net.corda.core.node.ServiceHub;
 import net.corda.core.node.services.Vault;
-import net.corda.core.node.services.VaultService;
 import net.corda.core.node.services.vault.Builder;
 import net.corda.core.node.services.vault.CriteriaExpression;
 import net.corda.core.node.services.vault.QueryCriteria;
 import net.corda.core.transactions.SignedTransaction;
+import net.corda.core.transactions.WireTransaction;
 import net.corda.core.utilities.NetworkHostAndPort;
 import org.apache.activemq.artemis.api.core.ActiveMQException;
 import org.graphstream.graph.Node;
 import org.graphstream.graph.implementations.MultiGraph;
-import org.graphstream.ui.spriteManager.Sprite;
 import org.graphstream.ui.spriteManager.SpriteManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.vloyalty.schema.TokenSchema;
 import org.vloyalty.state.TokenState;
-import org.vloyalty.token.Token;
 import rx.Observable;
 
 import java.lang.reflect.Field;
+import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
@@ -42,27 +40,16 @@ public class TokenClientRPC {
     private static final Logger logger = LoggerFactory.getLogger(TokenClientRPC.class);
     private static MultiGraph _graph = new MultiGraph("Corda transactions");
     private static SpriteManager _sman = new SpriteManager(_graph);
-    private static int _nodeNr = 0;
+    private static int _nodeNr = 1;
+    private static HashMap<Node, StateRef> _nodeToIdMap = new HashMap<>();
 
     private static void logState(StateAndRef<TokenState> state) {
-        logger.info("#TokenClientRPC.logState");
-        logger.info("{}", state.getState().getData());
         System.out.println("RM TokenClientRPC.logState : Ref#"+ state.getRef() + " : " + state.toString());
         StateRef stateRef= state.getRef();
         TransactionState<TokenState> tokenState= state.getState();
         TokenState ts= tokenState.getData();
 
-        String stateRefStr= stateRef.toString();
-        int indx= stateRefStr.indexOf("(");
-        if (indx > -1) {
-            stateRefStr= stateRefStr.substring(0, (indx));
-        }
-        _graph.addNode(stateRefStr);
-        Sprite s = _sman.addSprite("S" + _nodeNr++);
-        s.attachToNode(stateRefStr);
-        System.out.println("Node added: " + stateRefStr);
-
-        //_graph.display();
+        addPastNodeToGraph(stateRef);
     }
 
     /*
@@ -71,18 +58,11 @@ public class TokenClientRPC {
                 Each input-output relationship is an edge, represented by prining EDGE <txhash> <txhash>
     */
     private static void logFeedTxn(SignedTransaction nextTxn) {
-        //System.out.println("NODE: " + nextTxn.getId() + " Inputs size=" );
         List<StateRef> inputStateRefs= nextTxn.getInputs();
-        //System.out.println("NODE: " + nextTxn.getId() + " Inputs size=" + inputStateRefs.size());
-        //HashMap<StateRef, Integer> txn_io= new HashMap<>();
-        //transaction.tx.inputs.forEach { (txhash) ->
-        //                println("EDGE $txhash ${transaction.id}")
         List<ContractState> outputStates= nextTxn.getTx().getOutputStates();
+        WireTransaction wtx= nextTxn.getTx();
         String nextTxnId= nextTxn.getId().toString();
-        Node n= _graph.addNode(nextTxnId);
-        Sprite s = _sman.addSprite("S" + _nodeNr++);
-        s.attachToNode(nextTxnId);
-        System.out.println("Node added: " + nextTxnId);
+        //Node n= _graph.addNode(nextTxnId);
         System.out.println("Txn#: " + nextTxnId + " #Inputs=" + inputStateRefs.size() + " #Outputs=" + outputStates.size());
 
         if (inputStateRefs.size() == 0) System.out.println("   InputRef: {}");
@@ -90,13 +70,13 @@ public class TokenClientRPC {
             for (StateRef stateRef : inputStateRefs) {
                 System.out.println("   InputRef: " + stateRef.getTxhash() + " Index=" + stateRef.getIndex());
                 //graph.addEdge<Edge>("$ref", "${ref.txhash}", "${transaction.id}")
-                _graph.addEdge(stateRef.toString(), stateRef.getTxhash().toString(), nextTxnId);
-                //Testing:
-                if (outputStates.size() == 2) {
+                //_graph.addEdge(stateRef.toString(), stateRef.getTxhash().toString(), nextTxnId);
+                addEdge(stateRef, nextTxn);
+                /*if (outputStates.size() == 2) {
                     //Node to itseld
                     System.out.println("   Graphing self-ref");
                     _graph.addEdge(stateRef.toString()+"Self", stateRef.getTxhash().toString(), stateRef.getTxhash().toString());
-                }
+                }*/
             }
         }
 
@@ -106,7 +86,7 @@ public class TokenClientRPC {
             System.out.println("              OutputState=" + outState.toString());
         }
 
-        _graph.display();
+        //_graph.display();
         System.out.println("Break");
     }
 
@@ -122,6 +102,7 @@ public class TokenClientRPC {
 
         // Can be amended in the com.example.Main file.
         final CordaRPCOps proxy = client.start("user1", "test").getProxy();
+        _graph.display();
 
         //SecureHash txnId= SecureHash.parse(""); //4C9CF9FDD1648F0FCF9DCE536665F07D8D4A13E165CAC37694339095BCF4C164 ");
         //proxy.getVaultTransactionNotes(txnId); //4C9CF9FDD1648F0FCF9DCE536665F07D8D4A13E165CAC37694339095BCF4C164);
@@ -213,5 +194,95 @@ public class TokenClientRPC {
         updates.toBlocking().subscribe(update -> update.getProduced().forEach(TokenClientRPC::logState));
 
         System.out.println("Post-block");*/
+    }
+
+    //==============================================
+    /**
+     * Graphing functions
+     */
+    private static void addPastNodeToGraph(StateRef stateRef) {
+        //String stateRefStr= stateRef.toString();
+        /*int indx= stateRefStr.indexOf("(");
+        if (indx > -1) {
+            stateRefStr= stateRefStr.substring(0, indx);
+        }
+        else {
+            System.out.println("indx - When does this happen?");
+        }*/
+
+        Node node= basicAddNodeToGraph(stateRef);
+        _nodeToIdMap.put(node, stateRef);
+    }
+
+    private static Node basicAddNodeToGraph(StateRef stateRef) {
+        String stateRefStr= stateRef.toString();
+        int index= stateRef.getIndex();
+
+        //String nodeId= _nodeNr + "";
+        String nodeId= stateRefStr;// + "(" + index + ")";
+        Node node= _graph.addNode(nodeId);
+        //node.addAttribute("ui.style", "shape:circle;fill-color: yellow;size: 20px;");
+        node.addAttribute("ui.label", "Node#" + _nodeNr + ":" + stateRefStr.substring(0,4) + "(" + index + ")"); //Just for easier display
+        node.addAttribute("ui.style", "shape:circle;fill-color: yellow;size: 20px; text-alignment: center;");
+
+        System.out.println("Adding node#" + _nodeNr + " -> Txn#" + stateRefStr.substring(0,4));
+        _nodeNr++;
+
+        return node;
+    }
+
+    //@TODO: Cleanup with prev method
+    private static Node basicAddNodeToGraph(SignedTransaction sTxn) {
+        //String stateRefStr= stateRef.toString();
+        //int index= stateRef.getIndex();
+
+        //String nodeId= _nodeNr + "";
+        //String nodeId= stateRefStr;// + "(" + index + ")";
+        String nodeId= sTxn.getId().toString(); //Has no Indices (0), (1) etc.
+        Node node= _graph.addNode(nodeId);
+        //node.addAttribute("ui.style", "shape:circle;fill-color: yellow;size: 20px;");
+        node.addAttribute("ui.label", "Node#" + _nodeNr + ":" + nodeId.substring(0,4)); //Just for easier display
+        node.addAttribute("ui.style", "shape:circle;fill-color: orange;size: 20px; text-alignment: center;");
+
+        System.out.println("Adding node#" + _nodeNr + " -> Txn#" + nodeId.substring(0,4));
+        _nodeNr++;
+
+        return node;
+    }
+
+    private static void addNewNodeToGraph(SignedTransaction nextTxn) {
+        List<StateRef> inputStateRefs= nextTxn.getInputs();
+        WireTransaction wtx= nextTxn.getTx();
+        List<ContractState> outputStates= wtx.getOutputStates();
+        String nextTxnId= nextTxn.getId().toString();
+        //Node n= _graph.addNode(nextTxnId);
+        System.out.println("Txn#: " + nextTxnId + " #Inputs=" + inputStateRefs.size() + " #Outputs=" + outputStates.size());
+
+        if (inputStateRefs.size() == 0) System.out.println("   InputRef: {}");
+        else {
+            for (StateRef stateRef : inputStateRefs) {
+                System.out.println("   InputRef: " + stateRef.getTxhash() + " Index=" + stateRef.getIndex());
+                _graph.addEdge(stateRef.toString(), stateRef.getTxhash().toString(), nextTxnId);
+                if (outputStates.size() == 2) {
+                    //Node to itseld
+                    System.out.println("   Graphing self-ref");
+                    _graph.addEdge(stateRef.toString()+"Self", stateRef.getTxhash().toString(), stateRef.getTxhash().toString());
+                }
+            }
+        }
+    }
+
+    private static void addEdge(StateRef stateRef, SignedTransaction sTxn) {
+        String edgeId= stateRef.toString();// + "(" + stateRef.getIndex() + ")";
+        String n1= stateRef.getTxhash().toString() + "(" + stateRef.getIndex() + ")"; //This should exist.
+        Node node1= _graph.getNode(n1);
+        String n2= sTxn.getId().toString();
+        Node node2= _graph.getNode(n2); //Will typically not be there since this is a new txn.
+        if (node2 == null) {
+            node2= basicAddNodeToGraph(sTxn);
+        }
+        _graph.addEdge(edgeId, node1, node2);
+        System.out.println("Adding Edge" + edgeId + " : Node#" + node1.getId() + " -> Node#" + node2.getId());
+        //_nodeToIdMap
     }
 }
