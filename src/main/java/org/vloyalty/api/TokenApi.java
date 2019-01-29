@@ -3,6 +3,7 @@ package org.vloyalty.api;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import net.corda.core.contracts.StateAndRef;
 import net.corda.core.crypto.SecureHash;
 import net.corda.core.identity.CordaX500Name;
@@ -72,10 +73,6 @@ public class TokenApi {
     @Path("peers")
     @Produces(MediaType.APPLICATION_JSON)
     public Map<String, List<CordaX500Name>> getPeers() {
-        List<NodeInfo> nodeInfoSnapshot1 = rpcOps.networkMapSnapshot();
-        for (NodeInfo node: nodeInfoSnapshot1) {
-            System.out.println("Node is: " + node.toString());
-        }
         List<NodeInfo> nodeInfoSnapshot = rpcOps.networkMapSnapshot();
         return ImmutableMap.of("peers", nodeInfoSnapshot
                 .stream()
@@ -130,8 +127,10 @@ public class TokenApi {
             peerMap.put(nodePartyStr, mapValues);
         }
 
-        Gson gson = new Gson();
-        String json = gson.toJson(peerMap);
+        //Gson gson = new Gson();
+        //@see https://stackoverflow.com/questions/16558709/gson-issue-with-string
+        Gson gson = new GsonBuilder().disableHtmlEscaping().create();
+        String json = gson.toJson(peerMap, HashMap.class);
 
         return json;
         /*return peerMap; /* ImmutableMap.of("peer-details", peerMap

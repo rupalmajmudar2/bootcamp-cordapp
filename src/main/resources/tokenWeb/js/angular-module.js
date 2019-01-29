@@ -29,10 +29,20 @@ app.controller('DemoAppController', function($http, $location, $uibModal) {
     // We identify the node.
     const apiBaseURL = "/api/token/";
     let peers = [];
+    let peer_map = [];
 
     $http.get(apiBaseURL + "me").then((response) => demoApp.thisNode = response.data.me);
 
     $http.get(apiBaseURL + "peers").then((response) => peers = response.data.peers);
+
+    //@see TokenApi#peer-details : returns the json directly, not mapped to "peers"
+    $http.get(apiBaseURL + "peer-details").then((response) => {
+        peer_map = response.data;
+        //console.log("Peer details response: " + JSON.stringify(peer_map));
+        for (var key in peer_map) {
+            console.log(key + " : " + JSON.stringify(peer_map[key]));
+        }
+    });
 
     demoApp.openModalForTokenCreation = () => {
         const modalInstance = $uibModal.open({

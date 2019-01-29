@@ -49,7 +49,7 @@ public class ApiTests {
         TokenApi api= new TokenApi(proxy);
         String detailsJson= api.getPeerDetails();
         HashMap dets= new Gson().fromJson(detailsJson, HashMap.class);
-        Assert.assertTrue(dets.size() == 4);
+        Assert.assertTrue(dets.size() == 5);
 
         CordaX500Name sbb= new CordaX500Name("SBB", "Bern", "CH");
         Map sbb_dets= (Map) dets.get(sbb.toString());
