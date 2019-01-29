@@ -4,8 +4,10 @@ import co.paralleluniverse.fibers.Suspendable;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import net.corda.core.contracts.StateAndRef;
+import net.corda.core.crypto.SecureHash;
 import net.corda.core.flows.*;
 import net.corda.core.identity.Party;
+import net.corda.core.node.services.AttachmentStorage;
 import net.corda.core.transactions.SignedTransaction;
 import net.corda.core.transactions.TransactionBuilder;
 import org.vloyalty.contract.TokenContract;
@@ -120,11 +122,22 @@ public class TokenTransferFlowInitiator extends AbstractTokenFlow { //FlowLogic<
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }*/
+        //New : Attachments
+        //Note : do before CollectSignaturesFlow below as per https://stackoverflow.com/questions/49798273/attachment-resolution-failure
+        SecureHash attachmentHash= SecureHash.parse("46A5895F131FBA4A29DE6FAB301177BCA721A5AD4E70C11466A51AF62F3E6D20"); //TEMP!!
+        //System.out.println("TokenFlowInitiator sending attachmt 46A5 to " + _newOwner);
+        /*SignedTransaction attachedSignedTx = subFlow(
+                new TokenAttachmentSender(_newOwner, attachmentHash));*/
+        //txBuilder.addAttachment(attachmentHash);
+        //AttachmentStorage as= getServiceHub().getAttachments();
 
         // We check that the transaction builder we've created meets the
         // contracts of the input and output states.
         getProgressTracker().setCurrentStep(VERIFYING_TRANSACTION);
         txBuilder.verify(getServiceHub());
+
+        //txBuilder.addAttachment(attachmentHash); @TODO: Needs more work. Throws Attachment-exception in #verify.
+        AttachmentStorage as= getServiceHub().getAttachments();
 
         // We finalise the transaction builder by signing it,
         // converting it into a `SignedTransaction`.

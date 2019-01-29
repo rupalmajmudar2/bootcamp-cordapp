@@ -26,7 +26,6 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.lang.reflect.Field;
-import java.nio.file.FileAlreadyExistsException;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
@@ -35,6 +34,7 @@ import static java.util.stream.Collectors.toList;
 import static javax.security.auth.callback.ConfirmationCallback.OK;
 import static javax.ws.rs.core.Response.Status.BAD_REQUEST;
 import static javax.ws.rs.core.Response.Status.CREATED;
+import static org.junit.Assert.assertTrue;
 
 // This API is accessible from /api/token. All paths specified below are relative to it.
 @Path("token")
@@ -192,17 +192,10 @@ public class TokenApi {
         }
 
         SecureHash attachmentHash= null;
-        try {
-            attachmentHash = TokenClientAttachmentRPC.doAttachZipFile(rpcOps, zipFileName);
-        }
-        catch (Exception e) {
-            if (e instanceof FileAlreadyExistsException) {
-                System.out.println("fyi: File already exists. Noprobs!"); //Thats ok.  Keep going.
-            } else {
-                throw new Exception("error");
-            }
-        }
-            System.out.println("TokenClientAttachmentRPC#doAttachZipFile Done uploading pdf - AtachmentHash#"+attachmentHash);
+        attachmentHash = TokenClientAttachmentRPC.doAttachZipFile(rpcOps, zipFileName);
+        assertTrue (rpcOps.attachmentExists(attachmentHash));
+
+        System.out.println("TokenClientAttachmentRPC#doAttachZipFile Done uploading pdf - AtachmentHash#"+attachmentHash);
 
                    /* startTrackedFlow(::AttachmentDemoFlow, otherSideFuture.get(), notaryFuture.get(), hash)
             flowHandle.progress.subscribe(::println)
@@ -215,6 +208,7 @@ public class TokenApi {
                     .get();
 
             final String msg = String.format("TokenAttachmentSender Transaction id %s committed to ledger.\n", signedTx2.getId());
+            System.out.println(" TokenAttachmentSender Transaction id %s committed to ledger."  + signedTx2.getId());
             return Response.status(CREATED).entity(msg).build();
 
         } catch (Throwable ex) {

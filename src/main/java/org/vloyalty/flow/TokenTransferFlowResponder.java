@@ -1,13 +1,14 @@
 package org.vloyalty.flow;
 
 import co.paralleluniverse.fibers.Suspendable;
-import net.corda.core.contracts.ContractState;
+import net.corda.core.crypto.SecureHash;
+import net.corda.core.flows.FlowException;
+import net.corda.core.flows.FlowSession;
+import net.corda.core.flows.InitiatedBy;
+import net.corda.core.flows.SignTransactionFlow;
 import net.corda.core.identity.Party;
-import org.vloyalty.flow.TokenTransferFlowInitiator;
-import net.corda.core.flows.*;
 import net.corda.core.transactions.SignedTransaction;
 import net.corda.core.utilities.ProgressTracker;
-import org.vloyalty.state.TokenState;
 
 import javax.swing.*;
 import java.util.List;
@@ -75,7 +76,11 @@ public class TokenTransferFlowResponder extends AbstractTokenFlow { //FlowLogic<
                 }
                 //stx.getInputs();
 
-                //getServiceHub().getValidatedTransactions();
+                List<SecureHash> attachments= stx.getTx().getAttachments();
+                System.out.println("Txn#: " + stx.getId() + " Attachment size=" + attachments.size());
+                for(SecureHash attachment: attachments) {
+                    System.out.println("Hash= " + attachment);
+                }
             }
         }
 

@@ -26,6 +26,7 @@ public class TokenAttachmentSender extends AbstractTokenFlow {
     @Suspendable
     @Override
     public SignedTransaction call() throws FlowException {
+        super.call();
         // Create a trivial transaction with an output that describes the attachment, and the attachment itself
 
         TransactionBuilder txBuilder = new TransactionBuilder();
