@@ -31,7 +31,7 @@ public class NodeDriver {
                                     .withCustomOverrides(ImmutableMap.of("rpcSettings.address", "localhost:10098", "rpcSettings.adminAddress", "localhost:10045", "webAddress", "localhost:10099"))
                                     .withRpcUsers(ImmutableList.of(user))),*/
                             dsl.startNode(new NodeParameters()
-                                    .withProvidedName(new CordaX500Name("Loyalty_AG", "Zurich", "CH"))
+                                    .withProvidedName(new CordaX500Name("Valora", "Zurich", "CH"))
                                     .withCustomOverrides(ImmutableMap.of("rpcSettings.address", "localhost:10008", "rpcSettings.adminAddress", "localhost:10048", "webAddress", "localhost:10009"))
                                     .withRpcUsers(ImmutableList.of(user))),
                             dsl.startNode(new NodeParameters()
@@ -39,15 +39,20 @@ public class NodeDriver {
                                     .withCustomOverrides(ImmutableMap.of("rpcSettings.address", "localhost:10011", "rpcSettings.adminAddress", "localhost:10051", "webAddress", "localhost:10012"))
                                     .withRpcUsers(ImmutableList.of(user))),
                             dsl.startNode(new NodeParameters()
-                                    .withProvidedName(new CordaX500Name("Alpamare", "Pfaffikon", "CH"))
+                                    .withProvidedName(new CordaX500Name("Evian", "Pfaffikon", "CH"))
                                     .withCustomOverrides(ImmutableMap.of("rpcSettings.address", "localhost:10014", "rpcSettings.adminAddress", "localhost:10054", "webAddress", "localhost:10015"))
+                                    .withRpcUsers(ImmutableList.of(user))),
+                            dsl.startNode(new NodeParameters()
+                                    .withProvidedName(new CordaX500Name("Customer", "Zug", "CH"))
+                                    .withCustomOverrides(ImmutableMap.of("rpcSettings.address", "localhost:10017", "rpcSettings.adminAddress", "localhost:10057", "webAddress", "localhost:10018"))
                                     .withRpcUsers(ImmutableList.of(user))));
+
 
                     try {
                         dsl.startWebserver(nodeFutures.get(0).get());
                         dsl.startWebserver(nodeFutures.get(1).get());
                         dsl.startWebserver(nodeFutures.get(2).get());
-                        //dsl.startWebserver(nodeFutures.get(3).get());
+                        dsl.startWebserver(nodeFutures.get(3).get());
 
                     } catch (Throwable e) {
                         System.err.println("Encountered exception in node startup: " + e.getMessage());
