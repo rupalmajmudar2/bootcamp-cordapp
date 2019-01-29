@@ -2,6 +2,7 @@ package org.vloyalty.api;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
+import com.google.gson.Gson;
 import net.corda.core.contracts.StateAndRef;
 import net.corda.core.crypto.SecureHash;
 import net.corda.core.identity.CordaX500Name;
@@ -13,6 +14,7 @@ import net.corda.core.node.services.vault.Builder;
 import net.corda.core.node.services.vault.CriteriaExpression;
 import net.corda.core.node.services.vault.QueryCriteria;
 import net.corda.core.transactions.SignedTransaction;
+import net.corda.core.utilities.NetworkHostAndPort;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.vloyalty.client.TokenClientAttachmentRPC;
@@ -26,6 +28,7 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.lang.reflect.Field;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
@@ -69,12 +72,73 @@ public class TokenApi {
     @Path("peers")
     @Produces(MediaType.APPLICATION_JSON)
     public Map<String, List<CordaX500Name>> getPeers() {
+        List<NodeInfo> nodeInfoSnapshot1 = rpcOps.networkMapSnapshot();
+        for (NodeInfo node: nodeInfoSnapshot1) {
+            System.out.println("Node is: " + node.toString());
+        }
         List<NodeInfo> nodeInfoSnapshot = rpcOps.networkMapSnapshot();
         return ImmutableMap.of("peers", nodeInfoSnapshot
                 .stream()
                 .map(node -> node.getLegalIdentities().get(0).getName())
                 //.filter(name -> !name.equals(myLegalName) && !serviceNames.contains(name.getOrganisation()))
                 .collect(toList()));
+    }
+
+    /**
+     * Returns all parties details ** <b>Ugly ** Hard-coded **</b>
+     * rupal 29Jan19 : Adding node-specific attributes right here, since -configFile option seems not to work
+     * @TODO : Move these to configFile lnode.conf
+     * Output: Hashmap of [key = nodeName,
+     *                      value = Hashmap  [
+     *                                  isCustomer = true/false
+     */
+    @GET
+    @Path("peer-details")
+    @Produces(MediaType.APPLICATION_JSON)
+    public String /*Map<String, List<CordaX500Name>>*/ getPeerDetails() {
+        List<NodeInfo> nodeInfoSnapshot = rpcOps.networkMapSnapshot();
+        HashMap<String, HashMap<String,String>> peerMap= new HashMap();
+        for (NodeInfo node: nodeInfoSnapshot) {
+            NetworkHostAndPort hp= node.getAddresses().get(0);
+            int port = hp.getPort();
+
+            boolean isCustNode= false;
+            boolean isPartnerNode= false;
+            boolean isNotary= false;
+
+            if (node.toString().toLowerCase().contains("customer")) isCustNode = true;
+
+            if (node.toString().toLowerCase().contains("valora")) isPartnerNode= true;
+            if (node.toString().toLowerCase().contains("loyalty")) isPartnerNode = true;
+            if (node.toString().toLowerCase().contains("sbb")) isPartnerNode = true;
+            if (node.toString().toLowerCase().contains("alpamare")) isPartnerNode = true;
+
+            if (node.toString().toLowerCase().contains("notary")) isNotary = true;
+
+            HashMap mapValues= new HashMap<String,String>();
+            mapValues.put("port", port);
+            mapValues.put("isCustomerNode", isCustNode);
+            mapValues.put("isPartnerNode", isPartnerNode);
+            mapValues.put("isNotary", isNotary);
+
+            Party nodeParty= node.getLegalIdentities().get(0);
+            String nodePartyStr= nodeParty.getName().toString();
+
+            System.out.println("Node is: " + nodePartyStr + /*" @ port= " + port + */" IsCustomerNode=" + isCustNode
+                                    + " IsPartnerNode=" + isPartnerNode  + " IsMyNotary=" + isNotary);
+
+            peerMap.put(nodePartyStr, mapValues);
+        }
+
+        Gson gson = new Gson();
+        String json = gson.toJson(peerMap);
+
+        return json;
+        /*return peerMap; /* ImmutableMap.of("peer-details", peerMap
+                .stream()
+                .map(node -> node.getLegalIdentities().get(0).getName())
+                //.filter(name -> !name.equals(myLegalName) && !serviceNames.contains(name.getOrganisation()))
+                .collect(toList()));*/
     }
 
     /**

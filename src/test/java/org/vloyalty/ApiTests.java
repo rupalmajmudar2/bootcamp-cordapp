@@ -1,5 +1,6 @@
 package org.vloyalty;
 
+import com.google.gson.Gson;
 import net.corda.client.rpc.CordaRPCClient;
 import net.corda.client.rpc.CordaRPCClientConfiguration;
 import net.corda.core.identity.CordaX500Name;
@@ -8,9 +9,13 @@ import net.corda.core.utilities.NetworkHostAndPort;
 import net.corda.testing.node.MockNetwork;
 import net.corda.testing.node.StartedMockNode;
 import org.junit.After;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.vloyalty.api.TokenApi;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Rupal 18Dec18 - try automate the things done inside TokenApi.
@@ -36,6 +41,29 @@ public class ApiTests {
     }
 
     @Test
+    public void getPeerInfos() throws Exception {
+        final NetworkHostAndPort nodeAddress = NetworkHostAndPort.parse("localhost:10008");
+        final CordaRPCClient rpcOps = new CordaRPCClient(nodeAddress, CordaRPCClientConfiguration.DEFAULT);
+        final CordaRPCOps proxy = rpcOps.start("user1", "test").getProxy();
+
+        TokenApi api= new TokenApi(proxy);
+        String detailsJson= api.getPeerDetails();
+        HashMap dets= new Gson().fromJson(detailsJson, HashMap.class);
+        Assert.assertTrue(dets.size() == 4);
+
+        CordaX500Name sbb= new CordaX500Name("SBB", "Bern", "CH");
+        Map sbb_dets= (Map) dets.get(sbb.toString());
+        Assert.assertTrue(sbb_dets.get("isPartnerNode") instanceof Boolean);
+        Boolean isPartnerNode= (Boolean) sbb_dets.get("isPartnerNode");
+        Assert.assertTrue(isPartnerNode);
+
+        Assert.assertTrue(sbb_dets.get("isCustomerNode") instanceof Boolean);
+        Boolean isCustomerNode= (Boolean) sbb_dets.get("isCustomerNode");
+        Assert.assertFalse(isCustomerNode);
+    }
+
+    /*
+    @Test
     public void sendAttachmentToPeer() throws Exception {
         final NetworkHostAndPort nodeAddress = NetworkHostAndPort.parse("localhost:10008");
         final CordaRPCClient rpcOps = new CordaRPCClient(nodeAddress, CordaRPCClientConfiguration.DEFAULT);
@@ -47,7 +75,7 @@ public class ApiTests {
         api.sendAttachment(attachmentFn, sbb);
         assert(true);
     }
-
+*/
     /*
     @Test
     public void createTokenCreationFlow() throws Exception {
