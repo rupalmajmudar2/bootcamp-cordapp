@@ -36,7 +36,9 @@ COMING WEEKS WE'LL WRITE A TUTORIAL ON HOW BEST TO DO THIS.
             <a class="navbar-brand" href="#">{{demoApp.thisNode}}</a>
         </div>
         <button ng-click="demoApp.openModalForTokenCreation()" type="button" class="btn btn-primary navbar-btn">Create Tokens</button>
-        Signed by: Txn Initiator
+        Signed by: Txn Initiator<br>
+        My Node: {{demoApp.thisNode}} : : {{demoApp.peer_map[demoApp.thisNode]}}<br>
+        <!--All Node details: {{demoApp.peer_map}}-->
         <!-- <button ng-click="demoApp.openModalForTokenTransfer()" type="button" class="btn btn-primary navbar-btn">Transfer Tokens</button> -->
     </div>
 </nav>
@@ -49,7 +51,9 @@ COMING WEEKS WE'LL WRITE A TUTORIAL ON HOW BEST TO DO THIS.
             <div class="form-group">
                 <label for="counterparty" class="control-label">Tokens For:</label>
                 <select ng-model="modalInstance.form.counterparty" class="form-control" id="counterparty"
-                        ng-options="peer as peer for peer in modalInstance.peers">
+                        ng-options="peerkey as peerkey for (peerkey,peerval) in modalInstance.peer_map">
+                        <!-- <select ng-options="k as v for (k, v) in cols"></select> -->
+                        <!-- ng-options="peer as peer for peer in modalInstance.peer"> -->
                 </select>
             </div>
             <div class="form-group">
@@ -89,7 +93,8 @@ COMING WEEKS WE'LL WRITE A TUTORIAL ON HOW BEST TO DO THIS.
             <div class="form-group">
                 <label for="counterparty" class="control-label">Send Tokens To:</label>
                 <select ng-model="modalInstance.form.counterparty" class="form-control" id="counterparty"
-                        ng-options="peer as peer for peer in modalInstance.peers">
+                        ng-options="peerkey as peerkey for (peerkey,peerval) in modalInstance.peer_map">
+                        <!--ng-options="peer as peer for peer in modalInstance.peers">-->
                 </select>
             </div>
             <div class="form-group">
@@ -128,7 +133,8 @@ COMING WEEKS WE'LL WRITE A TUTORIAL ON HOW BEST TO DO THIS.
             <div class="form-group">
                 <label for="counterparty" class="control-label">Send Attachment To:</label>
                 <select ng-model="modalInstance.form.counterparty" class="form-control" id="counterparty"
-                        ng-options="peer as peer for peer in modalInstance.peers">
+                        ng-options="peerkey as peerkey for (peerkey,peerval) in modalInstance.peer_map">
+                        <!--ng-options="peer as peer for peer in modalInstance.peers">-->
                 </select>
             </div>
             <div class="form-group">

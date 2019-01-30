@@ -46,6 +46,9 @@ apply plugin: 'net.corda.plugins.quasar-utils'
 jar.baseName = "cordapp-tokens"
 
 sourceSets {
+    main.java.srcDir "src/main"
+    test.java.srcDir "src/test"
+    
     main {
         resources {
             srcDir "../config/dev"
@@ -61,7 +64,7 @@ sourceSets {
 dependencies {
     //rm adding from net.corda.attachment-demo
     //compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
-    //testCompile "junit:junit:$junit_version"
+    testCompile "junit:junit:$junit_version"
 
     compileClasspath fileTree(dir: 'lib/dependencies', include: '*.jar')
     //cordaRuntime project(path: ":node:capsule", configuration: 'runtimeArtifacts')
@@ -74,7 +77,7 @@ dependencies {
     //rm adding from corda-example projecct:
     cordaRuntime "$corda_release_group:corda-webserver:$corda_release_version"
     cordaCompile "$corda_release_group:corda-webserver-impl:$corda_release_version"
-    //cordaCompile "$corda_release_group:corda-node-driver:$corda_release_version"
+    cordaCompile "$corda_release_group:corda-node-driver:$corda_release_version"
     testCompile "$corda_release_group:corda-node-driver:$corda_release_version"
     testCompileClasspath fileTree(dir: 'lib/dependencies', include: '*.jar')
     //cordaCompile "$corda_release_group:corda-test-utils:$corda_release_version"
@@ -104,7 +107,6 @@ task deployNodesJava(type: net.corda.plugins.Cordform, dependsOn: ['jar']) {
                 "$project.group:cordapp:$project.version"
         ]
         configFile "bootcamp-cordapp/src/main/resources/lnode.conf"
-        //isCustomerNode "false"
     }
     node {
         name "O=Valora,L=Zurich,C=CH"

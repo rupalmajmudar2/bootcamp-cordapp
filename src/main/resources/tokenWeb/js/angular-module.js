@@ -40,8 +40,10 @@ app.controller('DemoAppController', function($http, $location, $uibModal) {
         peer_map = response.data;
         //console.log("Peer details response: " + JSON.stringify(peer_map));
         for (var key in peer_map) {
-            console.log(key + " : " + JSON.stringify(peer_map[key]));
+            //console.log(key + " : " + JSON.stringify(peer_map[key],null,2)); //works.
         }
+
+        demoApp.peer_map= peer_map; //state stored for ref in html. rupal 30jan19
     });
 
     demoApp.openModalForTokenCreation = () => {
@@ -52,7 +54,8 @@ app.controller('DemoAppController', function($http, $location, $uibModal) {
             resolve: {
                 demoApp: () => demoApp,
                 apiBaseURL: () => apiBaseURL,
-                peers: () => peers
+                peers: () => peers,
+                peer_map: () => peer_map
             }
         });
 
@@ -67,7 +70,8 @@ app.controller('DemoAppController', function($http, $location, $uibModal) {
             resolve: {
                 demoApp: () => demoApp,
                 apiBaseURL: () => apiBaseURL,
-                peers: () => peers
+                peers: () => peers,
+                peer_map: () => peer_map
             }
         });
 
@@ -82,7 +86,8 @@ app.controller('DemoAppController', function($http, $location, $uibModal) {
                  resolve: {
                      demoApp: () => demoApp,
                      apiBaseURL: () => apiBaseURL,
-                     peers: () => peers
+                     peers: () => peers,
+                     peer_map: () => peer_map
                  }
              });
 
@@ -105,9 +110,10 @@ app.controller('DemoAppController', function($http, $location, $uibModal) {
     demoApp.getTokensIssuedByMe();
 });
 
-app.controller('ModalInstanceCtrl', function ($http, $location, $uibModalInstance, $uibModal, demoApp, apiBaseURL, peers) {
+app.controller('ModalInstanceCtrl', function ($http, $location, $uibModalInstance, $uibModal, demoApp, apiBaseURL, peers, peer_map) {
     const modalInstance = this;
 
+    modalInstance.peer_map = peer_map;
     modalInstance.peers = peers;
     modalInstance.form = {};
     modalInstance.formError = false;
