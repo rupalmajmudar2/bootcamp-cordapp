@@ -15,6 +15,7 @@ import net.corda.core.node.services.vault.Builder;
 import net.corda.core.node.services.vault.CriteriaExpression;
 import net.corda.core.node.services.vault.QueryCriteria;
 import net.corda.core.transactions.SignedTransaction;
+import net.corda.core.transactions.WireTransaction;
 import net.corda.core.utilities.NetworkHostAndPort;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -114,15 +115,15 @@ public class TokenApi {
 
             HashMap mapValues= new HashMap<String,String>();
             mapValues.put("port", port);
-            mapValues.put("isCustomerNode", isCustNode);
-            mapValues.put("isPartnerNode", isPartnerNode);
-            mapValues.put("isNotary", isNotary);
+            mapValues.put("isCustomerNode", String.valueOf(isCustNode));
+            mapValues.put("isPartnerNode", String.valueOf(isPartnerNode));
+            mapValues.put("isNotary", String.valueOf(isNotary));
 
             Party nodeParty= node.getLegalIdentities().get(0);
             String nodePartyStr= nodeParty.getName().toString();
 
-            System.out.println("Node is: " + nodePartyStr + /*" @ port= " + port + */" IsCustomerNode=" + isCustNode
-                                    + " IsPartnerNode=" + isPartnerNode  + " IsMyNotary=" + isNotary);
+            /*System.out.println("Node is: " + nodePartyStr + " IsCustomerNode=" + isCustNode
+                                    + " IsPartnerNode=" + isPartnerNode  + " IsMyNotary=" + isNotary);*/
 
             peerMap.put(nodePartyStr, mapValues);
         }
@@ -188,7 +189,10 @@ public class TokenApi {
                     .getReturnValue()
                     .get();
 
-            final String msg = String.format("TokenIssue Transaction id %s committed to ledger.\n", signedTx.getId());
+            final String msg = String.format("TokenIssue by %s for %s: Txn# %s committed to ledger.\n",
+                                            myLegalName.toString(),
+                                            ownerPartyName.toString(),
+                                            signedTx.getId());
             //System.out.println("#createTokens: #1");
             Response rr= Response.status(CREATED).entity(msg).build();
             //System.out.println("#createTokens: #2");
@@ -294,10 +298,10 @@ public class TokenApi {
         QueryCriteria generalCriteria = new QueryCriteria.VaultQueryCriteria(Vault.StateStatus.ALL);
         QueryCriteria all_criteria = generalCriteria;
         List<StateAndRef<TokenState>> all_results = rpcOps.vaultQueryByCriteria(all_criteria,TokenState.class).getStates();
-        System.out.println("#tokens-issued-by-loyaltyAg: all-criteria count=" + all_results.size());
+        System.out.println("#tokens-total: all-criteria count=" + all_results.size());
 
         Field issuer = TokenSchema.PersistentToken.class.getDeclaredField("issuer");
-        CordaX500Name loyaltyAg = new CordaX500Name("Loyalty_AG", "Zurich", "CH");
+        CordaX500Name loyaltyAg = new CordaX500Name("Valora", "Zurich", "CH");
         CriteriaExpression issuerIndex = Builder.equal(issuer, loyaltyAg.toString());
         QueryCriteria issuerCriteria = new QueryCriteria.VaultCustomQueryCriteria(issuerIndex);
 
@@ -305,5 +309,27 @@ public class TokenApi {
         List<StateAndRef<TokenState>> results = rpcOps.vaultQueryByCriteria(criteria,TokenState.class).getStates();
         System.out.println("#tokens-issued-by-loyaltyAg: count=" + results.size());
         return Response.status(OK).entity(results).build();
+    }
+
+    @GET
+    @Path("txns")
+    @Produces(MediaType.APPLICATION_JSON)
+    public String getTxns()  {
+        List<SignedTransaction> txns= rpcOps.internalVerifiedTransactionsSnapshot();
+
+        System.out.println("#Txns: count=" + txns.size());
+
+        //For now just prepare the Txn string right here.
+        String txnStr= "";
+        for (int i=0; i < txns.size(); i++) {
+            SignedTransaction stxn= txns.get(i);
+            String txnId= stxn.getId().toString();
+            WireTransaction wtx= stxn.getTx();
+            String txnDets= wtx.toString();
+
+            txnStr += "Txn#" + (i+1) + " : Id=" + txnId.substring(0,4) + " " + txnDets;
+        }
+        System.out.println("#getTxns returning: " + txnStr);
+        return txnStr; //Response.status(OK).entity(txnStr).build();
     }
 }

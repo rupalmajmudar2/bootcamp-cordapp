@@ -42,6 +42,7 @@ app.controller('DemoAppController', function($http, $location, $uibModal) {
         for (var key in peer_map) {
             //console.log(key + " : " + JSON.stringify(peer_map[key],null,2)); //works.
         }
+        console.log("isCustNode=" + peer_map[demoApp.thisNode]["isCustomerNode"]);
 
         demoApp.peer_map= peer_map; //state stored for ref in html. rupal 30jan19
     });
@@ -98,16 +99,20 @@ app.controller('DemoAppController', function($http, $location, $uibModal) {
         .then((response) => demoApp.tokens = Object.keys(response.data)
             .map((key) => response.data[key].state.data)
             .reverse());
-
     demoApp.getTokens();
 
     demoApp.getTokensIssuedByMe = () => $http.get(apiBaseURL + "tokens-issued-by-me")
         .then((response) => demoApp.loyalty_tokens = Object.keys(response.data)
            .map((key) => response.data[key].state.data)
            .reverse());
-
-    //console.log("L-issued tokens size=" + demoApp.tokens.length);
     demoApp.getTokensIssuedByMe();
+
+     demoApp.getTxns = () => $http.get(apiBaseURL + "txns")
+        .then((response) => {
+            console.log("Txn Response= " + response);
+            demoApp.txns = response.data;
+        });
+     demoApp.getTxns();
 });
 
 app.controller('ModalInstanceCtrl', function ($http, $location, $uibModalInstance, $uibModal, demoApp, apiBaseURL, peers, peer_map) {
@@ -134,6 +139,7 @@ app.controller('ModalInstanceCtrl', function ($http, $location, $uibModalInstanc
                 (result) => {
                     modalInstance.displayMessage(result);
                     demoApp.getTokens();
+                    demoApp.getTxns();
                 },
                 (result) => {
                     modalInstance.displayMessage(result);
@@ -157,6 +163,7 @@ app.controller('ModalInstanceCtrl', function ($http, $location, $uibModalInstanc
                 (result) => {
                     modalInstance.displayMessage(result);
                     demoApp.getTokens();
+                    demoApp.getTxns();
                 },
                 (result) => {
                     modalInstance.displayMessage(result);
@@ -180,6 +187,7 @@ app.controller('ModalInstanceCtrl', function ($http, $location, $uibModalInstanc
                 (result) => {
                     modalInstance.displayMessage(result);
                      demoApp.getTokens();
+                     demoApp.getTxns();
                  },
                  (result) => {
                     modalInstance.displayMessage(result);

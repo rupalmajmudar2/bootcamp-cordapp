@@ -202,16 +202,7 @@ public class TokenClientRPC {
      * Graphing functions
      */
     private static void addPastNodeToGraph(StateRef stateRef) {
-        //String stateRefStr= stateRef.toString();
-        /*int indx= stateRefStr.indexOf("(");
-        if (indx > -1) {
-            stateRefStr= stateRefStr.substring(0, indx);
-        }
-        else {
-            System.out.println("indx - When does this happen?");
-        }*/
-
-        Node node= basicAddNodeToGraph(stateRef);
+          Node node= basicAddNodeToGraph(stateRef);
         _nodeToIdMap.put(node, stateRef);
     }
 

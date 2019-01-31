@@ -46,8 +46,8 @@ apply plugin: 'net.corda.plugins.quasar-utils'
 jar.baseName = "cordapp-tokens"
 
 sourceSets {
-    main.java.srcDir "src/main"
-    test.java.srcDir "src/test"
+    //main.java.srcDir "src/main"
+    //test.java.srcDir "src/test"
     
     main {
         resources {
