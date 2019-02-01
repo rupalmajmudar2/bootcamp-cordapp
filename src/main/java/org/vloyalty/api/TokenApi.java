@@ -110,14 +110,15 @@ public class TokenApi {
             if (node.toString().toLowerCase().contains("loyalty")) isPartnerNode = true;
             if (node.toString().toLowerCase().contains("sbb")) isPartnerNode = true;
             if (node.toString().toLowerCase().contains("alpamare")) isPartnerNode = true;
+            if (node.toString().toLowerCase().contains("evian")) isPartnerNode = true;
 
             if (node.toString().toLowerCase().contains("notary")) isNotary = true;
 
             HashMap mapValues= new HashMap<String,String>();
             mapValues.put("port", port);
-            mapValues.put("isCustomerNode", String.valueOf(isCustNode));
-            mapValues.put("isPartnerNode", String.valueOf(isPartnerNode));
-            mapValues.put("isNotary", String.valueOf(isNotary));
+            mapValues.put("isCustomerNode", isCustNode);
+            mapValues.put("isPartnerNode", isPartnerNode);
+            mapValues.put("isNotary", isNotary);
 
             Party nodeParty= node.getLegalIdentities().get(0);
             String nodePartyStr= nodeParty.getName().toString();
@@ -319,17 +320,54 @@ public class TokenApi {
 
         System.out.println("#Txns: count=" + txns.size());
 
-        //For now just prepare the Txn string right here.
-        String txnStr= "";
+        //Map(Sequence# ->(TxnId : TxnString_Inputs_Outputs)
+        HashMap<String, String> txnMap= new HashMap();
         for (int i=0; i < txns.size(); i++) {
             SignedTransaction stxn= txns.get(i);
             String txnId= stxn.getId().toString();
             WireTransaction wtx= stxn.getTx();
             String txnDets= wtx.toString();
 
-            txnStr += "Txn#" + (i+1) + " : Id=" + txnId.substring(0,4) + " " + txnDets;
+            //String txnStr = "Txn#" + (i+1) + " : Id=" + txnId.substring(0,4) + " " + txnDets;
+            String txnNr= (i+1) + "";
+            String txnStr= txnId.substring(0,4) + ":" + txnDets;
+
+            int  cmdIndx= txnStr.indexOf("COMMAND:");
+            txnStr= txnStr.substring(0, cmdIndx);
+
+            txnStr= txnStr.replaceAll("\r\n", "");
+            txnStr= txnStr.replaceAll("[^\\x00-\\x7F]", ""); //Removing funny asci, thanks to https://stackoverflow.com/questions/8519669/replace-non-ascii-character-from-string
+
+            System.out.println("#getTxns starting with: " + txnStr);
+            txnStr= inputStringCleanup(txnStr);
+            System.out.println("#getTxns returning: " + txnStr);
+
+            txnMap.put(txnNr, txnStr);
         }
-        System.out.println("#getTxns returning: " + txnStr);
-        return txnStr; //Response.status(OK).entity(txnStr).build();
+
+        Gson gson = new GsonBuilder().disableHtmlEscaping().create();
+        String json = gson.toJson(txnMap, HashMap.class);
+
+        return json; //Response.status(OK).entity(txnStr).build();
+    }
+
+    //@see ApiTests#parseTxnString
+    public String inputStringCleanup(String str) {
+        String finalStr= "";
+        int startIndx= str.indexOf("INPUT:");
+        if (startIndx > -1) {
+            finalStr = str.substring(0, startIndx+6); //upto INPUT:
+            int endIndx = str.indexOf("(");
+            String stringEndOfInputTillEnd= str.substring(startIndx+6, endIndx).trim(); //the full txnId
+            String shortTxnId= stringEndOfInputTillEnd.substring(0,4);
+
+            String remaining= str.substring(endIndx);
+            if (endIndx > -1) {
+                finalStr= finalStr.concat(shortTxnId).concat(remaining);
+            }
+        }
+        else return str;
+
+        return finalStr;
     }
 }

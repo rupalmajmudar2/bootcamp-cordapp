@@ -31,8 +31,8 @@ COMING WEEKS WE'LL WRITE A TUTORIAL ON HOW BEST TO DO THIS.
     <!--<script src="lib/angular/angular-sanitize.min.js"></script>-->
 </head>
 <body ng-app="demoAppModule" ng-controller="DemoAppController as demoApp">
-My Node: {{demoApp.thisNode}} : {{demoApp.peer_map[demoApp.thisNode]}}<br>
-isPartnerNode=value of "{{demoApp.peer_map[demoApp.thisNode]['isPartnerNode']}}"
+<!-- My Node: {{demoApp.thisNode}} : {{demoApp.peer_map[demoApp.thisNode]}} -->
+<!-- isPartnerNode=value of "{{demoApp.peer_map[demoApp.thisNode]['isPartnerNode']}}" -->
 <!--
 <nav class="navbar navbar-default">
     <div class="container-fluid">
@@ -252,19 +252,19 @@ isPartnerNode=value of "{{demoApp.peer_map[demoApp.thisNode]['isPartnerNode']}}"
             <legend style="color:blue;font-weight:bold;">Setup</legend>
             <nav class="navbar navbar-default">
                 <div class="container-fluid">
-                    <!--Show Token-creation button? "{{demoApp.peer_map[demoApp.thisNode]['isPartnerNode']}}"-->
-                    <!--<button ng-click="demoApp.openModalForTokenCreation()" type="button" ng-show="{{demoApp.peer_map[demoApp.thisNode]['isPartnerNode']}}" class="btn btn-primary navbar-btn">Issue Points</button>-->
-                    <button ng-click="demoApp.openModalForTokenCreation()" type="button" ng-show="true" class="btn btn-primary navbar-btn">Issue Points</button>
+                    <!-- Show Token-creation button? "{{demoApp.isPartnerNode}}" -->
+                    <button ng-click="demoApp.openModalForTokenCreation()" type="button" ng-show="demoApp.isPartnerNode" class="btn btn-primary navbar-btn">Issue Points</button>
+                    <!--<button ng-click="demoApp.openModalForTokenCreation()" type="button" ng-show="true" class="btn btn-primary navbar-btn">Issue Points</button>-->
                 </div>
             </nav>
             <nav class="navbar navbar-default">
                 <div class="container-fluid">
-                    <button ng-click="demoApp.openModalForTokenTransfer()" type="button" class="btn btn-primary navbar-btn">Transfer Tokens</button>
+                    <button ng-click="demoApp.openModalForTokenTransfer()" type="button" ng-show="demoApp.isPartnerNode" class="btn btn-primary navbar-btn">Transfer Points</button>
                 </div>
             </nav>
             <nav class="navbar navbar-default">
                 <div class="container-fluid">
-                    <button ng-click="demoApp.openModalForAttachmentSend()" type="button" class="btn btn-primary navbar-btn">Send Attachment</button>
+                    <button ng-click="demoApp.openModalForAttachmentSend()" type="button" ng-show="demoApp.isPartnerNode" class="btn btn-primary navbar-btn">Send Attachment</button>
                 </div>
             </nav>
         </fieldset>
@@ -281,14 +281,13 @@ isPartnerNode=value of "{{demoApp.peer_map[demoApp.thisNode]['isPartnerNode']}}"
                     </div>
                 </div>
                 <div>
-                    <!--<div ng-repeat="txn in demoApp.txns" class="panel panel-default">
+                    <div ng-repeat="txn in demoApp.txns" class="panel panel-default">
                         <div class="panel-body">
                             <ul>
                                 <li>Txn: {{txn.toString()}}</li>
                             </ul>
                         </div>
-                    </div>-->
-                    Txns are: {{demoApp.txns}}
+                    </div>
                 </div>
             </div>
         </fieldset>
@@ -300,7 +299,7 @@ isPartnerNode=value of "{{demoApp.peer_map[demoApp.thisNode]['isPartnerNode']}}"
                 <div class="panel-primary">
                     <div class="panel-heading">
                         <h4 class="panel-title">
-                            My Tokens:
+                            My Points:
                         </h4>
                     </div>
                 </div>

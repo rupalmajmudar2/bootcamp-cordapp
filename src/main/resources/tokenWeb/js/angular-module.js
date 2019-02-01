@@ -38,13 +38,18 @@ app.controller('DemoAppController', function($http, $location, $uibModal) {
     //@see TokenApi#peer-details : returns the json directly, not mapped to "peers"
     $http.get(apiBaseURL + "peer-details").then((response) => {
         peer_map = response.data;
-        //console.log("Peer details response: " + JSON.stringify(peer_map));
-        for (var key in peer_map) {
-            //console.log(key + " : " + JSON.stringify(peer_map[key],null,2)); //works.
-        }
+            //console.log("Peer details response: " + JSON.stringify(peer_map));
+            for (var key in peer_map) {
+                //console.log(key + " : " + JSON.stringify(peer_map[key],null,2)); //works.
+            }
         console.log("isCustNode=" + peer_map[demoApp.thisNode]["isCustomerNode"]);
 
         demoApp.peer_map= peer_map; //state stored for ref in html. rupal 30jan19
+
+        demoApp.isCustomerNode = demoApp.peer_map[demoApp.thisNode]['isCustomerNode'];
+        demoApp.isPartnerNode = demoApp.peer_map[demoApp.thisNode]['isPartnerNode'];
+        //console.log("isCustNode2=" + demoApp.isCustomerNode + " type = "+ typeof demoApp.isCustomerNode);
+        //console.log("isPartnerNode2=" + demoApp.isPartnerNode + " type = "+ typeof demoApp.isPartnerNode);
     });
 
     demoApp.openModalForTokenCreation = () => {
@@ -101,18 +106,19 @@ app.controller('DemoAppController', function($http, $location, $uibModal) {
             .reverse());
     demoApp.getTokens();
 
-    demoApp.getTokensIssuedByMe = () => $http.get(apiBaseURL + "tokens-issued-by-me")
+     demoApp.getTxns = () => $http.get(apiBaseURL + "txns")
+        .then((response) => {
+            //console.log("Txn Response= " + response.data);
+            demoApp.txns = response.data;
+        });
+
+     demoApp.getTxns();
+
+    /*demoApp.getTokensIssuedByMe = () => $http.get(apiBaseURL + "tokens-issued-by-me")
         .then((response) => demoApp.loyalty_tokens = Object.keys(response.data)
            .map((key) => response.data[key].state.data)
            .reverse());
-    demoApp.getTokensIssuedByMe();
-
-     demoApp.getTxns = () => $http.get(apiBaseURL + "txns")
-        .then((response) => {
-            console.log("Txn Response= " + response);
-            demoApp.txns = response.data;
-        });
-     demoApp.getTxns();
+    demoApp.getTokensIssuedByMe();*/
 });
 
 app.controller('ModalInstanceCtrl', function ($http, $location, $uibModalInstance, $uibModal, demoApp, apiBaseURL, peers, peer_map) {

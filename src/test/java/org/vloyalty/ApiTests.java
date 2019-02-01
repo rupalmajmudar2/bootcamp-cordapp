@@ -18,7 +18,9 @@ import org.junit.Before;
 import org.junit.Test;
 import org.vloyalty.api.TokenApi;
 
+import javax.swing.*;
 import javax.ws.rs.core.Response;
+import java.awt.*;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -44,6 +46,44 @@ public class ApiTests {
     @After
     public void tearDown() {
         //network.stopNodes();
+    }
+
+    @Test
+    public void ui() throws Exception {
+        String longString= "hfkldjfkd";
+        JTextArea textArea = new JTextArea(longString);
+        textArea.setSize( new Dimension(400, 40) );
+        int response = JOptionPane.showConfirmDialog(textArea, "Do you wish to Sign this txn?", "Confirm for Node:" + "MyNodeName",
+                JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+    }
+
+    @Test
+    public void parseTxnString() throws Exception {
+        final NetworkHostAndPort nodeAddress = NetworkHostAndPort.parse("localhost:10008");
+        final CordaRPCClient rpcOps = new CordaRPCClient(nodeAddress, CordaRPCClientConfiguration.DEFAULT);
+        final CordaRPCOps proxy = rpcOps.start("user1", "test").getProxy();
+        TokenApi api = new TokenApi(proxy);
+
+        String str= "INPUT: B6A4797D1934A42D48C05DCEAD90F997029024A2CCF46ECD7D30749C52E7D955(1)";
+        String expectedOut= "INPUT:B6A4(1)";
+        String finalStr= api.inputStringCleanup(str);
+        assert(expectedOut.equals(finalStr));
+
+        str="Txn: 2FA1:Transaction:INPUT: B6A4797D1934A42D48C05DCEAD90F997029024A2CCF46ECD7D30749C52E7D955(1)OUTPUT: TokenState(#tokens=20, owner=O=Customer, L=Zug, C=CH, issuer=O=Valora, L=Zurich, C=CH)OUTPUT: TokenState(#tokens=391, owner=O=Valora, L=Zurich, C=CH, issuer=O=Valora, L=Zurich, C=CH)";
+        expectedOut="Txn: 2FA1:Transaction:INPUT:B6A4(1)OUTPUT: TokenState(#tokens=20, owner=O=Customer, L=Zug, C=CH, issuer=O=Valora, L=Zurich, C=CH)OUTPUT: TokenState(#tokens=391, owner=O=Valora, L=Zurich, C=CH, issuer=O=Valora, L=Zurich, C=CH)";
+        finalStr= api.inputStringCleanup(str);
+        assert(expectedOut.equals(finalStr));
+
+        str="Txn: 8458:Transaction:OUTPUT: TokenState(#tokens=444, owner=O=Valora, L=Zurich, C=CH, issuer=O=Valora, L=Zurich, C=CH)";
+        expectedOut="Txn: 8458:Transaction:OUTPUT: TokenState(#tokens=444, owner=O=Valora, L=Zurich, C=CH, issuer=O=Valora, L=Zurich, C=CH)";
+        finalStr= api.inputStringCleanup(str);
+        assert(expectedOut.equals(finalStr));
+
+        str="C1C1:Transaction:INPUT:      1F2410CFD542C6968A557E73C105BC858C038D3BDD1F66250EF180DBF6A937A3(0)OUTPUT:     TokenState(#tokens=33, owner=O=Evian, L=Pfaffikon, C=CH, issuer=O=Valora, L=Zurich, C=CH)OUTPUT:     TokenState(#tokens=78, owner=O=Valora, L=Zurich, C=CH, issuer=O=Valora, L=Zurich, C=CH)";
+        expectedOut="C1C1:Transaction:INPUT:1F24(0)OUTPUT:     TokenState(#tokens=33, owner=O=Evian, L=Pfaffikon, C=CH, issuer=O=Valora, L=Zurich, C=CH)OUTPUT:     TokenState(#tokens=78, owner=O=Valora, L=Zurich, C=CH, issuer=O=Valora, L=Zurich, C=CH)";
+        finalStr= api.inputStringCleanup(str);
+        assert(expectedOut.equals(finalStr));
+
     }
 
     @Test
@@ -87,13 +127,13 @@ public class ApiTests {
 
         CordaX500Name sbb= new CordaX500Name("SBB", "Bern", "CH");
         Map sbb_dets= (Map) dets.get(sbb.toString());
-        Assert.assertTrue(sbb_dets.get("isPartnerNode") instanceof String);
-        String isPartnerNode= (String) sbb_dets.get("isPartnerNode");
-        Assert.assertTrue(isPartnerNode.equals("true"));
+        Assert.assertTrue(sbb_dets.get("isPartnerNode") instanceof Boolean);
+        boolean isPartnerNode= (Boolean) sbb_dets.get("isPartnerNode");
+        Assert.assertTrue(isPartnerNode);
 
-        Assert.assertTrue(sbb_dets.get("isCustomerNode") instanceof String);
-        String isCustomerNode= (String) sbb_dets.get("isCustomerNode");
-        Assert.assertTrue(isCustomerNode.equals("false"));
+        Assert.assertTrue(sbb_dets.get("isCustomerNode") instanceof Boolean);
+        boolean isCustomerNode= (Boolean) sbb_dets.get("isCustomerNode");
+        Assert.assertFalse(isCustomerNode);
     }
 
     /*
