@@ -58,7 +58,7 @@ public class ApiTests {
         List<StateAndRef<CouponState>> coupons=  api.getCoupons();
         assert(true);
     }
-    /*
+
     @Test
     public void issueCash() throws Exception {
         final NetworkHostAndPort nodeAddress = NetworkHostAndPort.parse("localhost:10008");
@@ -69,7 +69,7 @@ public class ApiTests {
         CordaX500Name me= proxy.nodeInfo().getLegalIdentities().get(0).getName();
         api.issueCash(100, me);
         assert(true);
-    }*/
+    }
 
     /*
     @Test
@@ -80,7 +80,7 @@ public class ApiTests {
         int response = JOptionPane.showConfirmDialog(textArea, "Do you wish to Sign this txn?", "Confirm for Node:" + "MyNodeName",
                 JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
     }
-*/
+    */
     @Test
     public void issueCoupon() throws Exception {
         final NetworkHostAndPort nodeAddress = NetworkHostAndPort.parse("localhost:10008");

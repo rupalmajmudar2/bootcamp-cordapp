@@ -24,6 +24,7 @@ import net.corda.finance.flows.CashIssueAndPaymentFlow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.vloyalty.client.TokenClientAttachmentRPC;
+import org.vloyalty.flow.CashIssueFlow;
 import org.vloyalty.flow.CouponIssueFlow;
 import org.vloyalty.flow.TokenAttachmentSender;
 import org.vloyalty.flow.TokenIssueFlow;
@@ -36,10 +37,8 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.lang.reflect.Field;
-import java.util.Currency;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.text.SimpleDateFormat;
+import java.util.*;
 import java.util.concurrent.ExecutionException;
 
 import static java.util.stream.Collectors.toList;
@@ -417,29 +416,21 @@ public class TokenApi {
         Party notary = rpcOps.notaryIdentities().get(0);
         boolean anonymous = true;
         //val issuerBankPartyRef = OpaqueBytes.of(params.issuerBankPartyRef.toByte())
-        String txnRefStr = "CashTxn#1234";
-        OpaqueBytes txnRef= OpaqueBytes.of(txnRefStr.getBytes());
-        Currency chf= Currency.getInstance("CHF");
+        //String txnRefStr = "CashTxn#1234";
+        //OpaqueBytes txnRef= OpaqueBytes.of(txnRefStr.getBytes());
+        //Currency chf= Currency.getInstance("CHF");
 
-        Amount<Currency> amount= Amount.parseCurrency(cashAmount + " CHF");
-        /*
-        CashIssueAndPaymentFlow( constructor:
-                  amount: Amount<Currency>,
-                issueRef: OpaqueBytes,
-                recipient: Party,
-                anonymous: Boolean,
-                notary: Party
-         */
+        //Amount<Currency> amount= Amount.parseCurrency(cashAmount + " CHF");
         try {
-            final AbstractCashFlow.Result result = rpcOps
-                    .startTrackedFlowDynamic(CashIssueAndPaymentFlow.class, amount, txnRef, otherParty, anonymous, notary)
+            final SignedTransaction result = rpcOps
+                    .startTrackedFlowDynamic(CashIssueFlow.class, otherParty, cashAmount)
                     .getReturnValue()
                     .get();
 
             final String msg = String.format("Cash Issue to %s for %s: Txn# %s committed to ledger.\n",
                     myLegalName.toString(),
                     cashAmount,
-                    result.getStx().getId());
+                    result.getId());
             //System.out.println("#createTokens: #1");
             Response rr = Response.status(CREATED).entity(msg).build();
             //System.out.println("#createTokens: #2");
@@ -482,8 +473,9 @@ public class TokenApi {
         }
 
         try {
+            String timestamp= new SimpleDateFormat("yyyyMMdd_HHmmss").format(Calendar.getInstance().getTime());
             final SignedTransaction signedTx = rpcOps
-                    .startTrackedFlowDynamic(CouponIssueFlow.class, text, ownerParty, distParty)
+                    .startTrackedFlowDynamic(CouponIssueFlow.class, text, ownerParty, distParty, "Coupon_Issued_" + timestamp)
                     .getReturnValue()
                     .get();
 

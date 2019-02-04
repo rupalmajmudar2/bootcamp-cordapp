@@ -23,7 +23,7 @@ public class NodeDriver {
     public static void main(String[] args) {
         final User user = new User("user1", "test", ImmutableSet.of("ALL"));
         driver(new DriverParameters().
-                withExtraCordappPackagesToScan(Arrays.asList("org.vloyalty.contract", "net.corda.finance.contracts.asset.Cash")).
+                withExtraCordappPackagesToScan(Arrays.asList("org.vloyalty.contract", "net.corda.finance.contracts.asset.Cash", "org.vloyalty.contract.CashContract")).
                 withWaitForAllNodesToFinish(true), dsl -> {
                     List<CordaFuture<NodeHandle>> nodeFutures = ImmutableList.of(
                             /*dsl.startNode(new NodeParameters()
