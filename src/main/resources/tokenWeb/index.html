@@ -45,14 +45,47 @@ COMING WEEKS WE'LL WRITE A TUTORIAL ON HOW BEST TO DO THIS.
         All Node details: {{demoApp.peer_map}}
     </div>
 </nav> -->
-<script type="text/ng-template" id="demoAppModal.html">
+<script type="text/ng-template" id="demoCashAppModal.html">
     <div class="modal-header">
-        <h4 class="modal-title">Add new Tokens</h4>
+        <h4 class="modal-title">Make Cash Payment [to get Points]</h4>
     </div>
     <form>
         <div class="modal-body">
             <div class="form-group">
-                <label for="counterparty" class="control-label">Tokens For:</label>
+                <label for="counterparty" class="control-label">Pay Cash To:</label>
+                <select ng-model="modalInstance.form.counterparty" class="form-control" id="counterparty"
+                        ng-options="peerkey as peerkey for (peerkey,peerval) in modalInstance.peer_map">
+                    <!-- <select ng-options="k as v for (k, v) in cols"></select> -->
+                    <!-- ng-options="peer as peer for peer in modalInstance.peer"> -->
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="value" class="control-label">Cash Amount [CHF]:</label>
+                <input type="text" ng-model="modalInstance.form.value" class="form-control" id="value">
+            </div>
+            <div ng-show="modalInstance.formError" class="form-group">
+                <div class="alert alert-danger" role="alert">
+                    <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+                    <span class="sr-only">Error:</span>
+                    Enter valid Cash parameters
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button ng-click="modalInstance.cancel()" type="button" class="btn btn-default">Close</button>
+            <button ng-click="modalInstance.payCash()" type="button" class="btn btn-primary">Pay Cash</button>
+        </div>
+    </form>
+</script>
+
+<script type="text/ng-template" id="demoAppModal.html">
+    <div class="modal-header">
+        <h4 class="modal-title">Add new Points</h4>
+    </div>
+    <form>
+        <div class="modal-body">
+            <div class="form-group">
+                <label for="counterparty" class="control-label">Points For:</label>
                 <select ng-model="modalInstance.form.counterparty" class="form-control" id="counterparty"
                         ng-options="peerkey as peerkey for (peerkey,peerval) in modalInstance.peer_map">
                         <!-- <select ng-options="k as v for (k, v) in cols"></select> -->
@@ -60,20 +93,20 @@ COMING WEEKS WE'LL WRITE A TUTORIAL ON HOW BEST TO DO THIS.
                 </select>
             </div>
             <div class="form-group">
-                <label for="value" class="control-label">#Tokens:</label>
+                <label for="value" class="control-label">#Points:</label>
                 <input type="text" ng-model="modalInstance.form.value" class="form-control" id="value">
             </div>
             <div ng-show="modalInstance.formError" class="form-group">
                 <div class="alert alert-danger" role="alert">
                     <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
                     <span class="sr-only">Error:</span>
-                    Enter valid Token parameters
+                    Enter valid Point parameters
                 </div>
             </div>
         </div>
         <div class="modal-footer">
             <button ng-click="modalInstance.cancel()" type="button" class="btn btn-default">Close</button>
-            <button ng-click="modalInstance.create()" type="button" class="btn btn-primary">Create Tokens</button>
+            <button ng-click="modalInstance.create()" type="button" class="btn btn-primary">Create Points</button>
         </div>
     </form>
 </script>
@@ -88,8 +121,6 @@ COMING WEEKS WE'LL WRITE A TUTORIAL ON HOW BEST TO DO THIS.
                 <label for="counterparty" class="control-label">Coupon For:</label>
                 <select ng-model="modalCouponInstance.form.counterparty" class="form-control" id="counterparty"
                         ng-options="peerkey as peerkey for (peerkey,peerval) in modalCouponInstance.peer_map">
-                    <!-- <select ng-options="k as v for (k, v) in cols"></select> -->
-                    <!-- ng-options="peer as peer for peer in modalInstance.peer"> -->
                 </select>
             </div>
             <div class="form-group">
@@ -123,32 +154,32 @@ COMING WEEKS WE'LL WRITE A TUTORIAL ON HOW BEST TO DO THIS.
 </nav> -->
 <script type="text/ng-template" id="demoAppModalTransfer.html">
     <div class="modal-header">
-        <h4 class="modal-title">Transfer My Tokens</h4>
+        <h4 class="modal-title">Transfer My Points</h4>
     </div>
     <form>
         <div class="modal-body">
             <div class="form-group">
-                <label for="counterparty" class="control-label">Send Tokens To:</label>
+                <label for="counterparty" class="control-label">Send Points To:</label>
                 <select ng-model="modalInstance.form.counterparty" class="form-control" id="counterparty"
                         ng-options="peerkey as peerkey for (peerkey,peerval) in modalInstance.peer_map">
                         <!--ng-options="peer as peer for peer in modalInstance.peers">-->
                 </select>
             </div>
             <div class="form-group">
-                <label for="value" class="control-label">#Tokens:</label>
+                <label for="value" class="control-label">#Points:</label>
                 <input type="text" ng-model="modalInstance.form.value" class="form-control" id="value">
             </div>
             <div ng-show="modalInstance.formError" class="form-group">
                 <div class="alert alert-danger" role="alert">
                     <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
                     <span class="sr-only">Error:</span>
-                    Enter valid Token-Transfer parameters
+                    Enter valid Point-Transfer parameters
                 </div>
             </div>
         </div>
         <div class="modal-footer">
             <button ng-click="modalInstance.cancel()" type="button" class="btn btn-default">Close</button>
-            <button ng-click="modalInstance.transfer()" type="button" class="btn btn-primary">Transfer Tokens</button>
+            <button ng-click="modalInstance.transfer()" type="button" class="btn btn-primary">Transfer Points</button>
         </div>
     </form>
 </script>
@@ -286,6 +317,9 @@ COMING WEEKS WE'LL WRITE A TUTORIAL ON HOW BEST TO DO THIS.
             <legend style="color:blue;font-weight:bold;">Setup</legend>
             <nav class="navbar navbar-default">
                 <div class="container-fluid">
+                    <button ng-click="demoApp.openModalForCashPayment()" type="button" ng-show="demoApp.isPartnerNode" class="btn btn-primary navbar-btn">Pay Cash</button>
+                </div>
+                <div class="container-fluid">
                     <button ng-click="demoApp.openModalForTokenCreation()" type="button" ng-show="demoApp.isPartnerNode" class="btn btn-primary navbar-btn">Issue Points</button>
                 </div>
                 <div class="container-fluid">
@@ -334,8 +368,20 @@ COMING WEEKS WE'LL WRITE A TUTORIAL ON HOW BEST TO DO THIS.
                 <div class="panel-primary">
                     <div class="panel-heading">
                         <h4 class="panel-title">
-                            My Points & Coupons:
+                            My Cash, Points & Coupons:
                         </h4>
+                    </div>
+                </div>
+                <div>
+                    Cash:
+                    <div ng-repeat="cashItem in demoApp.cash" class="panel panel-default">
+                        <div class="panel-body">
+                            <ul>
+                                <li>Owner: {{cashItem.owner}}</li>
+                                <li>Issuer: {{cashItem.issuer}}</li>
+                                <li>Value: {{cashItem.amount}} {{cashItem.ccy}}</li>
+                            </ul>
+                        </div>
                     </div>
                 </div>
                 <div>

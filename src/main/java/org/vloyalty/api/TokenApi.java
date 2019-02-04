@@ -4,7 +4,6 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import net.corda.core.contracts.Amount;
 import net.corda.core.contracts.StateAndRef;
 import net.corda.core.crypto.SecureHash;
 import net.corda.core.identity.CordaX500Name;
@@ -18,18 +17,12 @@ import net.corda.core.node.services.vault.QueryCriteria;
 import net.corda.core.transactions.SignedTransaction;
 import net.corda.core.transactions.WireTransaction;
 import net.corda.core.utilities.NetworkHostAndPort;
-import net.corda.core.utilities.OpaqueBytes;
-import net.corda.finance.flows.AbstractCashFlow;
-import net.corda.finance.flows.CashIssueAndPaymentFlow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.vloyalty.client.TokenClientAttachmentRPC;
-import org.vloyalty.flow.CashIssueFlow;
-import org.vloyalty.flow.CouponIssueFlow;
-import org.vloyalty.flow.TokenAttachmentSender;
-import org.vloyalty.flow.TokenIssueFlow;
-import org.vloyalty.flow.TokenTransferFlowInitiator;
+import org.vloyalty.flow.*;
 import org.vloyalty.schema.TokenSchema;
+import org.vloyalty.state.CashState;
 import org.vloyalty.state.CouponState;
 import org.vloyalty.state.TokenState;
 
@@ -38,7 +31,10 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.lang.reflect.Field;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.Calendar;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
 import static java.util.stream.Collectors.toList;
@@ -146,6 +142,16 @@ public class TokenApi {
                 .map(node -> node.getLegalIdentities().get(0).getName())
                 //.filter(name -> !name.equals(myLegalName) && !serviceNames.contains(name.getOrganisation()))
                 .collect(toList()));*/
+    }
+
+    /**
+     * Displays all Cash states that exist in the node's vault.
+     */
+    @GET
+    @Path("cash")
+    @Produces(MediaType.APPLICATION_JSON)
+    public List<StateAndRef<CashState>> getCash() {
+        return rpcOps.vaultQuery(CashState.class).getStates();
     }
 
     /**
@@ -399,7 +405,7 @@ public class TokenApi {
     public Response issueCash( //createIOU(
                                   @QueryParam("amount") int cashAmount,
                                   @QueryParam("owner") CordaX500Name ownerPartyName) throws InterruptedException, ExecutionException {
-        System.out.println("In TokenApi#issueCash");
+        System.out.println("In TokenApi#issueCash amount=" + cashAmount);
         if (cashAmount <= 0) {
             return Response.status(BAD_REQUEST).entity("Query parameter 'amount' must be non-negative.\n").build();
         }
@@ -428,7 +434,7 @@ public class TokenApi {
                     .get();
 
             final String msg = String.format("Cash Issue to %s for %s: Txn# %s committed to ledger.\n",
-                    myLegalName.toString(),
+                    ownerPartyName.toString(), //myLegalName.toString(),
                     cashAmount,
                     result.getId());
             //System.out.println("#createTokens: #1");
