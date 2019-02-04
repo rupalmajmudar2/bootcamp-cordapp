@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import net.corda.core.contracts.Amount;
 import net.corda.core.contracts.StateAndRef;
 import net.corda.core.crypto.SecureHash;
 import net.corda.core.identity.CordaX500Name;
@@ -17,19 +18,25 @@ import net.corda.core.node.services.vault.QueryCriteria;
 import net.corda.core.transactions.SignedTransaction;
 import net.corda.core.transactions.WireTransaction;
 import net.corda.core.utilities.NetworkHostAndPort;
+import net.corda.core.utilities.OpaqueBytes;
+import net.corda.finance.flows.AbstractCashFlow;
+import net.corda.finance.flows.CashIssueAndPaymentFlow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.vloyalty.client.TokenClientAttachmentRPC;
+import org.vloyalty.flow.CouponIssueFlow;
 import org.vloyalty.flow.TokenAttachmentSender;
 import org.vloyalty.flow.TokenIssueFlow;
 import org.vloyalty.flow.TokenTransferFlowInitiator;
 import org.vloyalty.schema.TokenSchema;
+import org.vloyalty.state.CouponState;
 import org.vloyalty.state.TokenState;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.lang.reflect.Field;
+import java.util.Currency;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -150,6 +157,16 @@ public class TokenApi {
     @Produces(MediaType.APPLICATION_JSON)
     public List<StateAndRef<TokenState>> getTokens() {
         return rpcOps.vaultQuery(TokenState.class).getStates();
+    }
+
+    /**
+     * Displays all Coupon states that exist in the node's vault.
+     */
+    @GET
+    @Path("coupons")
+    @Produces(MediaType.APPLICATION_JSON)
+    public List<StateAndRef<CouponState>> getCoupons() {
+        return rpcOps.vaultQuery(CouponState.class).getStates();
     }
 
     /**
@@ -369,5 +386,120 @@ public class TokenApi {
         else return str;
 
         return finalStr;
+    }
+
+    //===================== Now for Cash, Coupons etc. =============================
+
+    /**
+     *  Request Cash issuance
+     *  https://github.com/corda/corda/tree/master/samples/bank-of-corda-demo
+     *  BankOfCordaWebApi.kt
+     */
+    @PUT
+    @Path("issue-cash")
+    public Response issueCash( //createIOU(
+                                  @QueryParam("amount") int cashAmount,
+                                  @QueryParam("owner") CordaX500Name ownerPartyName) throws InterruptedException, ExecutionException {
+        System.out.println("In TokenApi#issueCash");
+        if (cashAmount <= 0) {
+            return Response.status(BAD_REQUEST).entity("Query parameter 'amount' must be non-negative.\n").build();
+        }
+        if (ownerPartyName == null) {
+            return Response.status(BAD_REQUEST).entity("Query parameter 'owner' missing or has wrong format.\n").build();
+        }
+
+        System.out.println("#createCash: owner=" + ownerPartyName + " #cash=" + cashAmount);
+        final Party otherParty = rpcOps.wellKnownPartyFromX500Name(ownerPartyName);
+        if (otherParty == null) {
+            return Response.status(BAD_REQUEST).entity("Party named " + ownerPartyName + "cannot be found.\n").build();
+        }
+
+        Party notary = rpcOps.notaryIdentities().get(0);
+        boolean anonymous = true;
+        //val issuerBankPartyRef = OpaqueBytes.of(params.issuerBankPartyRef.toByte())
+        String txnRefStr = "CashTxn#1234";
+        OpaqueBytes txnRef= OpaqueBytes.of(txnRefStr.getBytes());
+        Currency chf= Currency.getInstance("CHF");
+
+        Amount<Currency> amount= Amount.parseCurrency(cashAmount + " CHF");
+        /*
+        CashIssueAndPaymentFlow( constructor:
+                  amount: Amount<Currency>,
+                issueRef: OpaqueBytes,
+                recipient: Party,
+                anonymous: Boolean,
+                notary: Party
+         */
+        try {
+            final AbstractCashFlow.Result result = rpcOps
+                    .startTrackedFlowDynamic(CashIssueAndPaymentFlow.class, amount, txnRef, otherParty, anonymous, notary)
+                    .getReturnValue()
+                    .get();
+
+            final String msg = String.format("Cash Issue to %s for %s: Txn# %s committed to ledger.\n",
+                    myLegalName.toString(),
+                    cashAmount,
+                    result.getStx().getId());
+            //System.out.println("#createTokens: #1");
+            Response rr = Response.status(CREATED).entity(msg).build();
+            //System.out.println("#createTokens: #2");
+            return rr;
+
+        } catch (Throwable ex) {
+            final String msg = ex.getMessage();
+            logger.error(ex.getMessage(), ex);
+            return Response.status(BAD_REQUEST).entity(msg).build();
+        }
+    }
+
+    //===============
+
+    @PUT
+    @Path("issue-coupon")
+    public Response issueCoupon(
+                                  @QueryParam("text") String text,
+                                  @QueryParam("owner") CordaX500Name ownerPartyName,
+                                  @QueryParam("distributor") CordaX500Name distributorPartyName) throws Exception {
+        System.out.println("In TokenApi#issueCoupon");
+        if (text.trim().equals("")) {
+            return Response.status(BAD_REQUEST).entity("Query parameter 'text' must be specified.\n").build();
+        }
+        if (ownerPartyName == null) {
+            return Response.status(BAD_REQUEST).entity("Query parameter 'owner' missing or has wrong format.\n").build();
+        }
+        if (distributorPartyName == null) {
+            return Response.status(BAD_REQUEST).entity("Query parameter 'distributor' missing or has wrong format.\n").build();
+        }
+
+        System.out.println("#issueCoupon: distributor="+distributorPartyName+" owner="+ownerPartyName+ " text="+text);
+        final Party ownerParty = rpcOps.wellKnownPartyFromX500Name(ownerPartyName);
+        if (ownerParty == null) {
+            return Response.status(BAD_REQUEST).entity("Party named " + ownerPartyName + "cannot be found.\n").build();
+        }
+        final Party distParty = rpcOps.wellKnownPartyFromX500Name(distributorPartyName);
+        if (distParty == null) {
+            return Response.status(BAD_REQUEST).entity("Party named " + distributorPartyName + "cannot be found.\n").build();
+        }
+
+        try {
+            final SignedTransaction signedTx = rpcOps
+                    .startTrackedFlowDynamic(CouponIssueFlow.class, text, ownerParty, distParty)
+                    .getReturnValue()
+                    .get();
+
+            final String msg = String.format("Coupon %s issued by %s to %s: Txn# %s committed to ledger.\n",
+                    text,
+                    myLegalName.toString(),
+                    ownerPartyName.toString(),
+                    signedTx.getId());
+            Response rr= Response.status(CREATED).entity(msg).build();
+
+            return rr;
+
+        } catch (Throwable ex) {
+            final String msg = ex.getMessage();
+            logger.error(ex.getMessage(), ex);
+            return Response.status(BAD_REQUEST).entity(msg).build();
+        }
     }
 }

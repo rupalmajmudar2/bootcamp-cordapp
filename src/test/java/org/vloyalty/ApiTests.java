@@ -3,27 +3,27 @@ package org.vloyalty;
 import com.google.gson.Gson;
 import net.corda.client.rpc.CordaRPCClient;
 import net.corda.client.rpc.CordaRPCClientConfiguration;
-import net.corda.core.contracts.ContractState;
+import net.corda.core.contracts.StateAndRef;
 import net.corda.core.identity.CordaX500Name;
+import net.corda.core.identity.Party;
 import net.corda.core.messaging.CordaRPCOps;
-import net.corda.core.transactions.SignedTransaction;
-import net.corda.core.transactions.WireTransaction;
 import net.corda.core.utilities.NetworkHostAndPort;
 import net.corda.testing.node.MockNetwork;
 import net.corda.testing.node.StartedMockNode;
-//import org.apache.shiro.util.Assert;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.vloyalty.api.TokenApi;
+import org.vloyalty.state.CouponState;
 
 import javax.swing.*;
-import javax.ws.rs.core.Response;
 import java.awt.*;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+//import org.apache.shiro.util.Assert;
 
 /**
  * Rupal 18Dec18 - try automate the things done inside TokenApi.
@@ -49,6 +49,30 @@ public class ApiTests {
     }
 
     @Test
+    public void getCoupons() throws Exception {
+        final NetworkHostAndPort nodeAddress = NetworkHostAndPort.parse("localhost:10008");
+        final CordaRPCClient rpcOps = new CordaRPCClient(nodeAddress, CordaRPCClientConfiguration.DEFAULT);
+        final CordaRPCOps proxy = rpcOps.start("user1", "test").getProxy();
+
+        TokenApi api = new TokenApi(proxy);
+        List<StateAndRef<CouponState>> coupons=  api.getCoupons();
+        assert(true);
+    }
+    /*
+    @Test
+    public void issueCash() throws Exception {
+        final NetworkHostAndPort nodeAddress = NetworkHostAndPort.parse("localhost:10008");
+        final CordaRPCClient rpcOps = new CordaRPCClient(nodeAddress, CordaRPCClientConfiguration.DEFAULT);
+        final CordaRPCOps proxy = rpcOps.start("user1", "test").getProxy();
+
+        TokenApi api = new TokenApi(proxy);
+        CordaX500Name me= proxy.nodeInfo().getLegalIdentities().get(0).getName();
+        api.issueCash(100, me);
+        assert(true);
+    }*/
+
+    /*
+    @Test
     public void ui() throws Exception {
         String longString= "hfkldjfkd";
         JTextArea textArea = new JTextArea(longString);
@@ -56,6 +80,23 @@ public class ApiTests {
         int response = JOptionPane.showConfirmDialog(textArea, "Do you wish to Sign this txn?", "Confirm for Node:" + "MyNodeName",
                 JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
     }
+*/
+    @Test
+    public void issueCoupon() throws Exception {
+        final NetworkHostAndPort nodeAddress = NetworkHostAndPort.parse("localhost:10008");
+        final CordaRPCClient rpcOps = new CordaRPCClient(nodeAddress, CordaRPCClientConfiguration.DEFAULT);
+        final CordaRPCOps proxy = rpcOps.start("user1", "test").getProxy();
+
+        TokenApi api = new TokenApi(proxy);
+
+        String  text= "Coupon : 40% off Evian until 31.03.2019";
+        CordaX500Name sbb_dist= new CordaX500Name("SBB", "Bern", "CH");
+        CordaX500Name evian_issuer= new CordaX500Name("Evian", "Pfaffikon", "CH");
+        CordaX500Name sbb_owner= new CordaX500Name("SBB", "Bern", "CH");
+
+        api.issueCoupon(text, sbb_owner, sbb_dist);
+    }
+
 
     @Test
     public void parseTxnString() throws Exception {

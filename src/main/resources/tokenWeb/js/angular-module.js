@@ -68,6 +68,22 @@ app.controller('DemoAppController', function($http, $location, $uibModal) {
         modalInstance.result.then(() => {}, () => {});
     };
 
+    demoApp.openModalForCouponCreation = () => {
+        const modalCouponInstance = $uibModal.open({
+            templateUrl: 'demoCouponAppModal.html',
+            controller: 'ModalCouponInstanceCtrl',
+            controllerAs: 'modalCouponInstance',
+            resolve: {
+                demoApp: () => demoApp,
+                apiBaseURL: () => apiBaseURL,
+                peers: () => peers,
+                peer_map: () => peer_map
+            }
+        });
+
+        modalCouponInstance.result.then(() => {}, () => {});
+    };
+
     demoApp.openModalForTokenTransfer = () => {
         const modalInstance = $uibModal.open({
             templateUrl: 'demoAppModalTransfer.html',
@@ -111,8 +127,16 @@ app.controller('DemoAppController', function($http, $location, $uibModal) {
             //console.log("Txn Response= " + response.data);
             demoApp.txns = response.data;
         });
-
      demoApp.getTxns();
+
+    demoApp.getCoupons = () => $http.get(apiBaseURL + "coupons")
+        .then((response) => {
+            console.log("#getCoupons response data=" + response.data);
+
+            demoApp.coupons = Object.keys(response.data)
+                        .map((key) => response.data[key].state.data)
+                        .reverse()});
+    demoApp.getCoupons();
 
     /*demoApp.getTokensIssuedByMe = () => $http.get(apiBaseURL + "tokens-issued-by-me")
         .then((response) => demoApp.loyalty_tokens = Object.keys(response.data)
@@ -145,6 +169,7 @@ app.controller('ModalInstanceCtrl', function ($http, $location, $uibModalInstanc
                 (result) => {
                     modalInstance.displayMessage(result);
                     demoApp.getTokens();
+                    demoApp.getCoupons();
                     demoApp.getTxns();
                 },
                 (result) => {
@@ -155,6 +180,123 @@ app.controller('ModalInstanceCtrl', function ($http, $location, $uibModalInstanc
     };
 
     modalInstance.transfer = () => {
+        if (invalidFormInput()) {
+            modalInstance.formError = true;
+        } else {
+            modalInstance.formError = false;
+
+            $uibModalInstance.close();
+            console.log("In #transfer");
+            const txfrTokenEndpoint = `${apiBaseURL}transfer-tokens?newowner=${modalInstance.form.counterparty}&numtokens=${modalInstance.form.value}`;
+
+            // Create PO and handle success / fail responses.
+            $http.put(txfrTokenEndpoint).then(
+                (result) => {
+                    modalInstance.displayMessage(result);
+                    demoApp.getTokens();
+                    demoApp.getCoupons();
+                    demoApp.getTxns();
+                },
+                (result) => {
+                    modalInstance.displayMessage(result);
+                }
+            );
+        }
+    };
+
+    modalInstance.sendAttachment = () => {
+        if (invalidAttachmtFormInput()) {
+            modalInstance.formError = true;
+        } else {
+            modalInstance.formError = false;
+
+             $uibModalInstance.close();
+             console.log("In #sendAttachment");
+             const txfrTokenEndpoint = `${apiBaseURL}send-attachment?filename=${modalInstance.form.formfilename}&newowner=${modalInstance.form.counterparty}`;
+
+             // Create PO and handle success / fail responses.
+             $http.put(txfrTokenEndpoint).then(
+                (result) => {
+                    modalInstance.displayMessage(result);
+                     demoApp.getTokens();
+                     demoApp.getCoupons();
+                     demoApp.getTxns();
+                 },
+                 (result) => {
+                    modalInstance.displayMessage(result);
+                 }
+               );
+             }
+         };
+
+    modalInstance.displayMessage = (message) => {
+        const modalInstanceTwo = $uibModal.open({
+            templateUrl: 'messageContent.html',
+            controller: 'messageCtrl',
+            controllerAs: 'modalInstanceTwo',
+            resolve: { message: () => message }
+        });
+
+        // No behaviour on close / dismiss.
+        modalInstanceTwo.result.then(() => {}, () => {});
+    };
+
+    // Close create Token modal dialogue.
+    modalInstance.cancel = () => $uibModalInstance.dismiss();
+
+    // Validate the Token.
+    function invalidFormInput() {
+        return isNaN(modalInstance.form.value) || (modalInstance.form.counterparty === undefined);
+    }
+
+    // Validate the attachment
+    function invalidAttachmtFormInput() {
+        return !isNaN(modalInstance.form.formfilename) || (modalInstance.form.counterparty === undefined);
+    }
+});
+
+// Controller for success/fail modal dialogue.
+app.controller('messageCtrl', function ($uibModalInstance, message) {
+    const modalInstanceTwo = this;
+    modalInstanceTwo.message = message.data;
+});
+
+app.controller('ModalCouponInstanceCtrl', function ($http, $location, $uibModalInstance, $uibModal, demoApp, apiBaseURL, peers, peer_map) {
+    const modalCouponInstance = this;
+
+    modalCouponInstance.peer_map = peer_map;
+    modalCouponInstance.peers = peers;
+    modalCouponInstance.form = {};
+    modalCouponInstance.formError = false;
+
+    // Validate and create Coupons.
+    modalCouponInstance.create = () => {
+        console.log("#modalCouponInstance.create");
+        //if (invalidFormInput()) {  later.
+        //    modalCouponInstance.formError = true;
+        //} else {
+            modalCouponInstance.formError = false;
+
+            $uibModalInstance.close();
+
+            //For now, the coupon issuer (say Evian) issued the coupon and sends to the distributor.  So that initially, owner=distributor (say SBB). Owner can change later.
+            const createCouponEndpoint = `${apiBaseURL}issue-coupon?text=${modalCouponInstance.form.value}&owner=${modalCouponInstance.form.counterparty}&distributor=${modalCouponInstance.form.counterparty}`;
+            console.log("#modalCouponInstance.create: endpoint is: " + createCouponEndpoint);
+            // Create PO and handle success / fail responses.
+            $http.put(createCouponEndpoint).then(
+                (result) => {
+                    modalCouponInstance.displayMessage(result);
+                    demoApp.getCoupons();
+                    demoApp.getTxns();
+                },
+                (result) => {
+                    modalCouponInstance.displayMessage(result);
+                }
+            );
+        //}
+    };
+
+    /*modalInstance.transfer = () => {
         if (invalidFormInput()) {
             modalInstance.formError = true;
         } else {
@@ -198,11 +340,12 @@ app.controller('ModalInstanceCtrl', function ($http, $location, $uibModalInstanc
                  (result) => {
                     modalInstance.displayMessage(result);
                  }
-               );
-             }
-         };
+             );
+         }
+     };
+     */
 
-    modalInstance.displayMessage = (message) => {
+    modalCouponInstance.displayMessage = (message) => {
         const modalInstanceTwo = $uibModal.open({
             templateUrl: 'messageContent.html',
             controller: 'messageCtrl',
@@ -215,21 +358,15 @@ app.controller('ModalInstanceCtrl', function ($http, $location, $uibModalInstanc
     };
 
     // Close create Token modal dialogue.
-    modalInstance.cancel = () => $uibModalInstance.dismiss();
+    modalCouponInstance.cancel = () => $uibModalInstance.dismiss();
 
     // Validate the Token.
     function invalidFormInput() {
-        return isNaN(modalInstance.form.value) || (modalInstance.form.counterparty === undefined);
+        return isNaN(modalCouponInstance.form.value) || (modalCouponInstance.form.counterparty === undefined);
     }
 
     // Validate the attachment
     function invalidAttachmtFormInput() {
-        return !isNaN(modalInstance.form.formfilename) || (modalInstance.form.counterparty === undefined);
+        return !isNaN(modalCouponInstance.form.formfilename) || (modalCouponInstance.form.counterparty === undefined);
     }
-});
-
-// Controller for success/fail modal dialogue.
-app.controller('messageCtrl', function ($uibModalInstance, message) {
-    const modalInstanceTwo = this;
-    modalInstanceTwo.message = message.data;
 });

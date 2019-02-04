@@ -1,6 +1,9 @@
 package org.vloyalty.contract;
 
-import net.corda.core.contracts.*;
+import net.corda.core.contracts.Command;
+import net.corda.core.contracts.CommandData;
+import net.corda.core.contracts.Contract;
+import net.corda.core.contracts.ContractState;
 import net.corda.core.identity.Party;
 import net.corda.core.transactions.LedgerTransaction;
 import org.jetbrains.annotations.NotNull;
