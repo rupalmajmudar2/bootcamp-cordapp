@@ -42,7 +42,8 @@ public class TokenAttachmentContract implements Contract {
         }*/
     }
 
-    public static class Attach implements CommandData{
-
+    public interface Commands extends CommandData {
+        public static class Attach implements Commands {
+        }
     }
 }

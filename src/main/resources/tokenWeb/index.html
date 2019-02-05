@@ -13,7 +13,7 @@ GOING FORWARD WE RECOMMEND IMPLEMENTING A STANDALONE WEB SERVER THAT AUTHORISES 
 COMING WEEKS WE'LL WRITE A TUTORIAL ON HOW BEST TO DO THIS.
 -->
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:background-color="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="UTF-8">
     <title>Loyalty 2.0 Token CorDapp RM</title>
@@ -372,7 +372,7 @@ COMING WEEKS WE'LL WRITE A TUTORIAL ON HOW BEST TO DO THIS.
                 </div>
                 <div>
                     <div ng-repeat="txn in demoApp.txns" class="panel panel-default">
-                        <div class="panel-body">
+                        <div class="panel-body" background-color: {{demoApp.txnRowColor}}>
                             <ul>
                                 <li>Txn: {{txn.toString()}}</li>
                             </ul>

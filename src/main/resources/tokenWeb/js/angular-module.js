@@ -48,6 +48,7 @@ app.controller('DemoAppController', function($http, $location, $uibModal) {
 
         demoApp.isCustomerNode = demoApp.peer_map[demoApp.thisNode]['isCustomerNode'];
         demoApp.isPartnerNode = demoApp.peer_map[demoApp.thisNode]['isPartnerNode'];
+        demoApp.txnRowColor = "blue";
         //console.log("isCustNode2=" + demoApp.isCustomerNode + " type = "+ typeof demoApp.isCustomerNode);
         //console.log("isPartnerNode2=" + demoApp.isPartnerNode + " type = "+ typeof demoApp.isPartnerNode);
     });
@@ -177,6 +178,7 @@ app.controller('DemoAppController', function($http, $location, $uibModal) {
                         .reverse()});
     demoApp.getCoupons();
 
+    //demoApp.getColorFor(txn)
     /*demoApp.getTokensIssuedByMe = () => $http.get(apiBaseURL + "tokens-issued-by-me")
         .then((response) => demoApp.loyalty_tokens = Object.keys(response.data)
            .map((key) => response.data[key].state.data)
@@ -339,7 +341,7 @@ app.controller('ModalCouponInstanceCtrl', function ($http, $location, $uibModalI
     modalCouponInstance.form = {};
     modalCouponInstance.formError = false;
 
-    modalCouponInstance.couponStatuses = ["Coupon_Issued", "Coupon_Sent_to_Customer", "Coupon_Redeemed", "Coupon_Sent_For_Reimbursed", "Coupon_Settled"];
+    modalCouponInstance.couponStatuses = ["Coupon_Issued", "Coupon_Sent_to_Customer", "Coupon_Redeemed", "Coupon_Sent_For_Reimbursement", "Coupon_Settled"];
 
 
     // Validate and create Coupons.

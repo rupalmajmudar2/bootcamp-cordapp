@@ -292,6 +292,7 @@ public class TokenApi {
             val stx = flowHandle.returnValue.getOrThrow()
             println("Sent ${stx.id}")*/
         try {
+            TokenClientAttachmentRPC.downloadAttachment(rpcOps, attachmentHash); //re-checking
             final SignedTransaction signedTx2 = rpcOps
                     .startTrackedFlowDynamic(TokenAttachmentSender.class, otherParty, attachmentHash)
                     .getReturnValue()
@@ -348,6 +349,7 @@ public class TokenApi {
             SignedTransaction stxn= txns.get(i);
             String txnId= stxn.getId().toString();
             WireTransaction wtx= stxn.getTx();
+            //Instant ts = wtx.getTimeWindow().getFromTime();
             String txnDets= wtx.toString();
 
             //String txnStr = "Txn#" + (i+1) + " : Id=" + txnId.substring(0,4) + " " + txnDets;
@@ -359,7 +361,9 @@ public class TokenApi {
 
             txnStr= txnStr.replaceAll("\r\n", "");
             txnStr= txnStr.replaceAll("[^\\x00-\\x7F]", ""); //Removing funny asci, thanks to https://stackoverflow.com/questions/8519669/replace-non-ascii-character-from-string
-
+            txnStr= txnStr.replaceAll("Transaction:", ""); //remove this word
+            txnStr= txnStr.replaceAll("INPUT:", "Input: ");
+            txnStr= txnStr.replaceAll("OUTPUT:", ". Output:");
             System.out.println("#getTxns starting with: " + txnStr);
             txnStr= inputStringCleanup(txnStr);
             System.out.println("#getTxns returning: " + txnStr);
@@ -376,7 +380,14 @@ public class TokenApi {
     //@see ApiTests#parseTxnString
     public String inputStringCleanup(String str) {
         String finalStr= "";
-        int startIndx= str.indexOf("INPUT:");
+
+        //First kill the end bit
+        int cmdIndx= str.indexOf("COMMAND");
+        if (cmdIndx > -1) {
+            str = str.substring(0, cmdIndx);
+        }
+
+        int startIndx= str.indexOf("Input:");
         if (startIndx > -1) {
             finalStr = str.substring(0, startIndx+6); //upto INPUT:
             int endIndx = str.indexOf("(");

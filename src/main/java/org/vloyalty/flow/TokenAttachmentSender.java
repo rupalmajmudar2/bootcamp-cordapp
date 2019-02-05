@@ -39,7 +39,7 @@ public class TokenAttachmentSender extends AbstractTokenFlow {
         PublicKey ourPk = getOurIdentity().getOwningKey();
         txBuilder
                 .addOutputState(attachState, TokenAttachmentContract.ID)
-                .addCommand(new TokenAttachmentContract.Attach(), ourPk)
+                .addCommand(new TokenAttachmentContract.Commands.Attach(), ourPk)
                 .addAttachment(_attachmentHash);
 
         System.out.println("TokenAttachmentSender Before Verify");

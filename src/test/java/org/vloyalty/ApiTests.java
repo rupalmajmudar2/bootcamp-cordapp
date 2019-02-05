@@ -115,23 +115,23 @@ public class ApiTests {
         final CordaRPCOps proxy = rpcOps.start("user1", "test").getProxy();
         TokenApi api = new TokenApi(proxy);
 
-        String str= "INPUT: B6A4797D1934A42D48C05DCEAD90F997029024A2CCF46ECD7D30749C52E7D955(1)";
-        String expectedOut= "INPUT:B6A4(1)";
+        String str= "Input: B6A4797D1934A42D48C05DCEAD90F997029024A2CCF46ECD7D30749C52E7D955(1)";
+        String expectedOut= "Input:B6A4(1)";
         String finalStr= api.inputStringCleanup(str);
         assert(expectedOut.equals(finalStr));
 
-        str="Txn: 2FA1:Transaction:INPUT: B6A4797D1934A42D48C05DCEAD90F997029024A2CCF46ECD7D30749C52E7D955(1)OUTPUT: TokenState(#tokens=20, owner=O=Customer, L=Zug, C=CH, issuer=O=Valora, L=Zurich, C=CH)OUTPUT: TokenState(#tokens=391, owner=O=Valora, L=Zurich, C=CH, issuer=O=Valora, L=Zurich, C=CH)";
-        expectedOut="Txn: 2FA1:Transaction:INPUT:B6A4(1)OUTPUT: TokenState(#tokens=20, owner=O=Customer, L=Zug, C=CH, issuer=O=Valora, L=Zurich, C=CH)OUTPUT: TokenState(#tokens=391, owner=O=Valora, L=Zurich, C=CH, issuer=O=Valora, L=Zurich, C=CH)";
+        str="Txn: 2FA1:Transaction:Input: B6A4797D1934A42D48C05DCEAD90F997029024A2CCF46ECD7D30749C52E7D955(1)Output: TokenState(#tokens=20, owner=O=Customer, L=Zug, C=CH, issuer=O=Valora, L=Zurich, C=CH)Output: TokenState(#tokens=391, owner=O=Valora, L=Zurich, C=CH, issuer=O=Valora, L=Zurich, C=CH)";
+        expectedOut="Txn: 2FA1:Transaction:Input:B6A4(1)Output: TokenState(#tokens=20, owner=O=Customer, L=Zug, C=CH, issuer=O=Valora, L=Zurich, C=CH)Output: TokenState(#tokens=391, owner=O=Valora, L=Zurich, C=CH, issuer=O=Valora, L=Zurich, C=CH)";
         finalStr= api.inputStringCleanup(str);
         assert(expectedOut.equals(finalStr));
 
-        str="Txn: 8458:Transaction:OUTPUT: TokenState(#tokens=444, owner=O=Valora, L=Zurich, C=CH, issuer=O=Valora, L=Zurich, C=CH)";
-        expectedOut="Txn: 8458:Transaction:OUTPUT: TokenState(#tokens=444, owner=O=Valora, L=Zurich, C=CH, issuer=O=Valora, L=Zurich, C=CH)";
+        str="Txn: 8458:Transaction:Output: TokenState(#tokens=444, owner=O=Valora, L=Zurich, C=CH, issuer=O=Valora, L=Zurich, C=CH)";
+        expectedOut="Txn: 8458:Transaction:Output: TokenState(#tokens=444, owner=O=Valora, L=Zurich, C=CH, issuer=O=Valora, L=Zurich, C=CH)";
         finalStr= api.inputStringCleanup(str);
         assert(expectedOut.equals(finalStr));
 
-        str="C1C1:Transaction:INPUT:      1F2410CFD542C6968A557E73C105BC858C038D3BDD1F66250EF180DBF6A937A3(0)OUTPUT:     TokenState(#tokens=33, owner=O=Evian, L=Pfaffikon, C=CH, issuer=O=Valora, L=Zurich, C=CH)OUTPUT:     TokenState(#tokens=78, owner=O=Valora, L=Zurich, C=CH, issuer=O=Valora, L=Zurich, C=CH)";
-        expectedOut="C1C1:Transaction:INPUT:1F24(0)OUTPUT:     TokenState(#tokens=33, owner=O=Evian, L=Pfaffikon, C=CH, issuer=O=Valora, L=Zurich, C=CH)OUTPUT:     TokenState(#tokens=78, owner=O=Valora, L=Zurich, C=CH, issuer=O=Valora, L=Zurich, C=CH)";
+        str="C1C1:Transaction:Input:      1F2410CFD542C6968A557E73C105BC858C038D3BDD1F66250EF180DBF6A937A3(0)Output:     TokenState(#tokens=33, owner=O=Evian, L=Pfaffikon, C=CH, issuer=O=Valora, L=Zurich, C=CH)Output:     TokenState(#tokens=78, owner=O=Valora, L=Zurich, C=CH, issuer=O=Valora, L=Zurich, C=CH)";
+        expectedOut="C1C1:Transaction:Input:1F24(0)Output:     TokenState(#tokens=33, owner=O=Evian, L=Pfaffikon, C=CH, issuer=O=Valora, L=Zurich, C=CH)Output:     TokenState(#tokens=78, owner=O=Valora, L=Zurich, C=CH, issuer=O=Valora, L=Zurich, C=CH)";
         finalStr= api.inputStringCleanup(str);
         assert(expectedOut.equals(finalStr));
 
@@ -187,7 +187,7 @@ public class ApiTests {
         Assert.assertFalse(isCustomerNode);
     }
 
-    /*
+
     @Test
     public void sendAttachmentToPeer() throws Exception {
         final NetworkHostAndPort nodeAddress = NetworkHostAndPort.parse("localhost:10008");
@@ -196,11 +196,12 @@ public class ApiTests {
 
         TokenApi api= new TokenApi(proxy);
         String attachmentFn= "c:\\users\\rupal\\corda-attach.zip";
-        CordaX500Name sbb= new CordaX500Name("SBB", "Bern", "CH");
+        CordaX500Name sbb= new CordaX500Name("Valora", "Zurich", "CH");
+        //CordaX500Name sbb= new CordaX500Name("SBB", "Bern", "CH");
         api.sendAttachment(attachmentFn, sbb);
         assert(true);
     }
-*/
+
     /*
     @Test
     public void createTokenCreationFlow() throws Exception {

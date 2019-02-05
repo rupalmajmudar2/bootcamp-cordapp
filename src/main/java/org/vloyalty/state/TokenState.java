@@ -16,7 +16,6 @@ import org.vloyalty.token.Token;
 
 import java.math.BigDecimal;
 import java.security.PublicKey;
-import java.util.Currency;
 import java.util.List;
 
 public class TokenState implements FungibleAsset<Token>, QueryableState {
@@ -128,6 +127,14 @@ public class TokenState implements FungibleAsset<Token>, QueryableState {
 
     @Override
     public String toString() {
-        return String.format("TokenState(#tokens=%s, owner=%s, issuer=%s)", _numTokens, _owner, _issuer);
+        //e.g.  TokenState(#tokens=30, owner=O=SBB, L=Bern, C=CH, issuer=O=Valora, L=Zurich, C=CH)
+        //return String.format("TokenState(#tokens=%s, owner=%s, issuer=%s)", _numTokens, _owner, _issuer);
+
+        //Make it simpler:
+        //try get: [timestamp] : SBB 30tokens issued by Valora
+        String ownerOrg= _owner.getName().getOrganisation();
+        String issuerOrg= _issuer.getName().getOrganisation();
+
+        return ownerOrg + " " + _numTokens + " points issued by " + issuerOrg;
     }
 }
