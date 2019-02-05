@@ -339,6 +339,9 @@ app.controller('ModalCouponInstanceCtrl', function ($http, $location, $uibModalI
     modalCouponInstance.form = {};
     modalCouponInstance.formError = false;
 
+    modalCouponInstance.couponStatuses = ["Coupon_Issued", "Coupon_Sent_to_Customer", "Coupon_Redeemed", "Coupon_Sent_For_Reimbursed", "Coupon_Settled"];
+
+
     // Validate and create Coupons.
     modalCouponInstance.create = () => {
         console.log("#modalCouponInstance.create");

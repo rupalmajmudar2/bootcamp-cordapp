@@ -156,7 +156,9 @@ COMING WEEKS WE'LL WRITE A TUTORIAL ON HOW BEST TO DO THIS.
             </div>
             <div class="form-group">
                 <label for="value" class="control-label">New Status</label>
-                <input type="text" ng-model="modalCouponInstance.form.value" class="form-control" id="value">
+                <select ng-model="modalCouponInstance.form.value" class="form-control" id="value"
+                        ng-options="x for x in modalCouponInstance.couponStatuses"></select>
+                <!--<input type="text" ng-model="modalCouponInstance.form.value" class="form-control" id="value">-->
             </div>
             <div ng-show="modalCouponInstance.formError" class="form-group">
                 <div class="alert alert-danger" role="alert">
@@ -346,7 +348,7 @@ COMING WEEKS WE'LL WRITE A TUTORIAL ON HOW BEST TO DO THIS.
             <nav class="navbar navbar-default">
                 <div class="container-fluid">
                     <button ng-click="demoApp.openModalForTokenCreation()" type="button" ng-show="demoApp.isPartnerNode" class="btn btn-primary navbar-btn">Issue Points</button>
-                    <button ng-click="demoApp.openModalForTokenTransfer()" type="button" ng-show="demoApp.isPartnerNode" class="btn btn-primary navbar-btn">Transfer Points</button>
+                    <button ng-click="demoApp.openModalForTokenTransfer()" type="button" ng-show="true" class="btn btn-primary navbar-btn">Transfer Points</button>
                 </div>
             </nav>
             <nav class="navbar navbar-default">
