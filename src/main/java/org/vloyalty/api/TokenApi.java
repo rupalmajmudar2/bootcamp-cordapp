@@ -500,4 +500,35 @@ public class TokenApi {
             return Response.status(BAD_REQUEST).entity(msg).build();
         }
     }
+
+    @PUT
+    @Path("update-coupon")
+    public Response updateCoupon(
+            @QueryParam("newstatus") String newstatus,
+            @QueryParam("newowner") CordaX500Name newOwnerPartyName) throws InterruptedException, ExecutionException {
+        if (newOwnerPartyName == null) {
+            return Response.status(BAD_REQUEST).entity("Query parameter 'newowner' missing or has wrong format.\n").build();
+        }
+
+        System.out.println("#updateCoupon: newowner="+newOwnerPartyName+ " newstatus="+newstatus);
+        final Party otherParty = rpcOps.wellKnownPartyFromX500Name(newOwnerPartyName);
+        if (otherParty == null) {
+            return Response.status(BAD_REQUEST).entity("Party named " + newOwnerPartyName + "cannot be found.\n").build();
+        }
+
+        try {
+            final SignedTransaction signedTx = rpcOps
+                    .startTrackedFlowDynamic(CouponUpdateFlow.class, otherParty, newstatus)
+                    .getReturnValue()
+                    .get();
+
+            final String msg = String.format("CouponUpdate Transaction id %s committed to ledger.\n", signedTx.getId());
+            return Response.status(CREATED).entity(msg).build();
+
+        } catch (Throwable ex) {
+            final String msg = ex.getMessage();
+            logger.error(ex.getMessage(), ex);
+            return Response.status(BAD_REQUEST).entity(msg).build();
+        }
+    }
 }

@@ -5,7 +5,6 @@ import net.corda.client.rpc.CordaRPCClient;
 import net.corda.client.rpc.CordaRPCClientConfiguration;
 import net.corda.core.contracts.StateAndRef;
 import net.corda.core.identity.CordaX500Name;
-import net.corda.core.identity.Party;
 import net.corda.core.messaging.CordaRPCOps;
 import net.corda.core.utilities.NetworkHostAndPort;
 import net.corda.testing.node.MockNetwork;
@@ -17,8 +16,6 @@ import org.junit.Test;
 import org.vloyalty.api.TokenApi;
 import org.vloyalty.state.CouponState;
 
-import javax.swing.*;
-import java.awt.*;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -97,6 +94,19 @@ public class ApiTests {
         api.issueCoupon(text, sbb_owner, sbb_dist);
     }
 
+    @Test
+    public void updateCoupon() throws Exception {
+        final NetworkHostAndPort nodeAddress = NetworkHostAndPort.parse("localhost:10008");
+        final CordaRPCClient rpcOps = new CordaRPCClient(nodeAddress, CordaRPCClientConfiguration.DEFAULT);
+        final CordaRPCOps proxy = rpcOps.start("user1", "test").getProxy();
+
+        TokenApi api = new TokenApi(proxy);
+
+        //Transfer from Valora (to whom this client/api is connected) to the Customer
+        CordaX500Name customer_owner= new CordaX500Name("Customer", "Zug", "CH");
+
+        api.updateCoupon("New Status is with Customer", customer_owner);
+    }
 
     @Test
     public void parseTxnString() throws Exception {

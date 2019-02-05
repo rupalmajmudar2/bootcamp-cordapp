@@ -142,6 +142,36 @@ COMING WEEKS WE'LL WRITE A TUTORIAL ON HOW BEST TO DO THIS.
     </form>
 </script>
 
+<script type="text/ng-template" id="demoCouponUpdateAppModal.html">
+    <div class="modal-header">
+        <h4 class="modal-title">Process/Update the Coupon</h4>
+    </div>
+    <form>
+        <div class="modal-body">
+            <div class="form-group">
+                <label for="counterparty" class="control-label">Send to:</label>
+                <select ng-model="modalCouponInstance.form.counterparty" class="form-control" id="counterparty"
+                        ng-options="peerkey as peerkey for (peerkey,peerval) in modalCouponInstance.peer_map">
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="value" class="control-label">New Status</label>
+                <input type="text" ng-model="modalCouponInstance.form.value" class="form-control" id="value">
+            </div>
+            <div ng-show="modalCouponInstance.formError" class="form-group">
+                <div class="alert alert-danger" role="alert">
+                    <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+                    <span class="sr-only">Error:</span>
+                    Enter valid Coupon parameters
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button ng-click="modalCouponInstance.cancel()" type="button" class="btn btn-default">Close</button>
+            <button ng-click="modalCouponInstance.update()" type="button" class="btn btn-primary">Update Coupon</button>
+        </div>
+    </form>
+</script>
 <!--
 <nav class="navbar navbar-default">
     <div class="container-fluid">
@@ -184,14 +214,6 @@ COMING WEEKS WE'LL WRITE A TUTORIAL ON HOW BEST TO DO THIS.
     </form>
 </script>
 <!-- -------------------------- -->
-<!--<nav class="navbar navbar-default">
-    <div class="container-fluid">
-        <div class="navbar-header">
-            <a class="navbar-brand" href="#">{{demoApp.thisNode}}</a>
-        </div>
-        <button ng-click="demoApp.openModalForAttachmentSend()" type="button" class="btn btn-primary navbar-btn">Send Attachment</button>
-    </div>
-</nav>-->
 <script type="text/ng-template" id="demoAppModalAttachment.html">
     <div class="modal-header">
         <h4 class="modal-title">Send Legal Docs as Attachment</h4>
@@ -290,9 +312,9 @@ COMING WEEKS WE'LL WRITE A TUTORIAL ON HOW BEST TO DO THIS.
 /* Create three equal columns that floats next to each other */
 .column {
   float: left;
-  width: 33.33%;
+  width: 33.3%;
   padding: 10px;
-  height: 300px; /* Should be removed. Only for demonstration */
+  //height: 300px; /* Should be removed. Only for demonstration */
 }
 
 /* Clear floats after the columns */
@@ -314,33 +336,30 @@ COMING WEEKS WE'LL WRITE A TUTORIAL ON HOW BEST TO DO THIS.
 <div class="row">
     <div class="column" style="background-color:#aaa;">
         <fieldset>
-            <legend style="color:blue;font-weight:bold;">Setup</legend>
+            <legend align="center" style="color:blue;font-weight:bold;">Setup</legend>
             <nav class="navbar navbar-default">
                 <div class="container-fluid">
+                    <button ng-click="demoApp.openModalForAttachmentSend()" type="button" ng-show="demoApp.isPartnerNode" class="btn btn-primary navbar-btn">Send Invoice</button>
                     <button ng-click="demoApp.openModalForCashPayment()" type="button" ng-show="demoApp.isPartnerNode" class="btn btn-primary navbar-btn">Pay Cash</button>
-                </div>
-                <div class="container-fluid">
-                    <button ng-click="demoApp.openModalForTokenCreation()" type="button" ng-show="demoApp.isPartnerNode" class="btn btn-primary navbar-btn">Issue Points</button>
-                </div>
-                <div class="container-fluid">
-                    <button ng-click="demoApp.openModalForCouponCreation()" type="button" ng-show="demoApp.isPartnerNode" class="btn btn-primary navbar-btn">Issue Coupon</button>
                 </div>
             </nav>
             <nav class="navbar navbar-default">
                 <div class="container-fluid">
+                    <button ng-click="demoApp.openModalForTokenCreation()" type="button" ng-show="demoApp.isPartnerNode" class="btn btn-primary navbar-btn">Issue Points</button>
                     <button ng-click="demoApp.openModalForTokenTransfer()" type="button" ng-show="demoApp.isPartnerNode" class="btn btn-primary navbar-btn">Transfer Points</button>
                 </div>
             </nav>
             <nav class="navbar navbar-default">
                 <div class="container-fluid">
-                    <button ng-click="demoApp.openModalForAttachmentSend()" type="button" ng-show="demoApp.isPartnerNode" class="btn btn-primary navbar-btn">Send Attachment</button>
+                    <button ng-click="demoApp.openModalForCouponCreation()" type="button" ng-show="demoApp.isPartnerNode" class="btn btn-primary navbar-btn">Issue Coupon</button>
+                    <button ng-click="demoApp.openModalForCouponUpdate()" type="button" ng-show="true" class="btn btn-primary navbar-btn">Process Coupon</button>
                 </div>
             </nav>
         </fieldset>
     </div>
     <div class="column" style="background-color:#bbb;">
         <fieldset>
-            <legend style="color:blue;font-weight:bold;">Transactions</legend>
+            <legend align="center" style="color:blue;font-weight:bold;">Transactions</legend>
             <div class="panel">
                 <div class="panel-primary">
                     <div class="panel-heading">
@@ -363,7 +382,7 @@ COMING WEEKS WE'LL WRITE A TUTORIAL ON HOW BEST TO DO THIS.
     </div>
     <div class="column" style="background-color:#ccc;">
         <fieldset>
-            <legend style="color:blue;font-weight:bold;">Data</legend>
+            <legend align="center" style="color:blue;font-weight:bold;">Data</legend>
             <div class="panel">
                 <div class="panel-primary">
                     <div class="panel-heading">

@@ -86,9 +86,24 @@ app.controller('DemoAppController', function($http, $location, $uibModal) {
 
 
     demoApp.openModalForCouponCreation = () => {
-        console.log("In #openModalForCouponCreation");
         const modalCouponInstance = $uibModal.open({
             templateUrl: 'demoCouponAppModal.html',
+            controller: 'ModalCouponInstanceCtrl',
+            controllerAs: 'modalCouponInstance',
+            resolve: {
+                demoApp: () => demoApp,
+                apiBaseURL: () => apiBaseURL,
+                peers: () => peers,
+                peer_map: () => peer_map
+            }
+        });
+
+        modalCouponInstance.result.then(() => {}, () => {});
+    };
+
+    demoApp.openModalForCouponUpdate = () => {
+        const modalCouponInstance = $uibModal.open({
+            templateUrl: 'demoCouponUpdateAppModal.html',
             controller: 'ModalCouponInstanceCtrl',
             controllerAs: 'modalCouponInstance',
             resolve: {
@@ -339,6 +354,34 @@ app.controller('ModalCouponInstanceCtrl', function ($http, $location, $uibModalI
             console.log("#modalCouponInstance.create: endpoint is: " + createCouponEndpoint);
             // Create PO and handle success / fail responses.
             $http.put(createCouponEndpoint).then(
+                (result) => {
+                    modalCouponInstance.displayMessage(result);
+                    demoApp.getTokens();
+                    demoApp.getCoupons();
+                    demoApp.getTxns();
+                    demoApp.getCash();
+                },
+                (result) => {
+                    modalCouponInstance.displayMessage(result);
+                }
+            );
+        }
+    };
+
+    // Update Coupons.
+    modalCouponInstance.update = () => {
+        console.log("#modalCouponInstance.update");
+        if (invalidFormInput()) {
+            modalCouponInstance.formError = true;
+        } else {
+            modalCouponInstance.formError = false;
+
+            $uibModalInstance.close();
+
+            const createCouponUpdtEndpoint = `${apiBaseURL}update-coupon?newowner=${modalCouponInstance.form.counterparty}&newstatus=${modalCouponInstance.form.value}`;
+            console.log("#modalCouponInstance.update: endpoint is: " + createCouponUpdtEndpoint);
+
+            $http.put(createCouponUpdtEndpoint).then(
                 (result) => {
                     modalCouponInstance.displayMessage(result);
                     demoApp.getTokens();
