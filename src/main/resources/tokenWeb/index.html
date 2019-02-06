@@ -1,17 +1,3 @@
-<!--
---------
-WARNING:
---------
-
-THIS CODE IS ONLY MADE AVAILABLE FOR DEMONSTRATION PURPOSES AND IS NOT SECURE! DO NOT USE IN PRODUCTION!
-
-FOR SECURITY REASONS, USING A JAVASCRIPT WEB APP HOSTED VIA THE CORDA NODE IS NOT THE RECOMMENDED WAY TO INTERFACE
-WITH CORDA NODES! HOWEVER, FOR THIS PRE-ALPHA RELEASE IT'S A USEFUL WAY TO EXPERIMENT WITH THE PLATFORM AS IT ALLOWS
-YOU TO QUICKLY BUILD A UI FOR DEMONSTRATION PURPOSES.
-
-GOING FORWARD WE RECOMMEND IMPLEMENTING A STANDALONE WEB SERVER THAT AUTHORISES VIA THE NODE'S RPC INTERFACE. IN THE
-COMING WEEKS WE'LL WRITE A TUTORIAL ON HOW BEST TO DO THIS.
--->
 <!DOCTYPE html>
 <html lang="en" xmlns:background-color="http://www.w3.org/1999/xhtml">
 <head>
@@ -28,7 +14,6 @@ COMING WEEKS WE'LL WRITE A TUTORIAL ON HOW BEST TO DO THIS.
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.0-rc.1/angular.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/2.2.0/ui-bootstrap-tpls.min.js"></script>
     <script src="js/angular-module.js"></script>
-    <!--<script src="lib/angular/angular-sanitize.min.js"></script>-->
 </head>
 <body ng-app="demoAppModule" ng-controller="DemoAppController as demoApp">
 <!-- My Node: {{demoApp.thisNode}} : {{demoApp.peer_map[demoApp.thisNode]}} -->
@@ -45,9 +30,28 @@ COMING WEEKS WE'LL WRITE A TUTORIAL ON HOW BEST TO DO THIS.
         All Node details: {{demoApp.peer_map}}
     </div>
 </nav> -->
+
+<!-- Script for auto-refresh -->
+<script>
+    //https://stackoverflow.com/questions/4644027/how-to-automatically-reload-a-page-after-a-given-period-of-inactivity
+     var time = new Date().getTime();
+     $(document.body).bind("mousemove keypress", function(e) {
+         time = new Date().getTime();
+     });
+
+     function refresh() {
+         if(new Date().getTime() - time >= 60000)
+             window.location.reload(true);
+         else
+             setTimeout(refresh, 10000);
+     }
+
+     setTimeout(refresh, 10000);
+</script>
+
 <script type="text/ng-template" id="demoCashAppModal.html">
     <div class="modal-header">
-        <h4 class="modal-title">Make Cash Payment [to get Points]</h4>
+        <h4 class="modal-title">Make Cash Payment [to get KOINs]</h4>
     </div>
     <form>
         <div class="modal-body">
@@ -80,12 +84,12 @@ COMING WEEKS WE'LL WRITE A TUTORIAL ON HOW BEST TO DO THIS.
 
 <script type="text/ng-template" id="demoAppModal.html">
     <div class="modal-header">
-        <h4 class="modal-title">Add new Points</h4>
+        <h4 class="modal-title">Add new KOINs</h4>
     </div>
     <form>
         <div class="modal-body">
             <div class="form-group">
-                <label for="counterparty" class="control-label">Points For:</label>
+                <label for="counterparty" class="control-label">KOINs For:</label>
                 <select ng-model="modalInstance.form.counterparty" class="form-control" id="counterparty"
                         ng-options="peerkey as peerkey for (peerkey,peerval) in modalInstance.peer_map">
                         <!-- <select ng-options="k as v for (k, v) in cols"></select> -->
@@ -93,7 +97,7 @@ COMING WEEKS WE'LL WRITE A TUTORIAL ON HOW BEST TO DO THIS.
                 </select>
             </div>
             <div class="form-group">
-                <label for="value" class="control-label">#Points:</label>
+                <label for="value" class="control-label">#KOINs:</label>
                 <input type="text" ng-model="modalInstance.form.value" class="form-control" id="value">
             </div>
             <div ng-show="modalInstance.formError" class="form-group">
@@ -106,7 +110,7 @@ COMING WEEKS WE'LL WRITE A TUTORIAL ON HOW BEST TO DO THIS.
         </div>
         <div class="modal-footer">
             <button ng-click="modalInstance.cancel()" type="button" class="btn btn-default">Close</button>
-            <button ng-click="modalInstance.create()" type="button" class="btn btn-primary">Create Points</button>
+            <button ng-click="modalInstance.create()" type="button" class="btn btn-primary">Create KOINs</button>
         </div>
     </form>
 </script>
@@ -186,19 +190,19 @@ COMING WEEKS WE'LL WRITE A TUTORIAL ON HOW BEST TO DO THIS.
 </nav> -->
 <script type="text/ng-template" id="demoAppModalTransfer.html">
     <div class="modal-header">
-        <h4 class="modal-title">Transfer My Points</h4>
+        <h4 class="modal-title">Transfer My KOINs</h4>
     </div>
     <form>
         <div class="modal-body">
             <div class="form-group">
-                <label for="counterparty" class="control-label">Send Points To:</label>
+                <label for="counterparty" class="control-label">Send KOINs To:</label>
                 <select ng-model="modalInstance.form.counterparty" class="form-control" id="counterparty"
                         ng-options="peerkey as peerkey for (peerkey,peerval) in modalInstance.peer_map">
                         <!--ng-options="peer as peer for peer in modalInstance.peers">-->
                 </select>
             </div>
             <div class="form-group">
-                <label for="value" class="control-label">#Points:</label>
+                <label for="value" class="control-label">#KOINs:</label>
                 <input type="text" ng-model="modalInstance.form.value" class="form-control" id="value">
             </div>
             <div ng-show="modalInstance.formError" class="form-group">
@@ -211,7 +215,7 @@ COMING WEEKS WE'LL WRITE A TUTORIAL ON HOW BEST TO DO THIS.
         </div>
         <div class="modal-footer">
             <button ng-click="modalInstance.cancel()" type="button" class="btn btn-default">Close</button>
-            <button ng-click="modalInstance.transfer()" type="button" class="btn btn-primary">Transfer Points</button>
+            <button ng-click="modalInstance.transfer()" type="button" class="btn btn-primary">Transfer KOINs</button>
         </div>
     </form>
 </script>
@@ -334,7 +338,7 @@ COMING WEEKS WE'LL WRITE A TUTORIAL ON HOW BEST TO DO THIS.
 }
 </style>
 
-<h2>Node : {{demoApp.thisNode}}</h2>
+<h2>Node : {{demoApp.thisNodeOrg}}</h2>
 <div class="row">
     <div class="column" style="background-color:#aaa;">
         <fieldset>
@@ -347,8 +351,8 @@ COMING WEEKS WE'LL WRITE A TUTORIAL ON HOW BEST TO DO THIS.
             </nav>
             <nav class="navbar navbar-default">
                 <div class="container-fluid">
-                    <button ng-click="demoApp.openModalForTokenCreation()" type="button" ng-show="demoApp.isPartnerNode" class="btn btn-primary navbar-btn">Issue Points</button>
-                    <button ng-click="demoApp.openModalForTokenTransfer()" type="button" ng-show="true" class="btn btn-primary navbar-btn">Transfer Points</button>
+                    <button ng-click="demoApp.openModalForTokenCreation()" type="button" ng-show="demoApp.isPartnerNode" class="btn btn-primary navbar-btn">Issue KOINs</button>
+                    <button ng-click="demoApp.openModalForTokenTransfer()" type="button" ng-show="true" class="btn btn-primary navbar-btn">Transfer KOINs</button>
                 </div>
             </nav>
             <nav class="navbar navbar-default">
@@ -389,7 +393,7 @@ COMING WEEKS WE'LL WRITE A TUTORIAL ON HOW BEST TO DO THIS.
                 <div class="panel-primary">
                     <div class="panel-heading">
                         <h4 class="panel-title">
-                            My Cash, Points & Coupons:
+                            My Cash, KOINs & Coupons:
                         </h4>
                     </div>
                 </div>
@@ -406,7 +410,7 @@ COMING WEEKS WE'LL WRITE A TUTORIAL ON HOW BEST TO DO THIS.
                     </div>
                 </div>
                 <div>
-                    Points:
+                    KOINs:
                     <div ng-repeat="token in demoApp.tokens" class="panel panel-default">
                         <div class="panel-body">
                             <ul>

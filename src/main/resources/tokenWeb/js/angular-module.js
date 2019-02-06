@@ -33,6 +33,8 @@ app.controller('DemoAppController', function($http, $location, $uibModal) {
 
     $http.get(apiBaseURL + "me").then((response) => demoApp.thisNode = response.data.me);
 
+    $http.get(apiBaseURL + "my-org").then((response) => demoApp.thisNodeOrg = response.data);
+
     $http.get(apiBaseURL + "peers").then((response) => peers = response.data.peers);
 
     //@see TokenApi#peer-details : returns the json directly, not mapped to "peers"

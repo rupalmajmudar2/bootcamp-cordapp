@@ -156,6 +156,16 @@ public class ApiTests {
     }
 
     @Test
+    public void getTokensBrief() throws Exception {
+        final NetworkHostAndPort nodeAddress = NetworkHostAndPort.parse("localhost:10008");
+        final CordaRPCClient rpcOps = new CordaRPCClient(nodeAddress, CordaRPCClientConfiguration.DEFAULT);
+        final CordaRPCOps proxy = rpcOps.start("user1", "test").getProxy();
+
+        TokenApi api = new TokenApi(proxy);
+        api.getTokensWithOrgs();
+    }
+
+    @Test
     public void getTokensIssuedByMe() throws Exception {
         final NetworkHostAndPort nodeAddress = NetworkHostAndPort.parse("localhost:10008");
         final CordaRPCClient rpcOps = new CordaRPCClient(nodeAddress, CordaRPCClientConfiguration.DEFAULT);

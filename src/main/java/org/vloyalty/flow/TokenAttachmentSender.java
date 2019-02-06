@@ -35,7 +35,7 @@ public class TokenAttachmentSender extends AbstractTokenFlow {
         System.out.println("TokenAttachmentSender Notary=" + notary.getName());
         txBuilder.setNotary(notary);
 
-        TokenAttachmentState attachState = new TokenAttachmentState(_attachmentHash);
+        TokenAttachmentState attachState = new TokenAttachmentState(_attachmentHash, _newOwner);
         PublicKey ourPk = getOurIdentity().getOwningKey();
         txBuilder
                 .addOutputState(attachState, TokenAttachmentContract.ID)

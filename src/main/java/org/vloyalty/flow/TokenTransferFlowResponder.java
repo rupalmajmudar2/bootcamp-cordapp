@@ -61,18 +61,20 @@ public class TokenTransferFlowResponder extends AbstractTokenFlow { //FlowLogic<
                 JOptionPane.showInputDialog(msg);
                 */
                 Party thisNode= getOurIdentity();
-                JDialog.setDefaultLookAndFeelDecorated(true);
-                int response = JOptionPane.showConfirmDialog(null, "Do you wish to Sign this txn?", "Confirm for Node:" + thisNode.getName(),
-                        JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
-                if (response == JOptionPane.NO_OPTION) {
-                    System.out.println("No button clicked");
-                    throw new FlowException("Counterparty refused to sign. Cancelling the Transaction.");
-                } else if (response == JOptionPane.YES_OPTION) {
-                    System.out.println("Yes button clicked");
-                    //ok.
-                } else if (response == JOptionPane.CLOSED_OPTION) {
-                    System.out.println("JOptionPane closed");
-                    //ok.
+                if (!(thisNode.getName().getOrganisation().equals("Customer"))) { //Dont ask the customer to confirm.
+                    JDialog.setDefaultLookAndFeelDecorated(true);
+                    int response = JOptionPane.showConfirmDialog(null, "Do you wish to Sign this txn?", thisNode.getName().getOrganisation() + " to confirm:",
+                            JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+                    if (response == JOptionPane.NO_OPTION) {
+                        System.out.println("No button clicked");
+                        throw new FlowException("Counterparty refused to sign. Cancelling the Transaction.");
+                    } else if (response == JOptionPane.YES_OPTION) {
+                        System.out.println("Yes button clicked");
+                        //ok.
+                    } else if (response == JOptionPane.CLOSED_OPTION) {
+                        System.out.println("JOptionPane closed");
+                        //ok.
+                    }
                 }
                 //stx.getInputs();
 
@@ -85,11 +87,5 @@ public class TokenTransferFlowResponder extends AbstractTokenFlow { //FlowLogic<
         }
 
         return subFlow(new TokenTransferSignTxFlow(counterpartySession, SignTransactionFlow.tracker()));
-
-        // Once the counterparty calls `FinalityFlow`, we will
-        // automatically record the transaction if we are one of the
-        // `participants` on one or more of the transaction's states.
-
-        //return null;
     }
 }

@@ -135,6 +135,6 @@ public class TokenState implements FungibleAsset<Token>, QueryableState {
         String ownerOrg= _owner.getName().getOrganisation();
         String issuerOrg= _issuer.getName().getOrganisation();
 
-        return ownerOrg + " " + _numTokens + " points issued by " + issuerOrg;
+        return ownerOrg + " " + _numTokens + " KOINs issued by " + issuerOrg;
     }
 }

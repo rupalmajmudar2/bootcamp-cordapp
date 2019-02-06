@@ -68,6 +68,14 @@ public class TokenApi {
         return ImmutableMap.of("me", myLegalName);
     }
 
+    @GET
+    @Path("my-org")
+    @Produces(MediaType.APPLICATION_JSON)
+    public String myOrg() {
+        Gson gson = new GsonBuilder().disableHtmlEscaping().create();
+        return gson.toJson(myLegalName.getOrganisation());
+    }
+
     /**
      * Returns all parties registered with the [NetworkMapService]. These names can be used to look up identities
      * using the [IdentityService].
@@ -165,6 +173,21 @@ public class TokenApi {
     }
 
     /**
+     * For demo - keep shorter names of the parties!
+     */
+    @GET
+    @Path("tokensWithOrgs")
+    @Produces(MediaType.APPLICATION_JSON)
+    public List<StateAndRef<TokenState>> getTokensWithOrgs() {
+        List<StateAndRef<TokenState>> sars= getTokens();
+        for (StateAndRef<TokenState> sar: sars) {
+            System.out.println("SAR=" + sar.toString());
+        }
+
+        return sars;
+    }
+
+    /**
      * Displays all Coupon states that exist in the node's vault.
      */
     @GET
@@ -213,9 +236,9 @@ public class TokenApi {
                     .get();
 
             final String msg = String.format("TokenIssue by %s for %s: Txn# %s committed to ledger.\n",
-                                            myLegalName.toString(),
-                                            ownerPartyName.toString(),
-                                            signedTx.getId());
+                                            myLegalName.getOrganisation(),
+                                            ownerPartyName.getOrganisation(),
+                                            signedTx.getId().toString().substring(0,4));
             //System.out.println("#createTokens: #1");
             Response rr= Response.status(CREATED).entity(msg).build();
             //System.out.println("#createTokens: #2");
@@ -252,7 +275,7 @@ public class TokenApi {
                     .getReturnValue()
                     .get();
 
-            final String msg = String.format("TokenTransfer Transaction id %s committed to ledger.\n", signedTx.getId());
+            final String msg = String.format("TokenTransfer Transaction id %s committed to ledger.\n", signedTx.getId().toString().substring(0,4));
             return Response.status(CREATED).entity(msg).build();
 
         } catch (Throwable ex) {
@@ -299,7 +322,7 @@ public class TokenApi {
                     .get();
 
             final String msg = String.format("TokenAttachmentSender Transaction id %s committed to ledger.\n", signedTx2.getId());
-            System.out.println(" TokenAttachmentSender Transaction id %s committed to ledger."  + signedTx2.getId());
+            System.out.println(" TokenAttachmentSender Transaction id %s committed to ledger."  + signedTx2.getId().toString().substring(0,4));
             return Response.status(CREATED).entity(msg).build();
 
         } catch (Throwable ex) {
@@ -345,30 +368,33 @@ public class TokenApi {
 
         //Map(Sequence# ->(TxnId : TxnString_Inputs_Outputs)
         HashMap<String, String> txnMap= new HashMap();
-        for (int i=0; i < txns.size(); i++) {
-            SignedTransaction stxn= txns.get(i);
-            String txnId= stxn.getId().toString();
-            WireTransaction wtx= stxn.getTx();
-            //Instant ts = wtx.getTimeWindow().getFromTime();
-            String txnDets= wtx.toString();
+        int count= 0;
+        //for (int i=0; i < txns.size(); i++) {
+        for (int i=(txns.size() - 1); i > -1; i--) {
+                SignedTransaction stxn= txns.get(i);
+                String txnId= stxn.getId().toString();
+                WireTransaction wtx= stxn.getTx();
+                //Instant ts = wtx.getTimeWindow().getFromTime();
+                String txnDets= wtx.toString();
 
-            //String txnStr = "Txn#" + (i+1) + " : Id=" + txnId.substring(0,4) + " " + txnDets;
-            String txnNr= (i+1) + "";
-            String txnStr= txnId.substring(0,4) + ":" + txnDets;
+                //String txnStr = "Txn#" + (i+1) + " : Id=" + txnId.substring(0,4) + " " + txnDets;
+                String txnNr= (++count) + "";
+                String txnStr= txnId.substring(0,4) + ":" + txnDets;
 
-            int  cmdIndx= txnStr.indexOf("COMMAND:");
-            txnStr= txnStr.substring(0, cmdIndx);
+                int  cmdIndx= txnStr.indexOf("COMMAND:");
+                txnStr= txnStr.substring(0, cmdIndx);
 
-            txnStr= txnStr.replaceAll("\r\n", "");
-            txnStr= txnStr.replaceAll("[^\\x00-\\x7F]", ""); //Removing funny asci, thanks to https://stackoverflow.com/questions/8519669/replace-non-ascii-character-from-string
-            txnStr= txnStr.replaceAll("Transaction:", ""); //remove this word
-            txnStr= txnStr.replaceAll("INPUT:", "Input: ");
-            txnStr= txnStr.replaceAll("OUTPUT:", ". Output:");
-            System.out.println("#getTxns starting with: " + txnStr);
-            txnStr= inputStringCleanup(txnStr);
-            System.out.println("#getTxns returning: " + txnStr);
+                txnStr= txnStr.replaceAll("\r\n", "");
+                txnStr= txnStr.replaceAll("[^\\x00-\\x7F]", ""); //Removing funny asci, thanks to https://stackoverflow.com/questions/8519669/replace-non-ascii-character-from-string
+                txnStr= txnStr.replaceAll("Transaction:", ""); //remove this word
+                txnStr= txnStr.replaceAll("INPUT:", "Input: ");
+                txnStr= txnStr.replaceAll("OUTPUT:", ". Output:");
+                System.out.println("#getTxns starting with: " + txnStr);
+                txnStr= inputStringCleanup(txnStr);
+                System.out.println("#getTxns returning: " + txnStr);
 
-            txnMap.put(txnNr, txnStr);
+                txnMap.put(txnNr, txnStr);
+
         }
 
         Gson gson = new GsonBuilder().disableHtmlEscaping().create();
@@ -445,9 +471,9 @@ public class TokenApi {
                     .get();
 
             final String msg = String.format("Cash Issue to %s for %s: Txn# %s committed to ledger.\n",
-                    ownerPartyName.toString(), //myLegalName.toString(),
+                    ownerPartyName.getOrganisation(),
                     cashAmount,
-                    result.getId());
+                    result.getId().toString().substring(0,4));
             //System.out.println("#createTokens: #1");
             Response rr = Response.status(CREATED).entity(msg).build();
             //System.out.println("#createTokens: #2");
@@ -498,9 +524,9 @@ public class TokenApi {
 
             final String msg = String.format("Coupon %s issued by %s to %s: Txn# %s committed to ledger.\n",
                     text,
-                    myLegalName.toString(),
-                    ownerPartyName.toString(),
-                    signedTx.getId());
+                    myLegalName.getOrganisation(),
+                    ownerPartyName.getOrganisation(),
+                    signedTx.getId().toString().substring(0,4));
             Response rr= Response.status(CREATED).entity(msg).build();
 
             return rr;
@@ -533,7 +559,7 @@ public class TokenApi {
                     .getReturnValue()
                     .get();
 
-            final String msg = String.format("CouponUpdate Transaction id %s committed to ledger.\n", signedTx.getId());
+            final String msg = String.format("CouponUpdate Transaction id %s committed to ledger.\n", signedTx.getId().toString().substring(0,4));
             return Response.status(CREATED).entity(msg).build();
 
         } catch (Throwable ex) {

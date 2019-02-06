@@ -10,7 +10,7 @@ public class Token implements Serializable {
     //private int _numTokens;
 
     public String toString() {
-        return " Points";
+        return " KOINs";
         //return _numTokens + " KOINs";
     }
 
