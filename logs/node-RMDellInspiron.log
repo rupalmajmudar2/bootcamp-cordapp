@@ -1,5 +1,2 @@
-[INFO ] 2019-01-24T13:40:28,680Z [main] internal.RPCClient.logElapsedTime - Startup took 8981 msec {}
-[INFO ] 2019-01-24T13:42:40,751Z [main] internal.RPCClient.logElapsedTime - Startup took 8629 msec {}
-[INFO ] 2019-01-24T13:44:04,045Z [main] internal.RPCClient.logElapsedTime - Startup took 2447 msec {}
-[INFO ] 2019-01-24T13:47:32,175Z [main] internal.RPCClient.logElapsedTime - Startup took 2495 msec {}
-[WARN ] 2019-01-24T13:53:59,009Z [Thread-2 (ActiveMQ-client-global-threads)] core.client.fail - AMQ212037: Connection failure has been detected: AMQ119011: Did not receive data from server for org.apache.activemq.artemis.core.remoting.impl.netty.NettyConnection@6a101687[local= 0.0.0.0/0.0.0.0:50737, remote=null] [code=CONNECTION_TIMEDOUT] {}
+[INFO ] 2019-01-30T10:22:16,533Z [main] internal.RPCClient.logElapsedTime - Startup took 3055 msec {}
+[WARN ] 2019-01-30T10:23:24,384Z [rpc-client-reaper-0] internal.RPCClientProxyHandler.onRemoval - A hot observable returned from an RPC was never subscribed to. This wastes server-side resources because it was queueing observations for retrieval. It is being closed now, but please adjust your code to call .notUsed() on the observable to close it explicitly. (Java users: subscribe to it then unsubscribe). This warning will appear less frequently in future versions of the platform and you can ignore it if you want to. {}
